@@ -24,7 +24,7 @@ function generateLayout() {
 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>\
 </button>\
 <a href="/profile/" id="profileLink" style="display:none;">\
-<span style="border:1px solid rgba(201,160,94,0.3);border-radius:999px;padding:6px 12px;font-size:0.875rem;color:var(--gold);text-decoration:none;">我的</span>\
+<span id="profileLinkText" style="border:1px solid rgba(201,160,94,0.3);border-radius:999px;padding:6px 12px;font-size:0.875rem;color:var(--gold);text-decoration:none;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">登录</span>\
 </a>\
 </div>\
 <div class="gold-divider" style="position:absolute;bottom:0;left:0;right:0;opacity:0;transition:opacity 0.3s;"></div>\
@@ -141,11 +141,41 @@ function generateLayout() {
   }
 }
 
+// ===== 登录态：更新右上角"我的"按钮显示 =====
+// auth.js 未必在所有页面加载，这里直接读取 localStorage（键名与 auth.js 一致），
+// 若 BanruogeAuth 存在则优先使用其方法。
+function getAuthState() {
+  var token, username;
+  if (window.BanruogeAuth) {
+    return { loggedIn: BanruogeAuth.isLoggedIn(), username: BanruogeAuth.getUsername() };
+  }
+  try {
+    token = localStorage.getItem('banruoge_token');
+    username = localStorage.getItem('banruoge_username');
+  } catch (e) {}
+  return { loggedIn: !!(token && username), username: username || '' };
+}
+
+function updateProfileLink() {
+  var span = document.getElementById('profileLinkText');
+  if (!span) return;
+  var state = getAuthState();
+  span.textContent = state.loggedIn ? state.username : '登录';
+}
+
 // 页面加载后生成布局
 document.addEventListener('DOMContentLoaded', function() {
   generateLayout();
   initScrollReveal();
   audioPlayer.init();
+
+  // 根据登录态更新顶部导航"我的"按钮文字
+  updateProfileLink();
+
+  // 登录态变化时实时更新（如在本页面登录/退出）
+  if (window.BanruogeAuth && BanruogeAuth.onAuthChange) {
+    BanruogeAuth.onAuthChange(function() { updateProfileLink(); });
+  }
 
   var musicBtn = document.querySelector('[data-music-toggle]');
   if (musicBtn) {

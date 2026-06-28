@@ -28,6 +28,24 @@
   .lamp-name { font-size:0.95rem; color:var(--paper-dark); margin-bottom:4px; }
   .lamp-desc { font-size:0.72rem; color:var(--ink-muted); line-height:1.5; }
 
+  /* 供灯时长卡 */
+  .duration-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+  @media (max-width:560px){ .duration-grid { grid-template-columns:repeat(3,1fr); } }
+  .duration-card { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:12px; padding:14px 4px; text-align:center; cursor:pointer; transition:all 0.2s; position:relative; }
+  .duration-card:hover { border-color: rgba(201,160,94,0.5); transform:translateY(-1px); }
+  .duration-card.active { border-color: var(--gold); background:rgba(201,160,94,0.14); box-shadow:0 0 18px rgba(201,160,94,0.28); }
+  .duration-card.active::after { content:''; position:absolute; left:50%; bottom:-1px; transform:translateX(-50%); width:60%; height:2px; background:var(--gold); border-radius:1px; }
+  .duration-name { font-size:0.85rem; color:var(--paper-dark); margin-bottom:4px; }
+  .duration-card.active .duration-name { color:var(--gold); }
+  .duration-price { font-size:0.72rem; color:var(--ink-muted); }
+  .duration-card.active .duration-price { color:var(--gold-light); }
+  .duration-price.free { color:#7fb88f; }
+  .duration-card.active .duration-price.free { color:#a9d9b6; }
+  /* 灯墙时长标识 */
+  .wall-badge { display:inline-block; font-size:0.62rem; padding:1px 7px; border-radius:8px; margin-left:6px; vertical-align:middle; border:1px solid rgba(201,160,94,0.35); color:var(--gold-light); background:rgba(201,160,94,0.12); letter-spacing:0.05em; }
+  .wall-badge.badge-day { border-color:rgba(232,213,176,0.3); color:var(--paper-dark); background:rgba(232,213,176,0.06); }
+  .wall-badge.badge-year { border-color:rgba(201,160,94,0.55); color:var(--gold); background:rgba(201,160,94,0.18); }
+
   /* 点亮的灯 */
   .lit-lamp-wrap { display:none; flex-direction:column; align-items:center; gap:16px; padding:24px 0; }
   .lit-lamp { position:relative; width:90px; height:130px; }
@@ -116,6 +134,33 @@
         </div>
       </div>
 
+      <div>
+        <label class="field-label">供灯时长</label>
+        <div class="duration-grid" id="durationGrid">
+          <div class="duration-card active" data-dur="day">
+            <div class="duration-name">当天</div>
+            <div class="duration-price free">免费</div>
+          </div>
+          <div class="duration-card" data-dur="month">
+            <div class="duration-name">本月</div>
+            <div class="duration-price">¥1.9</div>
+          </div>
+          <div class="duration-card" data-dur="season">
+            <div class="duration-name">三个月</div>
+            <div class="duration-price">¥5.9</div>
+          </div>
+          <div class="duration-card" data-dur="half">
+            <div class="duration-name">半年</div>
+            <div class="duration-price">¥9.9</div>
+          </div>
+          <div class="duration-card" data-dur="year">
+            <div class="duration-name">一年</div>
+            <div class="duration-price">¥19.9</div>
+          </div>
+        </div>
+        <p style="font-size:0.72rem;color:var(--ink-muted);margin:8px 0 0;line-height:1.6;">当天供灯免费；选择更长时长需随喜功德，7天内同时长不重复收费。</p>
+      </div>
+
       <button type="submit" class="btn-ritual" style="width:100%;font-size:1.15rem;">点 灯</button>
     </form>
   </section>
@@ -167,12 +212,31 @@
   var selectedType = document.querySelector('.lamp-type.active');
   var selectedBlessing = selectedType ? selectedType.getAttribute('data-blessing') : '';
 
+  // 供灯时长配置
+  var DURATIONS = {
+    day:    { name:'当天',   price:0,    free:true,  label:'日灯',   pageKey:null,           badgeCls:'badge-day' },
+    month:  { name:'本月',   price:1.9,  free:false, label:'月灯',   pageKey:'qifu_month',   badgeCls:'' },
+    season: { name:'三个月', price:5.9,  free:false, label:'季灯',   pageKey:'qifu_3month',  badgeCls:'' },
+    half:   { name:'半年',   price:9.9,  free:false, label:'半年灯', pageKey:'qifu_6month',  badgeCls:'' },
+    year:   { name:'一年',   price:19.9, free:false, label:'年灯',   pageKey:'qifu_year',    badgeCls:'badge-year' }
+  };
+  var selectedDurationKey = 'day';
+
   // 灯种切换
   document.querySelectorAll('.lamp-type').forEach(function(el){
     el.addEventListener('click', function(){
       document.querySelectorAll('.lamp-type').forEach(function(e){ e.classList.remove('active'); });
       this.classList.add('active');
       selectedBlessing = this.getAttribute('data-blessing');
+    });
+  });
+
+  // 时长切换
+  document.querySelectorAll('.duration-card').forEach(function(el){
+    el.addEventListener('click', function(){
+      document.querySelectorAll('.duration-card').forEach(function(e){ e.classList.remove('active'); });
+      this.classList.add('active');
+      selectedDurationKey = this.getAttribute('data-dur');
     });
   });
 
@@ -191,38 +255,70 @@
     var wish = document.getElementById('lampWish').value.trim();
     if(!name || !wish){ showToast('请填写名字与心愿'); return; }
 
-    lightLamp(function(){
-      // 显示结果
-      var meta = '为 ' + whom + ' · ' + name + ' 点亮';
-      document.getElementById('litMeta').textContent = meta;
-      document.getElementById('litBlessing').textContent = selectedBlessing || '愿所求皆如愿，所行皆坦途。';
-      var wrap = document.getElementById('litLampWrap');
-      wrap.style.display = 'flex';
-      wrap.scrollIntoView({behavior:'smooth'});
+    var dur = DURATIONS[selectedDurationKey] || DURATIONS.day;
 
-      // 加入灯墙
-      addWallItem(name, wish, '刚刚', selectedBlessing);
-      showToast('灯已点亮，愿心愿成真', 1800);
+    function doLight(){
+      lightLamp(function(){
+        // 显示结果
+        var meta = '为 ' + whom + ' · ' + name + ' 点亮 · ' + dur.label;
+        document.getElementById('litMeta').textContent = meta;
+        document.getElementById('litBlessing').textContent = selectedBlessing || '愿所求皆如愿，所行皆坦途。';
+        var wrap = document.getElementById('litLampWrap');
+        wrap.style.display = 'flex';
+        wrap.scrollIntoView({behavior:'smooth'});
+
+        // 加入灯墙（带时长标识）
+        addWallItem(name, wish, '刚刚', selectedBlessing, dur.label, dur.badgeCls);
+        showToast('灯已点亮，愿心愿成真', 1800);
+      });
+    }
+
+    // 当天免费，或 7 天内已随喜过此时长 → 直接点灯
+    if(dur.free || isPaid(dur.pageKey)){
+      doLight();
+      return;
+    }
+
+    // 其他时长：弹出功德箱，扫码随喜后点灯并记录付费
+    showDonation(function(){
+      markPaid(dur.pageKey);
+      doLight();
     });
+    // 注入金额提示 & 调整按钮文案（不改共享 app.js）
+    var dm = document.getElementById('donationModal');
+    if(dm){
+      var box = dm.firstElementChild;
+      if(box){
+        var note = document.createElement('p');
+        note.style.cssText = 'font-size:0.8rem;color:#c9a05c;margin:0 0 14px;letter-spacing:0.05em;';
+        note.textContent = '供灯时长：' + dur.name + ' · 随喜 ¥' + dur.price;
+        var divider = box.querySelector('div[style*="height:1px"]');
+        if(divider && divider.nextSibling){ box.insertBefore(note, divider.nextSibling); }
+        else { box.appendChild(note); }
+      }
+      var btns = dm.querySelectorAll('button.btn-ritual');
+      if(btns.length){ btns[btns.length-1].textContent = '我已随喜，点灯祈福'; }
+    }
   });
 
   // 灯墙示例数据
   var sampleLamps = [
-    {name:'善信 李居士', wish:'愿母亲身体康健，远离病痛，岁岁平安。', time:'5分钟前'},
-    {name:'诚心者', wish:'祈愿家中老人安康，孩子学业有成，全家和顺。', time:'12分钟前'},
+    {name:'善信 李居士', wish:'愿母亲身体康健，远离病痛，岁岁平安。', time:'5分钟前', badge:'月灯'},
+    {name:'诚心者', wish:'祈愿家中老人安康，孩子学业有成，全家和顺。', time:'12分钟前', badge:'年灯', badgeCls:'badge-year'},
     {name:'无名氏', wish:'愿世间众生离苦得乐，少些纷争，多些慈悲。', time:'28分钟前'},
-    {name:'王氏女', wish:'愿父亲手术顺利，早日康复，感恩诸佛加持。', time:'40分钟前'},
-    {name:'净心', wish:'求智慧开明，于迷惑中得见正道，心常清净。', time:'1小时前'},
+    {name:'王氏女', wish:'愿父亲手术顺利，早日康复，感恩诸佛加持。', time:'40分钟前', badge:'季灯'},
+    {name:'净心', wish:'求智慧开明，于迷惑中得见正道，心常清净。', time:'1小时前', badge:'半年灯'},
     {name:'张先生', wish:'愿事业顺遂，遇贵人相扶，亦不忘布施利他。', time:'2小时前'},
-    {name:'慈母心', wish:'愿在外游子平安归来，一路顺风，家人牵挂。', time:'3小时前'},
-    {name:'修行人', wish:'愿精进不退，道心坚固，今生得闻正法。', time:'5小时前'}
+    {name:'慈母心', wish:'愿在外游子平安归来，一路顺风，家人牵挂。', time:'3小时前', badge:'月灯'},
+    {name:'修行人', wish:'愿精进不退，道心坚固，今生得闻正法。', time:'5小时前', badge:'日灯', badgeCls:'badge-day'}
   ];
 
-  function addWallItem(name, wish, time, blessing){
+  function addWallItem(name, wish, time, blessing, badge, badgeCls){
     var wall = document.getElementById('lampWall');
     var item = document.createElement('div');
     item.className = 'wall-item animate-fade-in-up';
-    item.innerHTML = '<div class="wall-name">'+ escapeHtml(name) +'</div>'+
+    var badgeHtml = badge ? '<span class="wall-badge '+ (badgeCls||'') +'">'+ escapeHtml(badge) +'</span>' : '';
+    item.innerHTML = '<div class="wall-name">'+ escapeHtml(name) + badgeHtml +'</div>'+
       '<div class="wall-wish">'+ escapeHtml(wish) +'</div>'+
       '<div class="wall-time">'+ escapeHtml(time) +'</div>';
     wall.insertBefore(item, wall.firstChild);
@@ -235,7 +331,7 @@
   }
 
   // 渲染示例灯墙
-  sampleLamps.forEach(function(l){ addWallItem(l.name, l.wish, l.time); });
+  sampleLamps.forEach(function(l){ addWallItem(l.name, l.wish, l.time, null, l.badge, l.badgeCls); });
 })();
 </script>
 </body>

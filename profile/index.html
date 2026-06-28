@@ -18,44 +18,37 @@
   /* 头像区 */
   .avatar-wrap { display:flex; align-items:center; gap:16px; }
   .avatar { width:72px; height:72px; border-radius:50%; border:2px solid rgba(201,160,94,0.5); background:linear-gradient(135deg,rgba(201,160,94,0.25),rgba(192,57,43,0.15)); display:flex; align-items:center; justify-content:center; font-family:'ZhiMangXing',cursive; font-size:2rem; color:var(--gold-light); flex-shrink:0; box-shadow:0 0 16px rgba(201,160,94,0.2); }
-  .nick-name { font-size:1.5rem; color:var(--gold-light); margin:0 0 4px; }
-  .nick-edit { background:none; border:none; color:var(--ink-muted); cursor:pointer; font-size:0.875rem; padding:2px 8px; }
-  .nick-edit:hover { color:var(--gold); }
-  .nick-input { background:rgba(42,31,24,0.8); border:1px solid rgba(201,160,94,0.4); border-radius:6px; padding:6px 10px; color:var(--gold-light); font-size:1.25rem; font-family:inherit; max-width:200px; }
-  .nick-input:focus { outline:none; border-color:var(--gold); }
+  .nick-name { font-size:1.5rem; color:var(--gold-light); margin:0 0 4px; word-break:break-all; }
 
-  /* 会员卡 */
-  .member-card { position:relative; overflow:hidden; }
-  .member-level { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-  .level-badge { font-family:'ZhiMangXing',cursive; font-size:1.2rem; color:var(--gold-light); padding:2px 12px; border:1px solid rgba(201,160,94,0.4); border-radius:999px; background:rgba(201,160,94,0.1); }
-  .member-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-  .stat-item { text-align:center; padding:10px 4px; border-right:1px solid rgba(201,160,94,0.12); }
-  .stat-item:last-child { border-right:none; }
-  .stat-num { font-family:'ZhiMangXing',cursive; font-size:1.6rem; color:var(--gold); line-height:1.2; }
-  .stat-label { font-size:0.75rem; color:var(--ink-muted); margin-top:4px; }
+  /* ===== 登录 / 注册 表单 ===== */
+  .auth-card { max-width: 380px; margin: 0 auto; }
+  .auth-tab { display:flex; gap:0; border-bottom:1px solid rgba(201,160,94,0.18); margin-bottom:24px; }
+  .auth-tab-item { flex:1; text-align:center; padding:12px 0; font-size:1.05rem; color:var(--ink-muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; letter-spacing:0.1em; }
+  .auth-tab-item.active { color:var(--gold); border-bottom-color:var(--gold); }
+  .auth-field { margin-bottom:18px; }
+  .auth-label { display:block; font-size:0.85rem; color:var(--ink-muted); margin-bottom:8px; letter-spacing:0.06em; }
+  .auth-input { width:100%; box-sizing:border-box; background:rgba(42,31,24,0.8); border:1px solid rgba(201,160,94,0.3); border-radius:8px; padding:12px 14px; color:var(--gold-light); font-size:1rem; font-family:inherit; transition:border-color 0.2s; }
+  .auth-input:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,160,94,0.1); }
+  .auth-input::placeholder { color:rgba(138,120,104,0.7); }
+  .auth-btn { width:100%; box-sizing:border-box; margin-top:8px; }
+  .auth-tip { text-align:center; font-size:0.8rem; color:var(--ink-muted); margin:18px 0 0; line-height:1.8; }
+  .auth-error { color:var(--vermillion-light); font-size:0.82rem; margin:8px 0 0; min-height:1.1em; text-align:center; }
 
-  /* 功能列表 */
-  .func-list { display:flex; flex-direction:column; gap:0; }
-  .func-item { display:flex; align-items:center; gap:14px; padding:16px 0; border-bottom:1px solid rgba(201,160,94,0.08); text-decoration:none; color:inherit; transition:all 0.2s; cursor:pointer; }
-  .func-item:last-child { border-bottom:none; }
-  .func-item:hover { padding-left:6px; }
-  .func-icon { width:42px; height:42px; border-radius:10px; background:rgba(201,160,94,0.1); border:1px solid rgba(201,160,94,0.15); display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0; }
-  .func-info { flex:1; min-width:0; }
-  .func-name { font-size:1.05rem; color:var(--paper-dark); margin:0; }
-  .func-desc { font-size:0.8rem; color:var(--ink-muted); margin:2px 0 0; }
-  .func-arrow { color:var(--ink-muted); flex-shrink:0; }
-  .func-badge { font-size:0.75rem; color:var(--gold); background:rgba(201,160,94,0.1); border-radius:999px; padding:2px 10px; flex-shrink:0; }
-
-  /* 设置列表 */
-  .setting-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(201,160,94,0.08); cursor:pointer; }
-  .setting-item:last-child { border-bottom:none; }
-  .setting-label { font-size:1rem; color:var(--paper-dark); display:flex; align-items:center; gap:10px; }
-  .setting-value { font-size:0.85rem; color:var(--ink-muted); }
-
-  /* 退出按钮 */
-  .logout-btn { width:100%; margin-top:8px; }
+  /* ===== 历史记录列表 ===== */
+  .record-list { display:flex; flex-direction:column; gap:0; }
+  .record-item { display:flex; align-items:flex-start; gap:14px; padding:16px 0; border-bottom:1px solid rgba(201,160,94,0.08); }
+  .record-item:last-child { border-bottom:none; }
+  .record-icon { width:42px; height:42px; border-radius:10px; background:rgba(201,160,94,0.1); border:1px solid rgba(201,160,94,0.15); display:flex; align-items:center; justify-content:center; font-size:1.25rem; flex-shrink:0; }
+  .record-info { flex:1; min-width:0; }
+  .record-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .record-title { font-size:1.02rem; color:var(--paper-dark); margin:0; }
+  .record-type { font-size:0.72rem; color:var(--gold); background:rgba(201,160,94,0.1); border-radius:999px; padding:1px 8px; flex-shrink:0; }
+  .record-summary { font-size:0.85rem; color:var(--ink-muted); margin:4px 0 0; line-height:1.6; }
+  .record-time { font-size:0.75rem; color:var(--ink-muted); margin:6px 0 0; }
 
   .empty-hint { text-align:center; color:var(--ink-muted); font-size:0.85rem; padding:8px 0; }
+  .logout-btn { width:100%; margin-top:8px; }
+  .loading-hint { text-align:center; color:var(--ink-muted); font-size:0.85rem; padding:16px 0; }
 </style>
 </head>
 <body class="antialiased">
@@ -68,49 +61,51 @@
     <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
   </section>
 
-  <!-- 用户信息 -->
-  <section class="card" style="padding:24px;margin-top:24px;" data-reveal>
+  <!-- ===== 未登录：登录 / 注册 ===== -->
+  <section id="authView" class="card auth-card" style="padding:28px 24px;margin-top:24px;display:none;" data-reveal>
+    <div class="auth-tab">
+      <div class="auth-tab-item active" id="tabLogin" data-mode="login">登 录</div>
+      <div class="auth-tab-item" id="tabRegister" data-mode="register">注 册</div>
+    </div>
+    <div class="auth-field">
+      <label class="auth-label" for="authUsername">用户名</label>
+      <input class="auth-input" type="text" id="authUsername" autocomplete="username" placeholder="请输入用户名" maxlength="32">
+    </div>
+    <div class="auth-field">
+      <label class="auth-label" for="authPassword">密码</label>
+      <input class="auth-input" type="password" id="authPassword" autocomplete="current-password" placeholder="请输入密码" maxlength="64">
+    </div>
+    <p class="auth-error" id="authError"></p>
+    <button class="btn-ritual auth-btn" id="authSubmitBtn">登 录</button>
+    <p class="auth-tip">登录后可同步保存灵签、八字、解梦等记录<br>般若阁 · 一念慈悲，一灯长明</p>
+  </section>
+
+  <!-- ===== 已登录：用户信息 ===== -->
+  <section id="userInfo" class="card" style="padding:24px;margin-top:24px;display:none;" data-reveal>
     <div class="avatar-wrap">
       <div class="avatar" id="avatar">慧</div>
       <div style="flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span class="nick-name" id="nickDisplay">慧光189</span>
-          <button class="nick-edit" id="nickEditBtn">编辑</button>
-        </div>
-        <p style="margin:0;font-size:0.8rem;color:var(--ink-muted);">般若阁同修 · ID 10089</p>
+        <p class="nick-name" id="nickDisplay">同修</p>
+        <p style="margin:0;font-size:0.8rem;color:var(--ink-muted);">般若阁同修 · 已登录</p>
       </div>
     </div>
   </section>
 
-  <!-- 会员状态 -->
-  <section class="card member-card" style="padding:24px;margin-top:16px;" data-reveal>
-    <div class="member-level">
-      <span class="level-badge">善 信</span>
-      <span style="font-size:0.85rem;color:var(--ink-muted);">距下一等级"居士"还需 320 积分</span>
-    </div>
-    <div class="member-stats">
-      <div class="stat-item">
-        <div class="stat-num" id="statPoints">680</div>
-        <div class="stat-label">功德积分</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num" id="statLamps">0</div>
-        <div class="stat-label">在点福灯</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num" id="statUses">3</div>
-        <div class="stat-label">可用次数</div>
+  <!-- ===== 已登录：历史记录 ===== -->
+  <section id="recordsView" style="margin-top:24px;display:none;" data-reveal>
+    <h2 class="section-title">历史记录</h2>
+    <div class="card" style="padding:8px 20px;">
+      <div class="record-list" id="recordList">
+        <div class="loading-hint" id="recordsLoading">加载中...</div>
       </div>
     </div>
-    <div class="gold-divider" style="margin:16px 0 12px;"></div>
-    <p style="text-align:center;font-size:0.8rem;color:var(--ink-muted);margin:0;">每日签到可获 10 积分 · 积分可兑换灵签、解梦等服务</p>
   </section>
 
-  <!-- 我的功能 -->
-  <section style="margin-top:24px;" data-reveal>
+  <!-- ===== 已登录：我的功德 ===== -->
+  <section id="funcView" style="margin-top:24px;display:none;" data-reveal>
     <h2 class="section-title">我的功德</h2>
     <div class="card" style="padding:8px 20px;">
-      <div class="func-list">
+      <div class="func-list" id="funcList">
         <a class="func-item" href="/qifu/">
           <div class="func-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 6 8 10 12 10s4-4 0-8Z"/><path d="M9 12v8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-8"/></svg>
@@ -119,7 +114,6 @@
             <p class="func-name">我的祈福灯</p>
             <p class="func-desc">查看已点亮的福灯与心愿</p>
           </div>
-          <span class="func-badge" id="lampCount">0 盏</span>
           <span class="func-arrow">›</span>
         </a>
         <a class="func-item" href="/lottery/">
@@ -130,7 +124,6 @@
             <p class="func-name">我的灵签</p>
             <p class="func-desc">历史抽签记录与解读</p>
           </div>
-          <span class="func-badge" id="lotteryCount">0 支</span>
           <span class="func-arrow">›</span>
         </a>
         <a class="func-item" href="/bazi/">
@@ -141,7 +134,6 @@
             <p class="func-name">我的八字报告</p>
             <p class="func-desc">命盘排盘与精批记录</p>
           </div>
-          <span class="func-badge" id="baziCount">0 份</span>
           <span class="func-arrow">›</span>
         </a>
         <a class="func-item" href="/dream/">
@@ -152,7 +144,6 @@
             <p class="func-name">我的解梦记录</p>
             <p class="func-desc">梦境解析历史归档</p>
           </div>
-          <span class="func-badge" id="dreamCount">0 条</span>
           <span class="func-arrow">›</span>
         </a>
         <a class="func-item" href="/naming/">
@@ -163,42 +154,36 @@
             <p class="func-name">收藏的名字</p>
             <p class="func-desc">起名收藏夹与典故</p>
           </div>
-          <span class="func-badge" id="nameCount">0 个</span>
           <span class="func-arrow">›</span>
         </a>
-        <a class="func-item" href="/meditation/">
+        <a class="func-item" href="/divination/">
           <div class="func-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>
           </div>
           <div class="func-info">
-            <p class="func-name">禅坐记录</p>
-            <p class="func-desc">累计禅坐时长与打卡</p>
+            <p class="func-name">六爻占卜</p>
+            <p class="func-desc">六爻起卦与解读</p>
           </div>
-          <span class="func-badge" id="medCount">0 分钟</span>
+          <span class="func-arrow">›</span>
+        </a>
+        <a class="func-item" href="/palmistry/">
+          <div class="func-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+          </div>
+          <div class="func-info">
+            <p class="func-name">手相 / 面相</p>
+            <p class="func-desc">手相面相分析记录</p>
+          </div>
           <span class="func-arrow">›</span>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- 设置 -->
-  <section style="margin-top:24px;" data-reveal>
+  <!-- ===== 设置 ===== -->
+  <section id="settingsView" style="margin-top:24px;display:none;" data-reveal>
     <h2 class="section-title">设置</h2>
     <div class="card" style="padding:8px 20px;">
-      <div class="setting-item" id="settingNotify">
-        <span class="setting-label">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-          通知设置
-        </span>
-        <span class="setting-value" id="notifyValue">已开启 ›</span>
-      </div>
-      <div class="setting-item" id="settingPrivacy">
-        <span class="setting-label">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          隐私设置
-        </span>
-        <span class="setting-value">›</span>
-      </div>
       <a class="setting-item" href="/more/" style="text-decoration:none;color:inherit;">
         <span class="setting-label">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
@@ -230,8 +215,8 @@
     </div>
   </section>
 
-  <!-- 退出登录 -->
-  <section style="margin-top:24px;padding-bottom:16px;" data-reveal>
+  <!-- ===== 退出登录 ===== -->
+  <section id="logoutView" style="margin-top:24px;padding-bottom:16px;display:none;" data-reveal>
     <button class="btn-secondary logout-btn" id="logoutBtn">退出登录</button>
     <p style="text-align:center;font-size:0.75rem;color:var(--ink-muted);margin-top:16px;line-height:1.8;">般若阁 · 一念慈悲，一灯长明<br>本站内容仅作传统文化参考</p>
   </section>
@@ -239,124 +224,252 @@
 </main>
 
 <script src="/js/app.js"></script>
+<script src="/js/auth.js"></script>
 <script src="/js/layout.js"></script>
 <script>
 (function(){
-  var STORAGE_KEY = 'banruoge_profile';
-
-  // 默认数据
-  var defaultData = {
-    nickname: '慧光189',
-    points: 680,
-    level: '善信',
-    uses: 3,
-    lamps: 0,
-    lottery: 0,
-    bazi: 0,
-    dream: 0,
-    names: 0,
-    meditation: 0,
-    notify: true
+  // 记录类型映射
+  var RECORD_TYPES = {
+    lottery:     { label: '灵签',     icon: '🪧' },
+    bazi:        { label: '八字',     icon: '☯' },
+    dream:       { label: '解梦',     icon: '🌙' },
+    divination:  { label: '六爻',     icon: '☰' },
+    naming:      { label: '起名',     icon: '✍' },
+    palmistry:   { label: '手相面相', icon: '✋' },
+    qifu:        { label: '供灯',     icon: '🪔' }
   };
 
-  function loadData(){
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if(raw) return Object.assign({}, defaultData, JSON.parse(raw));
-    } catch(e){}
-    return Object.assign({}, defaultData);
+  // 兼容样式：func-item / setting-item（与原页面一致）
+  // 注入必要的内联样式以保证在缺少原 <style> 时仍可用
+  (function injectStyles(){
+    if (document.getElementById('profileExtraStyle')) return;
+    var s = document.createElement('style');
+    s.id = 'profileExtraStyle';
+    s.textContent = '\
+.func-list { display:flex; flex-direction:column; gap:0; }\
+.func-item { display:flex; align-items:center; gap:14px; padding:16px 0; border-bottom:1px solid rgba(201,160,94,0.08); text-decoration:none; color:inherit; transition:all 0.2s; }\
+.func-item:last-child { border-bottom:none; }\
+.func-item:hover { padding-left:6px; }\
+.func-icon { width:42px; height:42px; border-radius:10px; background:rgba(201,160,94,0.1); border:1px solid rgba(201,160,94,0.15); display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0; }\
+.func-info { flex:1; min-width:0; }\
+.func-name { font-size:1.05rem; color:var(--paper-dark); margin:0; }\
+.func-desc { font-size:0.8rem; color:var(--ink-muted); margin:2px 0 0; }\
+.func-arrow { color:var(--ink-muted); flex-shrink:0; }\
+.setting-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(201,160,94,0.08); cursor:pointer; }\
+.setting-item:last-child { border-bottom:none; }\
+.setting-label { font-size:1rem; color:var(--paper-dark); display:flex; align-items:center; gap:10px; }\
+.setting-value { font-size:0.85rem; color:var(--ink-muted); }\
+';
+    document.head.appendChild(s);
+  })();
+
+  var authMode = 'login'; // login | register
+  var $ = function(id){ return document.getElementById(id); };
+
+  // ---- 视图切换 ----
+  function showAuthView(){
+    $('authView').style.display = '';
+    $('userInfo').style.display = 'none';
+    $('recordsView').style.display = 'none';
+    $('funcView').style.display = 'none';
+    $('settingsView').style.display = 'none';
+    $('logoutView').style.display = 'none';
   }
 
-  function saveData(d){
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch(e){}
+  function showUserView(){
+    $('authView').style.display = 'none';
+    $('userInfo').style.display = '';
+    $('recordsView').style.display = '';
+    $('funcView').style.display = '';
+    $('settingsView').style.display = '';
+    $('logoutView').style.display = '';
+
+    var username = BanruogeAuth.getUsername() || '同修';
+    $('nickDisplay').textContent = username;
+    $('avatar').textContent = (username.charAt(0) || '慧');
+
+    loadRecords();
   }
 
-  var data = loadData();
-
-  // 同步其他模块记录的数据（禅坐时长等）
-  try {
-    var medRaw = localStorage.getItem('banruoge_meditation');
-    if(medRaw){
-      var medData = JSON.parse(medRaw);
-      // 累计禅坐分钟（简化处理：取今日值）
-      data.meditation = medData.totalMinutes || medData.minutes || 0;
+  function renderState(){
+    if (BanruogeAuth.isLoggedIn()) {
+      showUserView();
+    } else {
+      showAuthView();
     }
-  } catch(e){}
-
-  // 渲染
-  function render(){
-    document.getElementById('nickDisplay').textContent = data.nickname;
-    document.getElementById('avatar').textContent = data.nickname.charAt(0) || '慧';
-    document.getElementById('statPoints').textContent = data.points;
-    document.getElementById('statLamps').textContent = data.lamps;
-    document.getElementById('statUses').textContent = data.uses;
-    document.getElementById('lampCount').textContent = data.lamps + ' 盏';
-    document.getElementById('lotteryCount').textContent = data.lottery + ' 支';
-    document.getElementById('baziCount').textContent = data.bazi + ' 份';
-    document.getElementById('dreamCount').textContent = data.dream + ' 条';
-    document.getElementById('nameCount').textContent = data.names + ' 个';
-    document.getElementById('medCount').textContent = data.meditation + ' 分钟';
-    document.getElementById('notifyValue').textContent = data.notify ? '已开启 ›' : '已关闭 ›';
   }
-  render();
 
-  // 昵称编辑
-  var editMode = false;
-  document.getElementById('nickEditBtn').addEventListener('click', function(){
-    if(!editMode){
-      editMode = true;
-      var display = document.getElementById('nickDisplay');
-      var input = document.createElement('input');
-      input.type = 'text';
-      input.className = 'nick-input';
-      input.value = data.nickname;
-      input.maxLength = 20;
-      display.replaceWith(input);
-      input.focus();
-      input.select();
-      this.textContent = '保存';
+  // ---- 登录 / 注册 表单 ----
+  function setMode(mode){
+    authMode = mode;
+    $('tabLogin').classList.toggle('active', mode === 'login');
+    $('tabRegister').classList.toggle('active', mode === 'register');
+    $('authSubmitBtn').textContent = mode === 'login' ? '登 录' : '注 册';
+    $('authError').textContent = '';
+  }
 
-      function save(){
-        var val = input.value.trim() || '慧光189';
-        data.nickname = val;
-        saveData(data);
-        input.replaceWith(display);
-        display.textContent = val;
-        document.getElementById('avatar').textContent = val.charAt(0) || '慧';
-        document.getElementById('nickEditBtn').textContent = '编辑';
-        editMode = false;
-        showToast('昵称已更新');
+  $('tabLogin').addEventListener('click', function(){ setMode('login'); });
+  $('tabRegister').addEventListener('click', function(){ setMode('register'); });
+
+  $('authPassword').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { $('authSubmitBtn').click(); }
+  });
+  $('authUsername').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { $('authPassword').focus(); }
+  });
+
+  $('authSubmitBtn').addEventListener('click', function(){
+    var username = $('authUsername').value.trim();
+    var password = $('authPassword').value;
+    var errEl = $('authError');
+
+    if (!username || !password) {
+      errEl.textContent = '请输入用户名和密码';
+      return;
+    }
+    if (username.length < 2) {
+      errEl.textContent = '用户名至少 2 个字符';
+      return;
+    }
+    if (password.length < 6) {
+      errEl.textContent = '密码至少 6 位';
+      return;
+    }
+
+    var btn = $('authSubmitBtn');
+    var originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = authMode === 'login' ? '登录中...' : '注册中...';
+    errEl.textContent = '';
+
+    var action = authMode === 'login' ? BanruogeAuth.login : BanruogeAuth.register;
+    action(username, password).then(function(res){
+      btn.disabled = false;
+      btn.textContent = originalText;
+      if (res && res.success) {
+        showToast(authMode === 'login' ? '登录成功，欢迎回来 🙏' : '注册成功，已自动登录 🙏', 1600);
+        // renderState 会在 onAuthChange 中触发；这里兜底
+        renderState();
+      } else {
+        errEl.textContent = (res && res.error) || '操作失败，请重试';
       }
+    });
+  });
 
-      input.addEventListener('blur', save);
-      input.addEventListener('keydown', function(e){
-        if(e.key === 'Enter'){ input.blur(); }
-      });
+  // ---- 退出登录 ----
+  $('logoutBtn').addEventListener('click', function(){
+    if (confirm('确定要退出登录吗？')) {
+      BanruogeAuth.logout();
+      showToast('已退出登录', 1200);
+      setMode('login');
+      $('authUsername').value = '';
+      $('authPassword').value = '';
+      renderState();
     }
   });
 
-  // 通知设置
-  document.getElementById('settingNotify').addEventListener('click', function(){
-    data.notify = !data.notify;
-    saveData(data);
-    render();
-    showToast(data.notify ? '通知已开启' : '通知已关闭');
-  });
-
-  // 隐私设置
-  document.getElementById('settingPrivacy').addEventListener('click', function(){
-    showToast('隐私设置：照片仅在本地分析，八字不上传服务器');
-  });
-
-  // 退出登录
-  document.getElementById('logoutBtn').addEventListener('click', function(){
-    if(confirm('确定要退出登录吗？本地记录将保留。')){
-      showToast('已退出登录（模拟）');
-      setTimeout(function(){
-        window.location.href = '/';
-      }, 1200);
+  // ---- 历史记录 ----
+  function formatTime(t){
+    if (!t) return '';
+    var d;
+    if (typeof t === 'number') {
+      // 兼容秒级与毫秒级时间戳
+      d = new Date(t < 1e12 ? t * 1000 : t);
+    } else {
+      d = new Date(t);
     }
-  });
+    if (isNaN(d.getTime())) return String(t);
+    var now = new Date();
+    var pad = function(n){ return n < 10 ? '0' + n : '' + n; };
+    var dateStr = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+    var timeStr = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    if (d.toDateString() === now.toDateString()) {
+      return '今天 ' + timeStr;
+    }
+    return dateStr + ' ' + timeStr;
+  }
+
+  function getRecordTime(r){
+    return r.createdAt || r.created_at || r.time || r.timestamp || r.date || r.updatedAt || '';
+  }
+
+  function recordSortKey(r){
+    var t = getRecordTime(r);
+    var d;
+    if (typeof t === 'number') d = t < 1e12 ? t * 1000 : t;
+    else d = new Date(t).getTime();
+    if (isNaN(d)) d = 0;
+    return d;
+  }
+
+  function renderRecords(records){
+    var list = $('recordList');
+    list.innerHTML = '';
+
+    if (!records || !records.length) {
+      list.innerHTML = '<div class="empty-hint">暂无历史记录<br>求签、解梦、供灯后可在此查看</div>';
+      return;
+    }
+
+    // 按时间倒序
+    records = records.slice().sort(function(a, b){
+      return recordSortKey(b) - recordSortKey(a);
+    });
+
+    records.forEach(function(r){
+      var type = r.type || 'other';
+      var typeInfo = RECORD_TYPES[type] || { label: '记录', icon: '📜' };
+      var title = r.title || typeInfo.label + '记录';
+      var summary = r.summary || r.detail || '';
+      var time = formatTime(getRecordTime(r));
+
+      var item = document.createElement('div');
+      item.className = 'record-item';
+      item.innerHTML =
+        '<div class="record-icon">' + typeInfo.icon + '</div>' +
+        '<div class="record-info">' +
+          '<div class="record-top">' +
+            '<p class="record-title"></p>' +
+            '<span class="record-type"></span>' +
+          '</div>' +
+          (summary ? '<p class="record-summary"></p>' : '') +
+          (time ? '<p class="record-time"></p>' : '') +
+        '</div>';
+
+      // 使用 textContent 防止 XSS
+      item.querySelector('.record-title').textContent = title;
+      item.querySelector('.record-type').textContent = typeInfo.label;
+      if (summary) item.querySelector('.record-summary').textContent = summary;
+      if (time) item.querySelector('.record-time').textContent = time;
+
+      list.appendChild(item);
+    });
+  }
+
+  function loadRecords(){
+    var list = $('recordList');
+    list.innerHTML = '<div class="loading-hint" id="recordsLoading">加载中...</div>';
+
+    BanruogeAuth.getRecords().then(function(res){
+      if (res && res.success) {
+        renderRecords(res.records || []);
+      } else {
+        list.innerHTML = '<div class="empty-hint">' + ((res && res.error) ? res.error : '暂无历史记录') + '<br><span style="font-size:0.78rem;opacity:0.7;">下拉重试或稍后再看</span></div>';
+      }
+    }).catch(function(){
+      list.innerHTML = '<div class="empty-hint">加载失败，请稍后重试</div>';
+    });
+  }
+
+  // ---- 登录态变化时刷新视图（来自其它页面登录或退出）----
+  if (window.BanruogeAuth && BanruogeAuth.onAuthChange) {
+    BanruogeAuth.onAuthChange(function(state){
+      renderState();
+    });
+  }
+
+  // ---- 初始化 ----
+  renderState();
 })();
 </script>
 </body>
