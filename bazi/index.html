@@ -470,11 +470,28 @@
           context: { baziString: baziString, dayMaster: dayMaster, wuxing: wuxingStr, strong: analysis.strong ? '偏旺' : '偏弱' },
           type: 'bazi'
         });
+        var reply = res.reply || '';
+        var freeText = reply.slice(0, 80);
+        var paidText = reply.slice(80);
+        var nl2br = function(s){ return s.replace(/</g,'&lt;').split(String.fromCharCode(10)).join('<br>'); };
+        var freeHtml = nl2br(freeText);
+        var paidHtml = nl2br(paidText);
+        var paidWrap = paidText
+          ? '<div class="paid-detail" style="position:relative;"><p class="analysis-text" style="margin-top:4px;">' + paidHtml + '</p></div>'
+          : '';
         analysisBox.innerHTML =
           '<div class="analysis-label" id="analysisLabel">' + masterNames[selectedMaster] + ' 批命</div>' +
-          '<p class="analysis-text" id="analysisText">' + (res.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</p>' +
+          '<p class="analysis-text" id="analysisText">' + freeHtml + (paidText ? '……' : '') + '</p>' +
+          paidWrap +
           (res.fallback ? '<div style="font-size:0.75rem;color:var(--ink-muted);margin-top:6px;">⚠ AI繁忙，稍后重试</div>' : '') +
           '<div class="analysis-by" id="analysisBy">—— ' + masterTitles[selectedMaster] + ' · 般若阁</div>';
+        if (paidText) {
+          attachPaywall(analysisBox.querySelector('.paid-detail'), {
+            btnText: '扫码随喜，解锁完整命局详批',
+            pageKey: 'bazi',
+            successMsg: '已解锁完整命局详批，福慧双增 🙏'
+          });
+        }
       } catch(e){
         analysisBox.innerHTML =
           '<div class="analysis-label" id="analysisLabel">' + masterNames[selectedMaster] + ' 批命</div>' +

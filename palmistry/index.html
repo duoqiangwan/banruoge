@@ -215,14 +215,36 @@ question: '请分析手相',
 context: { type: 'palm' },
 type: 'general'
 });
-result.innerHTML =
+var palmPaid = isPaid('palmistry');
+var palmHtml =
 '<div class="card" style="padding:24px;border:1px solid rgba(201,160,94,0.3);">' +
 '<h3 class="font-display" style="font-size:1.25rem;color:var(--gold);text-align:center;margin:0 0 16px;">手相分析结果</h3>' +
 '<div style="margin:16px 0;padding:12px;border-left:3px solid var(--gold);background:rgba(201,160,94,0.05);border-radius:4px;">' +
 '<p style="font-size:0.9375rem;line-height:2;color:var(--paper-dark);margin:0;white-space:pre-wrap;">' + (res.reply||'').replace(/</g,'&lt;') + '</p>' +
 '</div>' +
-(res.fallback ? '<div style="font-size:0.75rem;color:rgba(232,213,176,0.5);margin-top:12px;text-align:center;">⚠ AI繁忙，稍后重试</div>' : '') +
+'<h4 class="font-display" style="font-size:1rem;color:var(--gold);margin:20px 0 12px;">五大主线详批</h4>';
+palmAnalyses.forEach(function(a){
+palmHtml +=
+'<div class="palm-item" style="margin:12px 0;padding:12px;border:1px solid rgba(201,160,94,0.15);border-radius:8px;">' +
+'<p style="margin:0 0 6px;color:var(--gold);font-size:0.95rem;">' + a.line + '</p>' +
+'<p style="margin:0;font-size:0.9rem;line-height:1.9;color:var(--paper-dark);">' + a.items.join('<br>') + '</p>' +
 '</div>';
+});
+palmHtml += (res.fallback ? '<div style="font-size:0.75rem;color:rgba(232,213,176,0.5);margin-top:12px;text-align:center;">⚠ AI繁忙，稍后重试</div>' : '') + '</div>';
+result.innerHTML = palmHtml;
+if(!palmPaid){
+var pItems = result.querySelectorAll('.palm-item');
+var firstLocked = true;
+for(var pi=2; pi<pItems.length; pi++){
+attachPaywall(pItems[pi], {
+btnText: '扫码随喜，解锁完整手相分析',
+pageKey: 'palmistry',
+successMsg: '已解锁完整手相分析，福慧双增 🙏',
+buttonless: !firstLocked
+});
+firstLocked = false;
+}
+}
 } catch(e){
 result.innerHTML = '<div class="card" style="padding:24px;border:1px solid rgba(201,160,94,0.3);"><p style="color:var(--paper-dark);text-align:center;">分析暂时不可用，请稍后重试。</p></div>';
 }
@@ -254,14 +276,36 @@ question: '请分析面相',
 context: { type: 'face' },
 type: 'general'
 });
-result.innerHTML =
+var facePaid = isPaid('palmistry');
+var faceHtml =
 '<div class="card" style="padding:24px;border:1px solid rgba(201,160,94,0.3);">' +
 '<h3 class="font-display" style="font-size:1.25rem;color:var(--gold);text-align:center;margin:0 0 16px;">面相分析结果</h3>' +
 '<div style="margin:16px 0;padding:12px;border-left:3px solid var(--gold);background:rgba(201,160,94,0.05);border-radius:4px;">' +
 '<p style="font-size:0.9375rem;line-height:2;color:var(--paper-dark);margin:0;white-space:pre-wrap;">' + (res.reply||'').replace(/</g,'&lt;') + '</p>' +
 '</div>' +
-(res.fallback ? '<div style="font-size:0.75rem;color:rgba(232,213,176,0.5);margin-top:12px;text-align:center;">⚠ AI繁忙，稍后重试</div>' : '') +
+'<h4 class="font-display" style="font-size:1rem;color:var(--gold);margin:20px 0 12px;">六部位详批</h4>';
+faceAnalyses.forEach(function(a){
+faceHtml +=
+'<div class="face-item" style="margin:12px 0;padding:12px;border:1px solid rgba(201,160,94,0.15);border-radius:8px;">' +
+'<p style="margin:0 0 6px;color:var(--gold);font-size:0.95rem;">' + a.part + '</p>' +
+'<p style="margin:0;font-size:0.9rem;line-height:1.9;color:var(--paper-dark);">' + a.text + '</p>' +
 '</div>';
+});
+faceHtml += (res.fallback ? '<div style="font-size:0.75rem;color:rgba(232,213,176,0.5);margin-top:12px;text-align:center;">⚠ AI繁忙，稍后重试</div>' : '') + '</div>';
+result.innerHTML = faceHtml;
+if(!facePaid){
+var fItems = result.querySelectorAll('.face-item');
+var firstLocked = true;
+for(var fi=2; fi<fItems.length; fi++){
+attachPaywall(fItems[fi], {
+btnText: '扫码随喜，解锁完整面相分析',
+pageKey: 'palmistry',
+successMsg: '已解锁完整面相分析，福慧双增 🙏',
+buttonless: !firstLocked
+});
+firstLocked = false;
+}
+}
 } catch(e){
 result.innerHTML = '<div class="card" style="padding:24px;border:1px solid rgba(201,160,94,0.3);"><p style="color:var(--paper-dark);text-align:center;">分析暂时不可用，请稍后重试。</p></div>';
 }

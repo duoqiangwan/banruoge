@@ -127,7 +127,7 @@ function lightLamp(callback) {
 }
 
 // 功德箱弹窗
-function showDonation() {
+function showDonation(onUnlock) {
   // 已存在则不重复创建
   if (document.getElementById('donationModal')) return;
   var overlay = document.createElement('div');
@@ -155,10 +155,79 @@ function showDonation() {
 </div>';
   document.body.appendChild(overlay);
   overlay.addEventListener('click', function(e){ if(e.target === overlay) closeDonation(); });
+  // 带 unlock 回调时，追加“我已随喜，解锁详批”按钮
+  if (typeof onUnlock === 'function') {
+    var _box = overlay.firstElementChild;
+    var _ub = document.createElement('button');
+    _ub.className = 'btn-ritual';
+    _ub.textContent = '我已随喜，解锁详批';
+    _ub.style.cssText = 'width:100%;margin-top:16px;font-size:1rem;';
+    _ub.addEventListener('click', function(){ closeDonation(); onUnlock(); });
+    if (_box) _box.appendChild(_ub);
+  }
 }
 function closeDonation() {
   var m = document.getElementById('donationModal');
   if (m) m.remove();
+}
+
+// ===== 付费墙 =====
+var PAYWALL_MASK_CSS = 'position:absolute;inset:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:linear-gradient(180deg, transparent 0%, rgba(26,20,16,0.8) 30%, rgba(26,20,16,0.95) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;border-radius:inherit;z-index:5;text-align:center;';
+
+// 检查是否已付费（7天内有效）
+function isPaid(pageKey){
+  try {
+    var ts = localStorage.getItem('banruoge_paid_' + pageKey);
+    if(!ts) return false;
+    var age = Date.now() - parseInt(ts, 10);
+    return age > 0 && age < 7 * 24 * 3600 * 1000;
+  } catch(e){ return false; }
+}
+
+// 记录付费状态
+function markPaid(pageKey){
+  try { localStorage.setItem('banruoge_paid_' + pageKey, String(Date.now())); } catch(e){}
+}
+
+// 给容器附加付费墙遮罩（已付费则跳过）
+// opts: { btnText, pageKey, successMsg, buttonless }
+function attachPaywall(container, opts){
+  if(!container) return;
+  if(isPaid(opts.pageKey)) return;
+  if(!container.style.position || container.style.position === 'static'){
+    container.style.position = 'relative';
+  }
+  var mask = document.createElement('div');
+  mask.className = 'paywall-mask';
+  mask.style.cssText = PAYWALL_MASK_CSS;
+  if(!opts.buttonless){
+    var tip = document.createElement('p');
+    tip.style.cssText = 'color:rgba(232,213,176,0.85);font-size:0.82rem;line-height:1.7;margin:0;letter-spacing:0.04em;';
+    tip.textContent = '🔒 完整内容已为您备好';
+    var btn = document.createElement('button');
+    btn.className = 'btn-ritual';
+    btn.textContent = opts.btnText || '扫码随喜，解锁完整内容';
+    btn.style.cssText = 'position:relative;z-index:6;padding:12px 28px;font-size:1rem;';
+    btn.addEventListener('click', function(){
+      showDonation(function(){
+        markPaid(opts.pageKey);
+        document.querySelectorAll('.paywall-mask').forEach(function(m){ m.remove(); });
+        showToast(opts.successMsg || '已解锁完整内容，福慧双增 🙏', 2500);
+      });
+    });
+    mask.appendChild(tip);
+    mask.appendChild(btn);
+  } else {
+    var lock = document.createElement('p');
+    lock.style.cssText = 'color:rgba(201,160,94,0.6);font-size:1.6rem;margin:0;';
+    lock.textContent = '🔒';
+    var tip2 = document.createElement('p');
+    tip2.style.cssText = 'color:rgba(232,213,176,0.5);font-size:0.78rem;margin:0;';
+    tip2.textContent = '随喜解锁后可见';
+    mask.appendChild(lock);
+    mask.appendChild(tip2);
+  }
+  container.appendChild(mask);
 }
 
 // 初始化
