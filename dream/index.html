@@ -111,6 +111,7 @@
 
 </main>
 
+<script src="/js/ai.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/layout.js"></script>
 <script>
@@ -185,7 +186,7 @@
         '<button class="btn-secondary" style="padding:6px 18px;font-size:0.85rem;" data-toggle="'+ idx +'">详批</button>'+
         '<div class="dream-detail" data-detail="'+ idx +'">'+
           '<div class="detail-label">— 周公详批 —</div>'+
-          '<p class="detail-text">'+ d.detail +'</p>'+
+          '<p class="detail-text">点击「详批」获取大师解读...</p>'+
           '<div class="detail-meta">参之时令心境，不可执一而论</div>'+
         '</div>';
       list.appendChild(item);
@@ -202,15 +203,28 @@
           this.textContent = '详批';
         } else {
           detail.classList.add('show');
-          this.textContent = '收起';
-          // 模拟 AI 解读延迟
+          // AI解读（首次展开时调用）
           if(!detail.getAttribute('data-loaded')){
-            this.textContent = '解读中…';
+            var dreamData = filtered[parseInt(i)];
             var self = this;
-            setTimeout(function(){
+            self.textContent = '解读中…';
+            BanruogeAI.showLoading(detail, '周公');
+            BanruogeAI.chat({
+              master: 0,
+              question: '请解读此梦',
+              context: { dreamContent: dreamData.keyword + '。' + dreamData.brief },
+              type: 'dream'
+            }).then(function(res){
+              detail.innerHTML =
+                '<div class="detail-label">— 周公详批 —</div>'+
+                '<p class="detail-text">' + (res.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</p>'+
+                (res.fallback ? '<div style="font-size:0.75rem;color:var(--ink-muted);margin-top:6px;">⚠ AI繁忙，稍后重试</div>' : '')+
+                '<div class="detail-meta">参之时令心境，不可执一而论</div>';
               self.textContent = '收起';
-            }, 400);
-            detail.setAttribute('data-loaded','1');
+              detail.setAttribute('data-loaded','1');
+            });
+          } else {
+            this.textContent = '收起';
           }
         }
       });

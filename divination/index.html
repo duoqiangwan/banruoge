@@ -146,6 +146,7 @@
 </div>
 </main>
 
+<script src="/js/ai.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/layout.js"></script>
 <script>
@@ -320,7 +321,7 @@ btn.textContent = '继续摇第'+(tossCount+1)+'爻';
 });
 
 // 显示结果
-function showResult(){
+async function showResult(){
 var resultSection = document.getElementById('resultSection');
 resultSection.style.display = 'block';
 
@@ -370,19 +371,25 @@ div.appendChild(badge);
 yaoDisplay.appendChild(div);
 });
 
-// 大师解读
+// 大师解读（AI）
 var q = document.getElementById('questionInput').value.trim();
-var qText = q ? '施主问的是「'+q+'」，' : '';
-var analysisText = qText + '本卦'+benGua.name+'，'+(benCode===bianCode?'卦无变爻，态势稳定，当以卦辞为准。':'变卦为'+bianGua.name+'，事态将有变化，宜以变卦为趋向。')+'互卦'+(huGua.name||'—')+'，是此事内在的暗流。';
-
-var interp = masterIntros[selectedMaster]
-.replace('{gua}', benGua.name)
-.replace('{ci}', benGua.ci)
-.replace('{analysis}', analysisText);
-
-document.getElementById('interpText').textContent = interp;
+var masterInterp = document.getElementById('masterInterp');
+var bianGuaName = (benCode === bianCode) ? '无变卦' : bianGua.name;
+BanruogeAI.showLoading(masterInterp, masterNames[selectedMaster]);
 
 resultSection.scrollIntoView({behavior:'smooth', block:'start'});
+
+try {
+var res = await BanruogeAI.chat({
+master: selectedMaster,
+question: q || '请解卦',
+context: { benGua: benGua.name, benGuaCi: benGua.ci, huGua: huGua.name || '—', bianGua: bianGuaName },
+type: 'divination'
+});
+masterInterp.innerHTML = '<p id="interpText" style="margin:0;line-height:2;color:var(--paper-dark);font-size:0.9375rem;">' + (res.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</p>' + (res.fallback ? '<div style="font-size:0.75rem;color:rgba(232,213,176,0.5);margin-top:8px;">⚠ AI繁忙，稍后重试</div>' : '');
+} catch(e){
+masterInterp.innerHTML = '<p id="interpText" style="margin:0;line-height:2;color:var(--paper-dark);font-size:0.9375rem;">解读暂时不可用，请稍后重试。</p>';
+}
 }
 
 // 重置

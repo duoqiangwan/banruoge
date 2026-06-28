@@ -161,6 +161,7 @@
 
 </main>
 
+<script src="/js/ai.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/layout.js"></script>
 <script>
@@ -395,7 +396,7 @@
 
     showToast('排盘中，推演天干地支……', 1500);
 
-    setTimeout(function(){
+    setTimeout(async function(){
       var yp = getYearPillar(y, m, d);
       var mp = getMonthPillar(yp.stem, m);
       var dp = getDayPillar(y, m, d);
@@ -434,12 +435,15 @@
       });
       document.getElementById('wuxingBars').innerHTML = barsHtml;
 
-      // 命格分析
+      // 命格分析（AI）
       var masterNames = {huiming:'慧明长老', mingxin:'明心师父', xuanzhen:'玄真道长'};
       var masterTitles = {huiming:'庄严古德', mingxin:'慈悲尼师', xuanzhen:'直白道派'};
-      document.getElementById('analysisLabel').textContent = masterNames[selectedMaster] + ' 批命';
-      document.getElementById('analysisText').textContent = generateAnalysis(analysis, selectedMaster);
-      document.getElementById('analysisBy').textContent = '—— ' + masterTitles[selectedMaster] + ' · 般若阁';
+      var masterMap = {huiming:0, mingxin:1, xuanzhen:2};
+      var baziString = pillars.map(function(p){ return stems[p.stem]+branches[p.branch]; }).join(' ');
+      var dayMaster = stems[pillars[2].stem];
+      var wuxingStr = elemNames.map(function(en,i){ return en+analysis.counts[i]; }).join('、');
+      var analysisBox = document.querySelector('.analysis-box');
+      BanruogeAI.showLoading(analysisBox, masterNames[selectedMaster]);
 
       // 流年
       var liunian = generateLiunian(analysis);
@@ -457,6 +461,26 @@
       var wrap = document.getElementById('resultWrap');
       wrap.classList.add('show');
       wrap.scrollIntoView({behavior:'smooth', block:'start'});
+
+      // AI批命
+      try {
+        var res = await BanruogeAI.chat({
+          master: masterMap[selectedMaster],
+          question: '请批八字',
+          context: { baziString: baziString, dayMaster: dayMaster, wuxing: wuxingStr, strong: analysis.strong ? '偏旺' : '偏弱' },
+          type: 'bazi'
+        });
+        analysisBox.innerHTML =
+          '<div class="analysis-label" id="analysisLabel">' + masterNames[selectedMaster] + ' 批命</div>' +
+          '<p class="analysis-text" id="analysisText">' + (res.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</p>' +
+          (res.fallback ? '<div style="font-size:0.75rem;color:var(--ink-muted);margin-top:6px;">⚠ AI繁忙，稍后重试</div>' : '') +
+          '<div class="analysis-by" id="analysisBy">—— ' + masterTitles[selectedMaster] + ' · 般若阁</div>';
+      } catch(e){
+        analysisBox.innerHTML =
+          '<div class="analysis-label" id="analysisLabel">' + masterNames[selectedMaster] + ' 批命</div>' +
+          '<p class="analysis-text" id="analysisText">批命暂时不可用，请稍后重试。</p>' +
+          '<div class="analysis-by" id="analysisBy">—— ' + masterTitles[selectedMaster] + ' · 般若阁</div>';
+      }
     }, 800);
   });
 

@@ -94,6 +94,7 @@
 </div>
 </main>
 
+<script src="/js/ai.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/layout.js"></script>
 <script>
@@ -157,36 +158,23 @@ var femaleNames = [
 {name:'若初',pinyin:'Ruò Chū',origin:'纳兰性德《木兰花》',allusion:'"人生若只如初见"',meaning:'初心不忘，纯真如初',match:91}
 ];
 
-document.getElementById('generateBtn').addEventListener('click', function(){
-var surname = document.getElementById('surname').value.trim();
-if(!surname){
-showToast('请输入姓氏');
-return;
-}
-var gender = document.getElementById('gender').value;
-var charCount = parseInt(document.getElementById('charCount').value);
-var exclude = document.getElementById('excludeChars').value.split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean);
-
+// 本地名库生成（AI降级用）
+function renderLocalNames(surname, gender, charCount, exclude){
 var pool = gender === 'male' ? maleNames : femaleNames;
 pool = pool.filter(function(n){
 return !exclude.some(function(e){ return n.name.indexOf(e) >= 0; });
 });
-
 if(pool.length < 5) pool = (gender === 'male' ? maleNames : femaleNames);
-
-// 随机选5个
 var picked = [];
 var tempPool = pool.slice();
 for(var i=0; i<5 && tempPool.length>0; i++){
 var idx = Math.floor(Math.random()*tempPool.length);
 picked.push(tempPool.splice(idx,1)[0]);
 }
-
 var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 16px;">';
 html += '<h2 class="font-display" style="font-size:1.25rem;color:var(--gold);margin:0;">推荐名字</h2>';
 html += '<button id="refreshBtn" class="btn-secondary" style="padding:8px 16px;">换一批</button>';
 html += '</div>';
-
 picked.forEach(function(n){
 var fullName = charCount === 2 ? (surname + n.name.charAt(0)) : (surname + n.name);
 html += '<div class="card name-card" style="padding:20px;margin:12px 0;border:1px solid rgba(201,160,94,0.2);">';
@@ -211,12 +199,9 @@ html += '<span style="font-size:0.75rem;color:var(--gold);">'+n.match+'%</span>'
 html += '</div>';
 html += '</div>';
 });
-
 var result = document.getElementById('nameResult');
 result.innerHTML = html;
 result.style.display = 'block';
-
-// 收藏
 document.querySelectorAll('.fav-btn').forEach(function(btn){
 btn.addEventListener('click', function(){
 var name = btn.dataset.name;
@@ -233,13 +218,55 @@ showToast('已收藏「'+name+'」');
 }
 });
 });
-
-// 换一批
 document.getElementById('refreshBtn').addEventListener('click', function(){
 document.getElementById('generateBtn').click();
 });
-
 result.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+document.getElementById('generateBtn').addEventListener('click', async function(){
+var surname = document.getElementById('surname').value.trim();
+if(!surname){
+showToast('请输入姓氏');
+return;
+}
+var gender = document.getElementById('gender').value;
+var charCount = parseInt(document.getElementById('charCount').value);
+var exclude = document.getElementById('excludeChars').value.split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean);
+var birthInfo = document.getElementById('birthYear').value+'年'+document.getElementById('birthMonth').value+'月'+document.getElementById('birthDay').value+'日'+document.getElementById('birthHour').selectedOptions[0].textContent;
+var style = selectedStyles.length ? selectedStyles.join('、') : '不限';
+
+var result = document.getElementById('nameResult');
+result.style.display = 'block';
+BanruogeAI.showLoading(result, '起名大师');
+
+try {
+var res = await BanruogeAI.chat({
+master: 0,
+question: '请为宝宝起名',
+context: { surname: surname, gender: gender, birthInfo: birthInfo, style: style, charCount: charCount },
+type: 'naming'
+});
+if(res.fallback){
+// AI降级：使用本地名字库
+renderLocalNames(surname, gender, charCount, exclude);
+} else {
+result.innerHTML =
+'<div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 16px;">' +
+'<h2 class="font-display" style="font-size:1.25rem;color:var(--gold);margin:0;">推荐名字</h2>' +
+'<button id="refreshBtn" class="btn-secondary" style="padding:8px 16px;">换一批</button>' +
+'</div>' +
+'<div class="card" style="padding:20px;border:1px solid rgba(201,160,94,0.2);">' +
+'<p style="font-size:0.9375rem;line-height:2;color:var(--paper-dark);margin:0;white-space:pre-wrap;">' + (res.reply||'').replace(/</g,'&lt;') + '</p>' +
+'</div>';
+document.getElementById('refreshBtn').addEventListener('click', function(){
+document.getElementById('generateBtn').click();
+});
+result.scrollIntoView({behavior:'smooth', block:'start'});
+}
+} catch(e){
+renderLocalNames(surname, gender, charCount, exclude);
+}
 });
 })();
 </script>

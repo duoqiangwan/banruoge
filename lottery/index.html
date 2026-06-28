@@ -177,6 +177,7 @@
 
 </main>
 
+<script src="/js/ai.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/layout.js"></script>
 <script>
@@ -303,11 +304,12 @@
     }, 2000);
   });
 
-  function showResult(){
+  async function showResult(){
     // 随机抽签
     var lot = lots[Math.floor(Math.random()*lots.length)];
     var masterNames = {huiming:'慧明长老', mingxin:'明心师父', xuanzhen:'玄真道长'};
     var masterTitles = {huiming:'庄严古德', mingxin:'慈悲尼师', xuanzhen:'直白道派'};
+    var masterMap = {huiming:0, mingxin:1, xuanzhen:2};
 
     var gradeClass = 'grade-' + lot.grade;
     var numText = '第 ' + ['零','一','二','三','四','五','六','七','八','九','十'][lot.num] + ' 签';
@@ -318,13 +320,34 @@
     gradeEl.textContent = lot.gradeText;
     document.getElementById('lotteryTitle').textContent = '— ' + lot.title + ' —';
     document.getElementById('lotteryPoem').innerHTML = lot.poem.replace(/\n/g, '<br>');
-    document.getElementById('interpretLabel').textContent = masterNames[selectedMaster] + ' 解读';
-    document.getElementById('interpretText').textContent = lot.interpret[selectedMaster];
     document.getElementById('interpretBy').textContent = '—— ' + masterTitles[selectedMaster] + ' · 般若阁';
 
     var wrap = document.getElementById('resultWrap');
     wrap.classList.add('show');
     wrap.scrollIntoView({behavior:'smooth', block:'start'});
+
+    // AI解读
+    var interpretBox = document.querySelector('.master-interpret');
+    var question = document.getElementById('questionInput').value.trim();
+    BanruogeAI.showLoading(interpretBox, masterNames[selectedMaster]);
+    try {
+      var res = await BanruogeAI.chat({
+        master: masterMap[selectedMaster],
+        question: question || '请解读此签',
+        context: { signNumber: lot.num, signTitle: lot.title, signPoem: lot.poem, grade: lot.gradeText },
+        type: 'lottery'
+      });
+      interpretBox.innerHTML =
+        '<div class="interpret-label" id="interpretLabel">' + masterNames[selectedMaster] + ' 解读</div>' +
+        '<p class="interpret-text" id="interpretText">' + (res.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</p>' +
+        (res.fallback ? '<div style="font-size:0.75rem;color:var(--ink-light);margin-top:6px;">⚠ AI繁忙，稍后重试</div>' : '') +
+        '<div class="interpret-by" id="interpretBy">—— ' + masterTitles[selectedMaster] + ' · 般若阁</div>';
+    } catch(e){
+      interpretBox.innerHTML =
+        '<div class="interpret-label" id="interpretLabel">' + masterNames[selectedMaster] + ' 解读</div>' +
+        '<p class="interpret-text" id="interpretText">解读暂时不可用，请稍后重试。</p>' +
+        '<div class="interpret-by" id="interpretBy">—— ' + masterTitles[selectedMaster] + ' · 般若阁</div>';
+    }
   }
 
   // 再抽一签
