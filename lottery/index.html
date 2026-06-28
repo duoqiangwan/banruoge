@@ -177,6 +177,7 @@
 
 </main>
 
+<script src="/js/auth.js"></script>
 <script src="/js/ai.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/layout.js"></script>
@@ -342,6 +343,9 @@
         '<p class="interpret-text" id="interpretText">' + (res.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</p>' +
         (res.fallback ? '<div style="font-size:0.75rem;color:var(--ink-light);margin-top:6px;">⚠ AI繁忙，稍后重试</div>' : '') +
         '<div class="interpret-by" id="interpretBy">—— ' + masterTitles[selectedMaster] + ' · 般若阁</div>';
+      if (window.BanruogeAuth && BanruogeAuth.isLoggedIn()) {
+        BanruogeAuth.saveRecord({type: 'lottery', title: numText + ' · ' + lot.title, summary: (res.reply||'').slice(0,50)});
+      }
     } catch(e){
       interpretBox.innerHTML =
         '<div class="interpret-label" id="interpretLabel">' + masterNames[selectedMaster] + ' 解读</div>' +

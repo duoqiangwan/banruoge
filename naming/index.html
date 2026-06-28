@@ -94,6 +94,7 @@
 </div>
 </main>
 
+<script src="/js/auth.js"></script>
 <script src="/js/ai.js"></script>
 <script src="/js/app.js"></script>
 <script src="/js/layout.js"></script>
@@ -254,6 +255,11 @@ firstLocked = false;
 }
 
 result.scrollIntoView({behavior:'smooth', block:'start'});
+
+if (window.BanruogeAuth && BanruogeAuth.isLoggedIn()) {
+  var _names = picked.slice(0,2).map(function(n){ return charCount === 2 ? (surname + n.name.charAt(0)) : (surname + n.name); });
+  BanruogeAuth.saveRecord({type: 'naming', title: '宝宝起名 · ' + surname, summary: _names.join('、')});
+}
 }
 
 document.getElementById('generateBtn').addEventListener('click', async function(){
