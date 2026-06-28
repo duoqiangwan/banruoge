@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>今日黄历 · 般若阁</title>
+<meta name="description" content="今日黄历宜忌，值神冲煞胎神，十二时辰吉凶，未来七日运势预览。择吉日，趋吉避凶。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+
+  .date-nav { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .date-nav-btn { width:44px; height:44px; border-radius:50%; border:1px solid rgba(201,160,94,0.3); background:rgba(34,26,20,0.6); color:var(--gold); font-size:1.3rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .date-nav-btn:hover { border-color:var(--gold); background:rgba(201,160,94,0.1); }
+  .date-display { text-align:center; flex:1; }
+  .date-solar { font-size:1.3rem; color:var(--gold-light); font-weight:500; }
+  .date-lunar { font-size:0.95rem; color:var(--paper-dark); margin-top:4px; }
+  .date-ganzhi { font-size:0.82rem; color:var(--ink-muted); margin-top:2px; }
+  .date-weekday { font-size:0.75rem; color:var(--ink-light); margin-top:2px; }
+
+  .yiji-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .yiji-box { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:12px; padding:16px; }
+  .yiji-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .yiji-badge { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; }
+  .yi-badge { background:rgba(126,196,126,0.15); color:#7ec47e; border:1px solid rgba(126,196,126,0.3); }
+  .ji-badge { background:rgba(192,57,43,0.15); color:var(--vermillion-light); border:1px solid rgba(192,57,43,0.3); }
+  .yiji-title { font-size:1rem; color:var(--paper-dark); }
+  .yiji-items { display:flex; flex-wrap:wrap; gap:6px; }
+  .yiji-tag { font-size:0.82rem; padding:4px 12px; border-radius:999px; }
+  .yi-tag { background:rgba(126,196,126,0.08); color:#9ad49a; border:1px solid rgba(126,196,126,0.2); }
+  .ji-tag { background:rgba(192,57,43,0.08); color:var(--vermillion-light); border:1px solid rgba(192,57,43,0.2); }
+
+  .shensha-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .shensha-item { text-align:center; border:1px solid rgba(201,160,94,0.15); background:rgba(34,26,20,0.6); border-radius:10px; padding:12px 8px; }
+  .shensha-label { font-size:0.72rem; color:var(--ink-muted); margin-bottom:6px; }
+  .shensha-value { font-size:1rem; color:var(--gold-light); }
+  .shensha-value.luck-ji { color:#7ec47e; }
+  .shensha-value.luck-xiong { color:var(--vermillion-light); }
+
+  .hour-table { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .hour-cell { border:1px solid rgba(201,160,94,0.15); background:rgba(34,26,20,0.6); border-radius:8px; padding:10px 6px; text-align:center; }
+  .hour-name { font-size:0.9rem; color:var(--paper-dark); margin-bottom:4px; }
+  .hour-time { font-size:0.68rem; color:var(--ink-muted); margin-bottom:6px; }
+  .hour-luck { font-size:0.8rem; font-weight:500; padding:2px 10px; border-radius:4px; display:inline-block; }
+  .hour-ji { color:#7ec47e; background:rgba(126,196,126,0.1); border:1px solid rgba(126,196,126,0.2); }
+  .hour-xiong { color:var(--vermillion-light); background:rgba(192,57,43,0.1); border:1px solid rgba(192,57,43,0.2); }
+  .hour-zhong { color:var(--gold); background:rgba(201,160,94,0.1); border:1px solid rgba(201,160,94,0.2); }
+  .hour-zhishen { font-size:0.68rem; color:var(--ink-light); margin-top:4px; }
+
+  .preview-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+  .preview-row::-webkit-scrollbar { display:none; }
+  .preview-card { flex-shrink:0; width:100px; border:1px solid rgba(201,160,94,0.15); background:rgba(34,26,20,0.6); border-radius:10px; padding:12px 8px; text-align:center; }
+  .preview-day { font-size:0.78rem; color:var(--ink-muted); margin-bottom:4px; }
+  .preview-lunar { font-size:0.82rem; color:var(--paper-dark); margin-bottom:6px; }
+  .preview-ganzhi { font-size:0.9rem; color:var(--gold); font-family:'ZhiMangXing',cursive; margin-bottom:4px; }
+  .preview-luck { font-size:0.72rem; padding:2px 8px; border-radius:4px; display:inline-block; }
+
+  .knowledge-card { background:rgba(42,31,24,0.5); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:16px; }
+  .knowledge-card p { margin:0 0 8px; line-height:1.9; font-size:0.9rem; color:var(--paper-dark); }
+  .knowledge-card p:last-child { margin-bottom:0; }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <section style="text-align:center;padding:24px 0 8px;">
+    <h1 class="font-display gold-text-gradient page-title">今日黄历</h1>
+    <p class="page-sub">择吉日 · 趋吉避凶</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <section class="card" style="padding:20px;margin-top:24px;" data-reveal>
+    <div class="date-nav">
+      <button class="date-nav-btn" id="prevDay">‹</button>
+      <div class="date-display">
+        <div class="date-solar" id="dateSolar"></div>
+        <div class="date-lunar" id="dateLunar"></div>
+        <div class="date-ganzhi" id="dateGanzhi"></div>
+        <div class="date-weekday" id="dateWeekday"></div>
+      </div>
+      <button class="date-nav-btn" id="nextDay">›</button>
+    </div>
+    <button class="btn-secondary" id="todayBtn" style="width:100%;margin-top:16px;padding:8px;font-size:0.9rem;">回到今天</button>
+  </section>
+
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">今日宜忌</h2>
+    <div class="yiji-grid">
+      <div class="yiji-box">
+        <div class="yiji-header">
+          <div class="yiji-badge yi-badge">宜</div>
+          <div class="yiji-title">宜行之事</div>
+        </div>
+        <div class="yiji-items" id="yiItems"></div>
+      </div>
+      <div class="yiji-box">
+        <div class="yiji-header">
+          <div class="yiji-badge ji-badge">忌</div>
+          <div class="yiji-title">忌行之事</div>
+        </div>
+        <div class="yiji-items" id="jiItems"></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">神煞 · 冲煞</h2>
+    <div class="shensha-grid" id="shenshaGrid"></div>
+  </section>
+
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">十二时辰吉凶</h2>
+    <div class="hour-table" id="hourTable"></div>
+  </section>
+
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">未来七日</h2>
+    <div class="preview-row" id="previewRow"></div>
+  </section>
+
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">黄历文化</h2>
+    <div class="knowledge-card">
+      <p>黄历，古称「通书」，相传由黄帝创制，故称「黄历」。以天干地支纪日，配以宜忌、神煞、吉凶，为古人择日行事之指南。</p>
+      <p>「宜」者，利于行之事；「忌」者，不宜行之事。值神有十二：青龙、明堂为吉，天刑、朱雀为凶，金匮、天德、玉堂、司命为吉，白虎、天牢、玄武、勾陈为凶。吉日宜行大事，凶日宜守静。</p>
+      <p>冲煞者，日支与某支相冲，煞方有凶。胎神占方，为孕妇不宜触动之方位。此皆为古人趋吉避凶之经验，今人参考即可，不必拘泥。</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  var stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  var branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  var weekdayNames = ['日','一','二','三','四','五','六'];
+  var hourNames = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  var hourRanges = ['23-1','1-3','3-5','5-7','7-9','9-11','11-13','13-15','15-17','17-19','19-21','21-23'];
+  var zhiShenNames = ['青龙','明堂','天刑','朱雀','金匮','天德','白虎','玉堂','天牢','玄武','司命','勾陈'];
+  var zhiShenLuck = ['吉','吉','凶','凶','吉','吉','凶','吉','凶','凶','吉','凶'];
+  var zhiShenColor = {吉:'luck-ji',凶:'luck-xiong'};
+
+  var yiPool = ['祭祀','祈福','出行','嫁娶','动土','安床','开市','交易','立券','纳财','栽种','纳畜','沐浴','修造','入宅','移徙','求嗣','上梁','破土','安葬','扫舍','冠笄','进人口','经络','酝酿','断蚁','塞穴'];
+  var taishenMap = {
+    0:'占门碓 外东南', 1:'占门厕 外正南', 2:'占炉灶 外正南',
+    3:'占碓磨 外正南', 4:'占门栖 外正南', 5:'占厨灶炉 外正南',
+    6:'占房床 外正南', 7:'占房床 外正南', 8:'占碓磨 外正南',
+    9:'占厨灶 外正南'
+  };
+  var shaDir = {0:'南',4:'南',8:'南',2:'北',6:'北',10:'北',5:'东',9:'东',1:'东',11:'西',3:'西',7:'西'};
+  var animalNames = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+
+  var lunarInfo = [
+    0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+    0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+    0x04970,0x0a4b0,0x0b4b5,0x0a950,0x0b550,0x15356,0x04da0,0x0a5b0,0x06a80,0x0aa50,
+    0x07b52,0x0a930,0x0a950,0x0b550,0x0b6a0,0x0bb95,0x052b0,0x0b540,0x0b6a5,0x0ba50,
+    0x057d0,0x055d2,0x04b60,0x0a450,0x0b295,0x06b50,0x06d40,0x04ab0,0x07560,0x09570,
+    0x074b0,0x0a9b0,0x06aa0,0x0ad50,0x14b52,0x04b60,0x0a570,0x054d5,0x0d250,0x1d455,
+    0x0b540,0x0b6a0,0x195a6,0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,
+    0x0af46,0x0ab60,0x09570,0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,
+    0x0ab60,0x096d5,0x092e0,0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,
+    0x025d0,0x092d0,0x0cab5,0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,
+    0x15176,0x052b0,0x0a930,0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,
+    0x0d260,0x0ea65,0x0d530,0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,
+    0x0d250,0x0d520,0x0dd45,0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,
+    0x1b255,0x06d20,0x0ada0,0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,
+    0x06b20,0x1a6c4,0x0aae0,0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,
+    0x056a0,0x0a6d0,0x055d4,0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,
+    0x0aba4,0x0a5b0,0x052b0,0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,
+    0x0a570,0x054d4,0x0d160,0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,
+    0x0a2d0,0x0d150,0x0f252,0x0d520
+  ];
+
+  function lYearDays(y){
+    var sum = 348;
+    for(var i=0x8000; i>0x8; i>>=1){ sum += (lunarInfo[y-1900] & i) ? 1 : 0; }
+    return sum + leapDays(y);
+  }
+  function leapMonth(y){ return lunarInfo[y-1900] & 0xf; }
+  function leapDays(y){
+    if(leapMonth(y)) return (lunarInfo[y-1900] & 0x10000) ? 30 : 29;
+    return 0;
+  }
+  function monthDays(y, m){
+    return (lunarInfo[y-1900] & (0x10000 >> m)) ? 30 : 29;
+  }
+  function solar2lunar(y, m, d){
+    if(y<1900 || y>2100) return null;
+    var offset = Math.round((new Date(y, m-1, d) - new Date(1900, 0, 31)) / 86400000);
+    var ly = 1900, temp = 0;
+    for(; ly<2101 && offset>0; ly++){
+      temp = lYearDays(ly);
+      offset -= temp;
+    }
+    if(offset<0){ offset += temp; ly--; }
+    var isLeap = false, leap = leapMonth(ly);
+    var lm = 1;
+    for(; lm<13 && offset>0; lm++){
+      if(leap>0 && lm === leap+1 && !isLeap){
+        lm--; isLeap = true; temp = leapDays(ly);
+      } else {
+        temp = monthDays(ly, lm);
+      }
+      if(isLeap && lm === leap+1) isLeap = false;
+      offset -= temp;
+    }
+    if(offset===0 && leap>0 && lm===leap+1){
+      if(isLeap){ isLeap = false; } else { isLeap = true; lm--; }
+    }
+    if(offset<0){ offset += temp; lm--; }
+    var ld = offset + 1;
+    var lunarMonthName = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+    var lunarDayPre = ['初','十','廿','卅'];
+    var lunarDayNum = ['','一','二','三','四','五','六','七','八','九','十'];
+    var dayStr;
+    if(ld===10) dayStr='初十';
+    else if(ld===20) dayStr='二十';
+    else if(ld===30) dayStr='三十';
+    else dayStr = lunarDayPre[Math.floor((ld-1)/10)] + lunarDayNum[ld%10 || 10];
+    var monthStr = (isLeap?'闰':'') + lunarMonthName[lm-1] + '月';
+    return {year:ly, month:lm, day:ld, isLeap:isLeap, monthStr:monthStr, dayStr:dayStr};
+  }
+
+  function getDayDiff(y, m, d){
+    var date = new Date(y, m-1, d);
+    var base = new Date(1900, 0, 1);
+    return Math.round((date - base) / 86400000);
+  }
+  function getDayGanZhi(y, m, d){
+    var diff = getDayDiff(y, m, d);
+    var stem = ((diff % 10) + 10) % 10;
+    var branch = ((diff % 12) + 10) % 12;
+    return stems[stem] + branches[branch];
+  }
+  function getDayBranchIdx(y, m, d){
+    var diff = getDayDiff(y, m, d);
+    return ((diff % 12) + 10) % 12;
+  }
+  function getDayStemIdx(y, m, d){
+    var diff = getDayDiff(y, m, d);
+    return ((diff % 10) + 10) % 10;
+  }
+
+  function getMonthBranchIdx(y, m, d){
+    // 近似节气计算: 每月约15-16日为节气交替
+    var solarTerms = [5,4,6,5,6,6,7,8,8,8,7,7]; // 各月节气日(近似)
+    var branchOffset = [2,3,4,5,6,7,8,9,10,11,0,1]; // 正月=寅
+    var idx = m - 1;
+    if(d < solarTerms[idx]) idx = (idx + 11) % 12;
+    return branchOffset[idx];
+  }
+
+  function getDayZhiShen(dayBranchIdx, monthBranchIdx){
+    var monthOffset = -(((monthBranchIdx - 2 + 12) % 12) % 6) * 2;
+    var idx = ((dayBranchIdx + monthOffset) % 12 + 12) % 12;
+    return {name:zhiShenNames[idx], luck:zhiShenLuck[idx], idx:idx};
+  }
+
+  function getHourZhiShen(dayBranchIdx, hourIdx){
+    var idx = (hourIdx + dayBranchIdx) % 12;
+    return {name:zhiShenNames[idx], luck:zhiShenLuck[idx]};
+  }
+
+  function getChongSha(dayBranchIdx){
+    var chongIdx = (dayBranchIdx + 6) % 12;
+    return {chong:'冲' + animalNames[chongIdx] + '（'+branches[chongIdx]+'）', sha:'煞' + shaDir[dayBranchIdx]};
+  }
+
+  function getTaishen(dayStemIdx){
+    var group = Math.floor(dayStemIdx / 2);
+    var names = ['占门碓栖 外东南','占门厕 外正南','占炉灶 外正南','占碓磨 外正南','占门栖 外正南'];
+    return names[group] || '占房床 外正南';
+  }
+
+  function seededRand(seed){
+    var x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  function getYiJi(y, m, d){
+    var seed = getDayDiff(y, m, d);
+    var pool = yiPool.slice();
+    // 洗牌
+    for(var i = pool.length-1; i>0; i--){
+      var j = Math.floor(seededRand(seed * (i+1) + 7) * (i+1));
+      var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+    }
+    var dayBranchIdx = getDayBranchIdx(y, m, d);
+    var zhiShen = getDayZhiShen(dayBranchIdx, getMonthBranchIdx(y, m, d));
+    var yiCount = zhiShen.luck === '吉' ? 7 : 5;
+    var jiCount = zhiShen.luck === '吉' ? 3 : 5;
+    return {yi: pool.slice(0, yiCount), ji: pool.slice(yiCount, yiCount + jiCount)};
+  }
+
+  var currentDate = new Date();
+
+  function render(){
+    var y = currentDate.getFullYear();
+    var m = currentDate.getMonth() + 1;
+    var d = currentDate.getDate();
+    var wd = currentDate.getDay();
+
+    var lunar = solar2lunar(y, m, d);
+    var ganzhi = getDayGanZhi(y, m, d);
+    var dayBranchIdx = getDayBranchIdx(y, m, d);
+    var dayStemIdx = getDayStemIdx(y, m, d);
+    var monthBranchIdx = getMonthBranchIdx(y, m, d);
+    var zhiShen = getDayZhiShen(dayBranchIdx, monthBranchIdx);
+    var chongSha = getChongSha(dayBranchIdx);
+    var taishen = getTaishen(dayStemIdx);
+    var yiji = getYiJi(y, m, d);
+
+    // 日期显示
+    var monthStr = m < 10 ? '0'+m : ''+m;
+    var dayStr = d < 10 ? '0'+d : ''+d;
+    document.getElementById('dateSolar').textContent = y + '年' + monthStr + '月' + dayStr + '日';
+    if(lunar){
+      document.getElementById('dateLunar').textContent = '农历 ' + lunar.monthStr + lunar.dayStr;
+    } else {
+      document.getElementById('dateLunar').textContent = '农历转换超出范围';
+    }
+    document.getElementById('dateGanzhi').textContent = ganzhi + '日 · ' + zhiShen.name + '(' + zhiShen.luck + ')';
+    document.getElementById('dateWeekday').textContent = '星期' + weekdayNames[wd];
+
+    // 宜忌
+    var yiHtml = yiji.yi.map(function(item){ return '<span class="yiji-tag yi-tag">'+item+'</span>'; }).join('');
+    var jiHtml = yiji.ji.map(function(item){ return '<span class="yiji-tag ji-tag">'+item+'</span>'; }).join('');
+    document.getElementById('yiItems').innerHTML = yiHtml;
+    document.getElementById('jiItems').innerHTML = jiHtml;
+
+    // 神煞
+    var luckClass = zhiShen.luck === '吉' ? 'luck-ji' : 'luck-xiong';
+    var shenshaHtml =
+      '<div class="shensha-item"><div class="shensha-label">值神</div><div class="shensha-value '+luckClass+'">'+zhiShen.name+'</div></div>'+
+      '<div class="shensha-item"><div class="shensha-label">冲煞</div><div class="shensha-value">'+chongSha.chong+'</div></div>'+
+      '<div class="shensha-item"><div class="shensha-label">煞方</div><div class="shensha-value">'+chongSha.sha+'</div></div>'+
+      '<div class="shensha-item"><div class="shensha-label">胎神占方</div><div class="shensha-value" style="font-size:0.85rem;">'+taishen+'</div></div>'+
+      '<div class="shensha-item"><div class="shensha-label">日冲生肖</div><div class="shensha-value">'+animalNames[(dayBranchIdx+6)%12]+'</div></div>'+
+      '<div class="shensha-item"><div class="shensha-label">彭祖百忌</div><div class="shensha-value" style="font-size:0.85rem;">'+branches[dayStemIdx]+'不'+(dayStemIdx%2===0?'开仓':'远行')+' '+branches[dayBranchIdx]+'不'+(dayBranchIdx%4===0?'问卜':'嫁娶')+'</div></div>';
+    document.getElementById('shenshaGrid').innerHTML = shenshaHtml;
+
+    // 十二时辰
+    var hourHtml = '';
+    for(var h=0; h<12; h++){
+      var hzs = getHourZhiShen(dayBranchIdx, h);
+      var luckCls = hzs.luck === '吉' ? 'hour-ji' : (hzs.luck === '凶' ? 'hour-xiong' : 'hour-zhong');
+      hourHtml +=
+        '<div class="hour-cell">'+
+          '<div class="hour-name">'+hourNames[h]+'时</div>'+
+          '<div class="hour-time">'+hourRanges[h]+'点</div>'+
+          '<span class="hour-luck '+luckCls+'">'+hzs.luck+'</span>'+
+          '<div class="hour-zhishen">'+hzs.name+'</div>'+
+        '</div>';
+    }
+    document.getElementById('hourTable').innerHTML = hourHtml;
+
+    // 未来七日
+    var previewHtml = '';
+    for(var i=0; i<7; i++){
+      var nd = new Date(y, m-1, d + i + 1);
+      var ny = nd.getFullYear(), nm = nd.getMonth()+1, ndd = nd.getDate();
+      var nl = solar2lunar(ny, nm, ndd);
+      var ngz = getDayGanZhi(ny, nm, ndd);
+      var nbIdx = getDayBranchIdx(ny, nm, ndd);
+      var nzs = getDayZhiShen(nbIdx, getMonthBranchIdx(ny, nm, ndd));
+      var nLuckCls = nzs.luck === '吉' ? 'hour-ji' : (nzs.luck === '凶' ? 'hour-xiong' : 'hour-zhong');
+      var nwd = weekdayNames[nd.getDay()];
+      previewHtml +=
+        '<div class="preview-card">'+
+          '<div class="preview-day">'+(nm<10?'0':'')+nm+'/'+(ndd<10?'0':'')+ndd+' 周'+nwd+'</div>'+
+          '<div class="preview-lunar">'+(nl?nl.dayStr:'—')+'</div>'+
+          '<div class="preview-ganzhi">'+ngz+'</div>'+
+          '<span class="preview-luck '+nLuckCls+'">'+nzs.name+'</span>'+
+        '</div>';
+    }
+    document.getElementById('previewRow').innerHTML = previewHtml;
+  }
+
+  document.getElementById('prevDay').addEventListener('click', function(){
+    currentDate.setDate(currentDate.getDate() - 1);
+    render();
+  });
+  document.getElementById('nextDay').addEventListener('click', function(){
+    currentDate.setDate(currentDate.getDate() + 1);
+    render();
+  });
+  document.getElementById('todayBtn').addEventListener('click', function(){
+    currentDate = new Date();
+    render();
+    showToast('已回到今天');
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

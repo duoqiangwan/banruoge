@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>周公解梦 · 般若阁</title>
+<meta name="description" content="百梦皆有意，古今相参证。搜索梦境关键词，参详周公解梦，明吉凶之兆。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+
+  /* 搜索框 */
+  .search-wrap { position:relative; }
+  .search-input { width:100%; background:rgba(42,31,24,0.6); border:1px solid rgba(201,160,94,0.2); border-radius:24px; padding:12px 48px 12px 20px; color:var(--paper-dark); font-size:1rem; }
+  .search-input:focus { outline:none; border-color:rgba(201,160,94,0.5); }
+  .search-input::placeholder { color:rgba(232,213,176,0.4); }
+  .search-icon { position:absolute; right:16px; top:50%; transform:translateY(-50%); color:var(--gold); pointer-events:none; }
+
+  /* 分类标签 */
+  .cat-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+  .cat-row::-webkit-scrollbar { display:none; }
+  .cat-tag { flex-shrink:0; border:1px solid rgba(201,160,94,0.25); background:rgba(34,26,20,0.6); border-radius:999px; padding:8px 18px; font-size:0.9rem; color:var(--paper-dark); cursor:pointer; transition:all 0.2s; }
+  .cat-tag:hover { border-color:rgba(201,160,94,0.5); }
+  .cat-tag.active { background:var(--gold); color:var(--xuan); border-color:var(--gold); }
+
+  /* 梦境列表 */
+  .dream-list { display:flex; flex-direction:column; gap:12px; }
+  .dream-item { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:12px; padding:16px; transition:all 0.2s; }
+  .dream-item:hover { border-color:rgba(201,160,94,0.4); }
+  .dream-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px; }
+  .dream-keyword { font-size:1.05rem; color:var(--gold-light); font-weight:500; }
+  .dream-cat { font-size:0.7rem; color:var(--ink-muted); border:1px solid rgba(201,160,94,0.2); border-radius:999px; padding:2px 8px; }
+  .dream-fortune { display:inline-block; font-size:0.8rem; font-weight:500; padding:2px 10px; border-radius:6px; }
+  .fortune-ji { color:#7ec47e; background:rgba(126,196,126,0.12); border:1px solid rgba(126,196,126,0.3); }
+  .fortune-xiong { color:var(--vermillion-light); background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.3); }
+  .fortune-zhong { color:var(--gold); background:rgba(201,160,94,0.1); border:1px solid rgba(201,160,94,0.3); }
+  .dream-brief { font-size:0.9rem; color:var(--paper-dark); line-height:1.7; margin:0 0 10px; }
+  .dream-detail { display:none; margin-top:12px; padding-top:12px; border-top:1px dashed rgba(201,160,94,0.2); }
+  .dream-detail.show { display:block; animation:fade-in-up 0.4s ease-out forwards; }
+  .detail-label { font-size:0.78rem; color:var(--gold); margin-bottom:6px; letter-spacing:0.05em; }
+  .detail-text { font-size:0.9rem; color:var(--paper-dark); line-height:1.9; margin:0 0 10px; }
+  .detail-text:last-child { margin-bottom:0; }
+  .detail-meta { font-size:0.75rem; color:var(--ink-muted); margin-top:8px; font-style:italic; }
+
+  .empty-state { text-align:center; padding:48px 16px; color:var(--ink-muted); }
+  .empty-state .icon { font-size:2.5rem; margin-bottom:12px; }
+
+  .knowledge-card { background:rgba(42,31,24,0.5); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:16px; }
+  .knowledge-card p { margin:0 0 8px; line-height:1.9; font-size:0.9rem; color:var(--paper-dark); }
+  .knowledge-card p:last-child { margin-bottom:0; }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <!-- 页头 -->
+  <section style="text-align:center;padding:24px 0 8px;">
+    <h1 class="font-display gold-text-gradient page-title">周公解梦</h1>
+    <p class="page-sub">百梦皆有意，古今相参证</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <!-- 搜索 -->
+  <section style="margin-top:24px;" data-reveal>
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="输入梦境关键词，如：水、蛇、飞翔">
+      <span class="search-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </span>
+    </div>
+  </section>
+
+  <!-- 分类 -->
+  <section style="margin-top:16px;" data-reveal>
+    <div class="cat-row" id="catRow">
+      <div class="cat-tag active" data-cat="all">全部</div>
+      <div class="cat-tag" data-cat="人物">人物</div>
+      <div class="cat-tag" data-cat="动物">动物</div>
+      <div class="cat-tag" data-cat="自然">自然</div>
+      <div class="cat-tag" data-cat="物品">物品</div>
+      <div class="cat-tag" data-cat="行为">行为</div>
+      <div class="cat-tag" data-cat="身体">身体</div>
+    </div>
+  </section>
+
+  <!-- 梦境列表 -->
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">梦境参详</h2>
+    <div class="dream-list" id="dreamList"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="icon">🌙</div>
+      <p>未找到相关梦境，试试其他关键词吧</p>
+    </div>
+  </section>
+
+  <!-- 文化渊源 -->
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">解梦渊源</h2>
+    <div class="knowledge-card">
+      <p>周公解梦，相传源于西周周公旦。周公制礼作乐，亦通梦占之术，《周礼》有「占梦」之官，掌六梦之占。</p>
+      <p>古人认为，梦乃心神之所感，亦为天地之兆示。梦有六种：正梦、噩梦、思梦、寤梦、喜梦、惧梦，各有吉凶之辨。</p>
+      <p>解梦之要，在于「参」字——参之以时令、参之以心境、参之以事理。一梦之意，并非定论，当与求梦者之境遇相参，方得真意。今所录，乃古人经验之汇集，仅供参考，不可执迷。</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  // 梦境数据
+  var dreams = [
+    {keyword:'梦见水', cat:'自然', fortune:'吉', brief:'水主财，亦主流转。梦中清水多为吉兆，预示财运将至或事态顺遂。',
+     detail:'清水流淌，主财源广进，事业顺遂；若水清澈见底，主心地清明，所谋可成。浑浊之水则防口舌是非，或有小人作祟。洪水泛滥，主变动剧烈，须谨慎应对。总体而言，水为生命之源，梦中得水，多主生机。参之以心境：若梦中喜悦，则吉上加吉；若惊惧，则须防隐患。'},
+    {keyword:'梦见蛇', cat:'动物', fortune:'中', brief:'蛇主变化，亦主阴私。梦见蛇未必为凶，多为生活将生变动之兆。',
+     detail:'蛇在梦中象征变化与蜕变。若蛇不伤人，主生活将有转折，或有贵人暗助；若被蛇咬，须防小人中伤或口舌之争。群蛇聚集，主财运，然来路须正。蛇蜕皮，主旧事将了，新生将至。蛇入宅中，主家有喜讯或客至。古云「蛇者，小龙也」，故亦含腾达之意，须观其色其态而定。'},
+    {keyword:'梦见飞翔', cat:'行为', fortune:'吉', brief:'飞翔主志得意满，心胸开阔，多为事业腾达、心愿得遂之兆。',
+     detail:'梦中飞翔，象征自由与超越。若飞得高远且顺畅，主志向将伸，事业有成，或近期有晋升之喜。若飞而受阻，主虽有抱负，尚须等待时机。逆风飞翔，主须克服困难方得成功。鸟瞰大地，主格局将开，眼界将广。此梦总体为吉，示梦者心气高昂，宜顺势而为。'},
+    {keyword:'梦见已故亲人', cat:'人物', fortune:'中', brief:'故人入梦，多为思念所致，亦或有所嘱托。心诚则通，不必惊惧。',
+     detail:'梦见已故亲人，多为日有所思、夜有所梦，是心念之感通。若故人面容安详，主其在彼岸安好，亦为庇佑之兆；若故人言语叮嘱，当记于心，或为潜意识的提醒。若故人面有忧色，可为之诵经回向，以慰其灵。此梦非凶，乃情之所至。宜以善行回向，令生者安心，亡者得利。'},
+    {keyword:'梦见掉牙', cat:'身体', fortune:'凶', brief:'掉牙主骨肉分离或健康之虑，亦主言语失当，须慎言慎行。',
+     detail:'梦见牙齿脱落，传统解为主亲属健康有虞，或主骨肉分离之兆。门牙脱落，多防口舌是非，或言语招祸；臼齿脱落，防家中长辈健康。牙齿无痛而落，主事虽惊无险；若伴随疼痛，须认真留意健康。另有一解：掉牙亦象征旧事物之结束、新事物之开始，如乳牙之换。不必过虑，留意身边人事即可。'},
+    {keyword:'梦见火', cat:'自然', fortune:'吉', brief:'火主兴旺，亦主名望。梦中得火，多为运势上扬、名声渐显之兆。',
+     detail:'火为阳刚之象，主兴旺热烈。梦中火炬明亮，主事业红火，名声远扬；灶火旺盛，主家宅兴旺，衣食丰足。若火势失控成灾，则防冲动行事，或口角之争。点火成功，主谋事可成；火被扑灭，主希望受阻。红红火色最吉，黑烟之火须防。总体而言，得火之梦多主阳气上升，宜把握时机。'},
+    {keyword:'梦见鱼', cat:'动物', fortune:'吉', brief:'鱼谐音「余」，主年年有余，财运亨通，亦主喜事将近。',
+     detail:'鱼为吉物，谐音「余」，主富足有余。梦中捕鱼得鱼，主财运将至，或有意外之喜；鱼跃出水面，主喜事临门，或有升迁之机。鱼游水中，主生活自在，事态顺遂。金鱼最吉，主富贵；黑鱼次之。若鱼死或离水，主机会将失，须及时把握。梦中食鱼，主得人实惠，或获馈赠。总体大吉。'},
+    {keyword:'梦见棺材', cat:'物品', fortune:'吉', brief:'棺谐音「官」，材谐音「财」，主升官发财，反凶为吉之兆。',
+     detail:'棺材之梦，初闻惊惧，实为吉兆。「棺」谐「官」，「材」谐「财」，故主升官发财。若见棺入宅，主有官职或财运将至；若抬棺而行，主事将成，有贵人相助；若开棺见人，主旧事重提而有转机。此乃「反梦」之理，凶象吉解。然若梦中恐惧异常，亦当留意健康，参之以心境。古人云「见棺得官」，此之谓也。'},
+    {keyword:'梦见迷路', cat:'行为', fortune:'中', brief:'迷路主方向不明，内心迷茫，须静心思考人生方向。',
+     detail:'梦见迷路，象征现实中对方向感的缺失，或对某事举棋不定。在熟悉之地迷路，主对现状生疑，须重新审视；在陌生之地迷路，主面临新境遇，尚需适应。若最终找到出路，主困惑将解，柳暗花明；若一直未出，主尚须时日摸索。此梦提醒梦者：停下脚步，静思己过，方向比速度更重要。宜向长者或智者请教。'},
+    {keyword:'梦见婴儿', cat:'人物', fortune:'吉', brief:'婴儿主新生，亦主希望，多为新事物萌芽、好运将至之兆。',
+     detail:'梦见婴儿，象征新生与希望。若婴儿健康可爱，主有新事、新机缘将至，或心愿将成；若怀抱婴儿，主有责任在肩，亦主收获；若婴儿啼哭，主新事需用心照料方能成长。陌生婴儿，主意外之喜；自家婴儿，主家庭和睦。此梦总体为吉，示生机勃勃，宜呵护培育新机。'},
+    {keyword:'梦见月亮', cat:'自然', fortune:'吉', brief:'月亮主阴柔之美，亦主团圆，多为家庭和睦、情感顺遂之兆。',
+     detail:'月为太阴之象，主阴柔、团圆与思念。梦中月圆，主家庭和睦，团圆美满；月色清明，主心境澄澈，事态明朗；新月如钩，主新事将起，宜蓄势。月落西山，主一段事将了；月升东海，主新机将至。水中捞月，防虚妄之事。总体而言，月梦多吉，示梦者内心柔软，宜珍惜眼前人。'},
+    {keyword:'梦见考试', cat:'行为', fortune:'中', brief:'考试主考验与焦虑，多为现实压力之投射，亦主面临挑战。',
+     detail:'梦见考试，多为现实压力之反映，亦象征面临考验。若考试顺利，主能应对当前挑战，或有升迁之机；若考试艰难或交白卷，主对自身能力存疑，须充实自我。考场迟到，主机会将失，须及时行动；考场作弊，防走捷径反受其害。此梦提醒梦者：面对考验当以实力应对，焦虑无益，准备为先。'},
+    {keyword:'梦见钱', cat:'物品', fortune:'中', brief:'钱主财运，亦主欲望。得钱未必尽吉，失钱未必尽凶。',
+     detail:'梦中得钱，主财运或有意外之得，然须观来路：来路正者吉，来路不正者反招祸。拾得钱财，主有小喜；赠人钱财，主施舍得福。梦见失钱，反主破财消灾，或舍小得大。数钱，主对财务之关注，宜理财。金银最吉，纸币次之。此梦关键在于「得失之心」——执着于得，反失其乐；淡然处之，财自来。'},
+    {keyword:'梦见猫', cat:'动物', fortune:'中', brief:'猫主灵性，亦主孤独。梦中猫多为直觉之提示，宜留意身边细微。',
+     detail:'猫在梦中象征灵性与独立。若猫亲近，主有灵性之助，或直觉可信赖；若猫远离，主须独立思考，勿过度依赖他人。黑猫，主须留意隐秘之事，防小人；白猫，主清静之兆；花猫，主生活多姿。猫捕鼠，主能解决小患；猫懒睡，主宜休养蓄锐。此梦提醒：倾听内心声音，留意细微之处，自有启示。'},
+    {keyword:'梦见结婚', cat:'行为', fortune:'吉', brief:'结婚主新阶段的开始，多为喜事将近、事态圆满之兆。',
+     detail:'梦见结婚，象征新的结合与开始。若自己结婚，主将有新事、新关系之确立，或心愿将成；若他人结婚，主有喜事临门，或得人相助。婚礼热闹，主事成且众人共贺；婚礼冷清，主事虽成然须自励。若已婚者梦见再婚，主生活将有新变化，非感情之变。总体为吉，示圆满意满，宜珍惜缘分。'}
+  ];
+
+  var currentCat = 'all';
+  var currentKeyword = '';
+
+  function renderList(){
+    var list = document.getElementById('dreamList');
+    var empty = document.getElementById('emptyState');
+    var filtered = dreams.filter(function(d){
+      var catOk = currentCat === 'all' || d.cat === currentCat;
+      var kwOk = !currentKeyword || d.keyword.indexOf(currentKeyword) > -1 || d.brief.indexOf(currentKeyword) > -1 || d.cat.indexOf(currentKeyword) > -1;
+      return catOk && kwOk;
+    });
+
+    list.innerHTML = '';
+    if(filtered.length === 0){
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    filtered.forEach(function(d, idx){
+      var fortuneClass = d.fortune === '吉' ? 'fortune-ji' : (d.fortune === '凶' ? 'fortune-xiong' : 'fortune-zhong');
+      var item = document.createElement('div');
+      item.className = 'dream-item animate-fade-in-up';
+      item.style.animationDelay = (idx*0.05) + 's';
+      item.innerHTML =
+        '<div class="dream-head">'+
+          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'+
+            '<span class="dream-keyword">'+ d.keyword +'</span>'+
+            '<span class="dream-cat">'+ d.cat +'</span>'+
+          '</div>'+
+          '<span class="dream-fortune '+ fortuneClass +'">'+ d.fortune +'</span>'+
+        '</div>'+
+        '<p class="dream-brief">'+ d.brief +'</p>'+
+        '<button class="btn-secondary" style="padding:6px 18px;font-size:0.85rem;" data-toggle="'+ idx +'">详批</button>'+
+        '<div class="dream-detail" data-detail="'+ idx +'">'+
+          '<div class="detail-label">— 周公详批 —</div>'+
+          '<p class="detail-text">'+ d.detail +'</p>'+
+          '<div class="detail-meta">参之时令心境，不可执一而论</div>'+
+        '</div>';
+      list.appendChild(item);
+    });
+
+    // 绑定详批
+    list.querySelectorAll('[data-toggle]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var i = this.getAttribute('data-toggle');
+        var detail = list.querySelector('[data-detail="'+i+'"]');
+        var opened = detail.classList.contains('show');
+        if(opened){
+          detail.classList.remove('show');
+          this.textContent = '详批';
+        } else {
+          detail.classList.add('show');
+          this.textContent = '收起';
+          // 模拟 AI 解读延迟
+          if(!detail.getAttribute('data-loaded')){
+            this.textContent = '解读中…';
+            var self = this;
+            setTimeout(function(){
+              self.textContent = '收起';
+            }, 400);
+            detail.setAttribute('data-loaded','1');
+          }
+        }
+      });
+    });
+  }
+
+  // 搜索
+  var searchInput = document.getElementById('searchInput');
+  var searchTimer = null;
+  searchInput.addEventListener('input', function(){
+    var v = this.value.trim();
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function(){
+      currentKeyword = v;
+      renderList();
+    }, 200);
+  });
+
+  // 分类
+  document.querySelectorAll('.cat-tag').forEach(function(tag){
+    tag.addEventListener('click', function(){
+      document.querySelectorAll('.cat-tag').forEach(function(t){ t.classList.remove('active'); });
+      this.classList.add('active');
+      currentCat = this.getAttribute('data-cat');
+      renderList();
+    });
+  });
+
+  renderList();
+})();
+</script>
+</body>
+</html>

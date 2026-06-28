@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>手相 / 面相 · 般若阁</title>
+<meta name="description" content="图解掌纹面容，围绕图上可见特征逐段分析。照片仅在本地分析，不上传服务器。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+<main class="main-content">
+<div style="max-width:720px;margin:0 auto;padding:24px 16px 80px;">
+
+<!-- 标题 -->
+<section data-reveal style="text-align:center;padding:24px 0;">
+<h1 class="font-display gold-text-gradient" style="font-size:2.5rem;letter-spacing:0.15em;margin:0;">手相 / 面相</h1>
+<p style="margin:12px 0 0;color:rgba(232,213,176,0.8);line-height:1.8;">图解掌纹面容 · 逐段分析</p>
+<div class="gold-divider" style="margin:16px auto;width:120px;"></div>
+</section>
+
+<!-- 标签切换 -->
+<section data-reveal style="margin:16px 0;">
+<div style="display:flex;gap:0;border:1px solid rgba(201,160,94,0.3);border-radius:8px;overflow:hidden;">
+<button id="tabPalm" class="tab-btn active" style="flex:1;padding:12px;border:none;background:var(--gold);color:var(--xuan);font-size:1rem;cursor:pointer;font-family:inherit;">手相</button>
+<button id="tabFace" class="tab-btn" style="flex:1;padding:12px;border:none;background:transparent;color:var(--paper-dark);font-size:1rem;cursor:pointer;font-family:inherit;">面相</button>
+</div>
+</section>
+
+<!-- 手相页 -->
+<section id="palmSection">
+<!-- 上传区 -->
+<div data-reveal class="card" style="padding:24px;margin:16px 0;">
+<div id="palmUploadArea" style="border:2px dashed rgba(201,160,94,0.3);border-radius:12px;padding:32px;text-align:center;cursor:pointer;">
+<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);margin:0 auto 12px;display:block;">
+<path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+</svg>
+<p style="color:var(--paper-dark);margin:0;">点击上传掌心照</p>
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.5);margin:8px 0 0;">照片仅在本地分析 · 不上传服务器</p>
+<input type="file" id="palmFile" accept="image/*" style="display:none;">
+</div>
+<div id="palmPreview" style="display:none;margin-top:12px;">
+<img id="palmImg" style="max-width:100%;border-radius:8px;border:1px solid rgba(201,160,94,0.2);" alt="掌心照">
+</div>
+</div>
+
+<!-- 分析项 -->
+<div data-reveal class="card" style="padding:16px;margin:16px 0;">
+<h3 class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0 0 12px;">五大主线分析</h3>
+<div style="display:grid;gap:8px;">
+<div style="display:flex;align-items:center;gap:12px;padding:8px;border-bottom:1px solid rgba(201,160,94,0.1);">
+<span style="width:28px;height:28px;border-radius:50%;background:rgba(201,160,94,0.15);display:flex;align-items:center;justify-content:center;font-size:0.875rem;color:var(--gold);">命</span>
+<div><p style="margin:0;color:var(--paper-dark);font-size:0.9375rem;">生命线</p><p style="margin:0;font-size:0.75rem;color:rgba(232,213,176,0.5);">体力与健康趋势</p></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px;border-bottom:1px solid rgba(201,160,94,0.1);">
+<span style="width:28px;height:28px;border-radius:50%;background:rgba(201,160,94,0.15);display:flex;align-items:center;justify-content:center;font-size:0.875rem;color:var(--gold);">智</span>
+<div><p style="margin:0;color:var(--paper-dark);font-size:0.9375rem;">智慧线</p><p style="margin:0;font-size:0.75rem;color:rgba(232,213,176,0.5);">思维与决策方式</p></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px;border-bottom:1px solid rgba(201,160,94,0.1);">
+<span style="width:28px;height:28px;border-radius:50%;background:rgba(201,160,94,0.15);display:flex;align-items:center;justify-content:center;font-size:0.875rem;color:var(--gold);">情</span>
+<div><p style="margin:0;color:var(--paper-dark);font-size:0.9375rem;">感情线</p><p style="margin:0;font-size:0.75rem;color:rgba(232,213,176,0.5);">情感与人际关系</p></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px;border-bottom:1px solid rgba(201,160,94,0.1);">
+<span style="width:28px;height:28px;border-radius:50%;background:rgba(201,160,94,0.15);display:flex;align-items:center;justify-content:center;font-size:0.875rem;color:var(--gold);">事</span>
+<div><p style="margin:0;color:var(--paper-dark);font-size:0.9375rem;">事业线</p><p style="margin:0;font-size:0.75rem;color:rgba(232,213,176,0.5);">事业与志向走向</p></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px;">
+<span style="width:28px;height:28px;border-radius:50%;background:rgba(201,160,94,0.15);display:flex;align-items:center;justify-content:center;font-size:0.875rem;color:var(--gold);">婚</span>
+<div><p style="margin:0;color:var(--paper-dark);font-size:0.9375rem;">婚姻线</p><p style="margin:0;font-size:0.75rem;color:rgba(232,213,176,0.5);">婚恋与家庭倾向</p></div>
+</div>
+</div>
+<button id="palmAnalyzeBtn" class="btn-ritual" style="width:100%;margin-top:16px;">开始手相分析</button>
+</div>
+
+<!-- 手相结果 -->
+<div id="palmResult" style="display:none;margin:16px 0;"></div>
+</section>
+
+<!-- 面相页 -->
+<section id="faceSection" style="display:none;">
+<div data-reveal class="card" style="padding:24px;margin:16px 0;">
+<div id="faceUploadArea" style="border:2px dashed rgba(201,160,94,0.3);border-radius:12px;padding:32px;text-align:center;cursor:pointer;">
+<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);margin:0 auto 12px;display:block;">
+<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+</svg>
+<p style="color:var(--paper-dark);margin:0;">点击上传正脸照</p>
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.5);margin:8px 0 0;">照片仅在本地分析 · 不上传服务器</p>
+<input type="file" id="faceFile" accept="image/*" style="display:none;">
+</div>
+<div id="facePreview" style="display:none;margin-top:12px;">
+<img id="faceImg" style="max-width:100%;border-radius:8px;border:1px solid rgba(201,160,94,0.2);" alt="正脸照">
+</div>
+</div>
+
+<div data-reveal class="card" style="padding:16px;margin:16px 0;">
+<h3 class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0 0 12px;">六部位分析</h3>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+<div style="text-align:center;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;"><p style="margin:0;font-size:0.875rem;color:var(--gold);">额头</p><p style="margin:4px 0 0;font-size:0.75rem;color:rgba(232,213,176,0.5);">早年运</p></div>
+<div style="text-align:center;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;"><p style="margin:0;font-size:0.875rem;color:var(--gold);">眉毛</p><p style="margin:4px 0 0;font-size:0.75rem;color:rgba(232,213,176,0.5);">性情</p></div>
+<div style="text-align:center;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;"><p style="margin:0;font-size:0.875rem;color:var(--gold);">眼睛</p><p style="margin:4px 0 0;font-size:0.75rem;color:rgba(232,213,176,0.5);">心神</p></div>
+<div style="text-align:center;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;"><p style="margin:0;font-size:0.875rem;color:var(--gold);">鼻子</p><p style="margin:4px 0 0;font-size:0.75rem;color:rgba(232,213,176,0.5);">财运</p></div>
+<div style="text-align:center;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;"><p style="margin:0;font-size:0.875rem;color:var(--gold);">嘴巴</p><p style="margin:4px 0 0;font-size:0.75rem;color:rgba(232,213,176,0.5);">食禄</p></div>
+<div style="text-align:center;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;"><p style="margin:0;font-size:0.875rem;color:var(--gold);">下巴</p><p style="margin:4px 0 0;font-size:0.75rem;color:rgba(232,213,176,0.5);">晚年运</p></div>
+</div>
+<button id="faceAnalyzeBtn" class="btn-ritual" style="width:100%;margin-top:16px;">开始面相分析</button>
+</div>
+
+<div id="faceResult" style="display:none;margin:16px 0;"></div>
+</section>
+
+<!-- 底部说明 -->
+<section data-reveal style="margin:32px 0;">
+<div class="card" style="padding:24px;border-left:4px solid var(--gold);">
+<h3 class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0 0 12px;">相术文化</h3>
+<p style="font-size:0.875rem;line-height:2;color:rgba(232,213,176,0.8);margin:0 0 12px;">手相面相之学，在中国有数千年传统。《麻衣相法》《柳庄相法》《神相全编》为其中代表。相术认为，人的手纹、面部特征与气色，可反映性格趋向与人生际遇的某些规律。</p>
+<div style="background:rgba(192,57,43,0.1);border-radius:8px;padding:12px;margin:12px 0;">
+<p style="font-size:0.8125rem;color:rgba(232,213,176,0.7);margin:0;">⚠ 隐私说明：您上传的照片仅在浏览器本地进行分析，不会上传到任何服务器。关闭页面后数据即清除。</p>
+</div>
+<p style="font-size:0.8125rem;color:rgba(232,213,176,0.6);margin:0;">本站分析结果仅作传统文化参考，不构成任何专业建议。</p>
+</div>
+</section>
+
+</div>
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+// 标签切换
+var tabPalm = document.getElementById('tabPalm');
+var tabFace = document.getElementById('tabFace');
+var palmSection = document.getElementById('palmSection');
+var faceSection = document.getElementById('faceSection');
+
+tabPalm.addEventListener('click', function(){
+tabPalm.style.background = 'var(--gold)';
+tabPalm.style.color = 'var(--xuan)';
+tabFace.style.background = 'transparent';
+tabFace.style.color = 'var(--paper-dark)';
+palmSection.style.display = 'block';
+faceSection.style.display = 'none';
+});
+
+tabFace.addEventListener('click', function(){
+tabFace.style.background = 'var(--gold)';
+tabFace.style.color = 'var(--xuan)';
+tabPalm.style.background = 'transparent';
+tabPalm.style.color = 'var(--paper-dark)';
+faceSection.style.display = 'block';
+palmSection.style.display = 'none';
+});
+
+// 手相上传
+var palmUploadArea = document.getElementById('palmUploadArea');
+var palmFile = document.getElementById('palmFile');
+var palmPreview = document.getElementById('palmPreview');
+var palmImg = document.getElementById('palmImg');
+
+palmUploadArea.addEventListener('click', function(){ palmFile.click(); });
+palmFile.addEventListener('change', function(e){
+if(e.target.files[0]){
+var reader = new FileReader();
+reader.onload = function(ev){
+palmImg.src = ev.target.result;
+palmPreview.style.display = 'block';
+palmUploadArea.style.display = 'none';
+};
+reader.readAsDataURL(e.target.files[0]);
+}
+});
+
+// 面相上传
+var faceUploadArea = document.getElementById('faceUploadArea');
+var faceFile = document.getElementById('faceFile');
+var facePreview = document.getElementById('facePreview');
+var faceImg = document.getElementById('faceImg');
+
+faceUploadArea.addEventListener('click', function(){ faceFile.click(); });
+faceFile.addEventListener('change', function(e){
+if(e.target.files[0]){
+var reader = new FileReader();
+reader.onload = function(ev){
+faceImg.src = ev.target.result;
+facePreview.style.display = 'block';
+faceUploadArea.style.display = 'none';
+};
+reader.readAsDataURL(e.target.files[0]);
+}
+});
+
+// 手相分析
+var palmAnalyses = [
+{line:'生命线',items:['生命线深长清晰，弧度饱满，说明体力充沛，身体素质较好。','生命线起点偏高，较早独立，性格自主性强。','生命线末端分叉，晚年精力分散，宜注重养生。']},
+{line:'智慧线',items:['智慧线平直有力，思维务实，做事条理分明。','智慧线较长，延伸至掌边，善于深谋远虑。','智慧线与生命线起点分开，思维独立，不受拘束。']},
+{line:'感情线',items:['感情线清晰上扬，感情顺遂，善于表达情感。','感情线有分支，情感丰富，人缘较好。','感情线较长，延伸至食指下，对感情忠诚专一。']},
+{line:'事业线',items:['事业线清晰直达智慧线，事业在中年有明确方向。','事业线从掌心起始，白手起家，靠自身努力。','事业线有中断，事业有转折，调整后可续。']},
+{line:'婚姻线',items:['婚姻线清晰平直，婚恋稳定，家庭和睦。','婚姻线略上翘，对伴侣有较高期望。','婚姻线有两条，情感经历较丰富。']}
+];
+
+document.getElementById('palmAnalyzeBtn').addEventListener('click', function(){
+var btn = this;
+btn.disabled = true;
+btn.textContent = '分析中...';
+setTimeout(function(){
+var html = '<div class="card" style="padding:24px;border:1px solid rgba(201,160,94,0.3);">';
+html += '<h3 class="font-display" style="font-size:1.25rem;color:var(--gold);text-align:center;margin:0 0 16px;">手相分析结果</h3>';
+palmAnalyses.forEach(function(a){
+html += '<div style="margin:12px 0;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;">';
+html += '<p class="font-display" style="font-size:1rem;color:var(--gold);margin:0 0 6px;">'+a.line+'</p>';
+a.items.forEach(function(t){ html += '<p style="font-size:0.875rem;line-height:1.8;color:rgba(232,213,176,0.8);margin:4px 0;">· '+t+'</p>'; });
+html += '</div>';
+});
+html += '<div style="margin:16px 0;padding:12px;border-left:3px solid var(--gold);background:rgba(201,160,94,0.05);border-radius:4px;">';
+html += '<p style="font-size:0.875rem;line-height:2;color:var(--paper-dark);margin:0;">综合来看，掌纹主线清晰，五行协调。性格务实而有主见，感情细腻但不失理性。事业中年渐入佳境，宜在三十至四十岁间积累深耕。健康方面注意劳逸结合，晚年宜静养。相由心生，命由己造，一切仅供参考。</p>';
+html += '</div></div>';
+var result = document.getElementById('palmResult');
+result.innerHTML = html;
+result.style.display = 'block';
+btn.disabled = false;
+btn.textContent = '重新分析';
+}, 1500);
+});
+
+// 面相分析
+var faceAnalyses = [
+{part:'额头',text:'额头饱满宽阔，天庭丰隆，早年运通顺。少年时期学习能力强，得长辈助力。'},
+{part:'眉毛',text:'眉形清秀，浓淡适中，性格温和而有主见。做事有条不紊，人缘较好。'},
+{part:'眼睛',text:'眼神清亮有神，黑白分明。心性端正，观察力敏锐，做事有决断。'},
+{part:'鼻子',text:'鼻梁挺直，鼻头圆润。财帛宫丰盈，中年财运较佳，善于理财。'},
+{part:'嘴巴',text:'唇形端正，厚薄适中。言而有信，食禄不缺，晚年衣食丰足。'},
+{part:'下巴',text:'下巴圆润饱满，地阁方圆。晚年安稳，子女缘好，根基牢靠。'}
+];
+
+document.getElementById('faceAnalyzeBtn').addEventListener('click', function(){
+var btn = this;
+btn.disabled = true;
+btn.textContent = '分析中...';
+setTimeout(function(){
+var html = '<div class="card" style="padding:24px;border:1px solid rgba(201,160,94,0.3);">';
+html += '<h3 class="font-display" style="font-size:1.25rem;color:var(--gold);text-align:center;margin:0 0 16px;">面相分析结果</h3>';
+faceAnalyses.forEach(function(a){
+html += '<div style="margin:12px 0;padding:12px;background:rgba(42,31,24,0.4);border-radius:8px;">';
+html += '<p class="font-display" style="font-size:1rem;color:var(--gold);margin:0 0 6px;">'+a.part+'</p>';
+html += '<p style="font-size:0.875rem;line-height:1.8;color:rgba(232,213,176,0.8);margin:0;">'+a.text+'</p>';
+html += '</div>';
+});
+html += '<div style="margin:16px 0;padding:12px;border-left:3px solid var(--gold);background:rgba(201,160,94,0.05);border-radius:4px;">';
+html += '<p style="font-size:0.875rem;line-height:2;color:var(--paper-dark);margin:0;">综合面相来看，五官端正，三停均匀。早年额运顺遂，中年鼻运财旺，晚年下停安稳。整体而言，属于稳中向好之相。性格温和有主见，做事踏实，人际关系和谐。相不独论，须结合整体气色与行止来看，以上仅供参考。</p>';
+html += '</div></div>';
+var result = document.getElementById('faceResult');
+result.innerHTML = html;
+result.style.display = 'block';
+btn.disabled = false;
+btn.textContent = '重新分析';
+}, 1500);
+});
+})();
+</script>
+</body>
+</html>

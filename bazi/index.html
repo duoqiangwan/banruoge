@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>八字精批 · 般若阁</title>
+<meta name="description" content="立春节气真排盘，看命格根骨。输入出生年月日时，三位大师为您详批八字命理，五行流年一目了然。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+  .field-label { display:block; font-size:0.85rem; color:var(--gold); margin-bottom:8px; letter-spacing:0.05em; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .form-grid .full { grid-column:1 / -1; }
+  select.input-field { appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c9a05c' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; }
+  .gender-row { display:flex; gap:12px; }
+  .gender-opt { flex:1; border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:8px; padding:12px; text-align:center; cursor:pointer; transition:all 0.2s; font-size:1rem; color:var(--paper-dark); }
+  .gender-opt.active { border-color:var(--gold); background:rgba(201,160,94,0.1); color:var(--gold-light); }
+  .master-list { display:flex; flex-direction:column; gap:12px; }
+  .master-card .master-emoji { font-size:2rem; flex-shrink:0; width:48px; height:48px; border-radius:50%; background:rgba(201,160,94,0.1); display:flex; align-items:center; justify-content:center; }
+  .master-info { flex:1; }
+  .master-name { font-size:1.05rem; color:var(--gold-light); margin-bottom:2px; }
+  .master-title { font-size:0.75rem; color:var(--ink-muted); margin-bottom:6px; }
+  .master-style { font-size:0.85rem; color:var(--paper-dark); line-height:1.6; }
+  .result-wrap { display:none; }
+  .result-wrap.show { display:block; animation:fade-in-up 0.6s ease-out forwards; }
+  .pillar-table { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:8px; }
+  .pillar-cell { text-align:center; border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:8px; padding:12px 4px; }
+  .pillar-label { font-size:0.72rem; color:var(--ink-muted); margin-bottom:6px; }
+  .pillar-gan { font-size:1.6rem; font-family:'ZhiMangXing','Noto Serif SC',cursive; color:var(--gold-light); line-height:1.2; }
+  .pillar-zhi { font-size:1.6rem; font-family:'ZhiMangXing','Noto Serif SC',cursive; color:var(--gold); line-height:1.2; }
+  .pillar-elem { font-size:0.7rem; color:var(--ink-muted); margin-top:4px; }
+  .pillar-nayin { font-size:0.68rem; color:var(--ink-light); margin-top:2px; }
+  .wuxing-bars { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .wuxing-row { display:flex; align-items:center; gap:10px; }
+  .wuxing-icon { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; color:#fff; flex-shrink:0; }
+  .wuxing-name { font-size:0.85rem; color:var(--paper-dark); width:28px; flex-shrink:0; }
+  .wuxing-track { flex:1; height:10px; background:rgba(42,31,24,0.6); border-radius:5px; overflow:hidden; }
+  .wuxing-fill { height:100%; border-radius:5px; transition:width 0.8s ease; }
+  .wuxing-count { font-size:0.78rem; color:var(--ink-muted); width:40px; text-align:right; flex-shrink:0; }
+  .analysis-box { background:rgba(42,31,24,0.5); border-left:3px solid var(--gold-dark); border-radius:0 8px 8px 0; padding:16px; margin-top:16px; }
+  .analysis-label { font-size:0.8rem; color:var(--gold-dark); margin-bottom:8px; font-weight:500; }
+  .analysis-text { font-size:0.95rem; color:var(--paper-dark); line-height:1.9; }
+  .analysis-by { font-size:0.75rem; color:var(--ink-muted); margin-top:8px; font-style:italic; }
+  .liunian-row { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .liunian-item { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:8px; padding:10px 14px; flex:1; min-width:100px; text-align:center; }
+  .liunian-year { font-size:0.9rem; color:var(--gold); margin-bottom:4px; }
+  .liunian-ganzhi { font-size:1.1rem; color:var(--gold-light); font-family:'ZhiMangXing',cursive; margin-bottom:4px; }
+  .liunian-tip { font-size:0.75rem; color:var(--paper-dark); }
+  .knowledge-card { background:rgba(42,31,24,0.5); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:16px; }
+  .knowledge-card p { margin:0 0 8px; line-height:1.9; font-size:0.9rem; color:var(--paper-dark); }
+  .knowledge-card p:last-child { margin-bottom:0; }
+  .disclaimer { font-size:0.8rem; color:var(--ink-muted); margin-top:12px; text-align:center; }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <section style="text-align:center;padding:24px 0 8px;">
+    <h1 class="font-display gold-text-gradient page-title">八字精批</h1>
+    <p class="page-sub">立春节气真排盘 · 看命格根骨</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <section class="card" style="padding:24px;margin-top:24px;" data-reveal>
+    <h2 class="section-title">出生信息</h2>
+    <div class="form-grid">
+      <div class="full">
+        <label class="field-label" for="baziYear">出生年份</label>
+        <select id="baziYear" class="input-field"></select>
+      </div>
+      <div>
+        <label class="field-label" for="baziMonth">月份</label>
+        <select id="baziMonth" class="input-field"></select>
+      </div>
+      <div>
+        <label class="field-label" for="baziDay">日期</label>
+        <select id="baziDay" class="input-field"></select>
+      </div>
+      <div class="full">
+        <label class="field-label" for="baziHour">时辰</label>
+        <select id="baziHour" class="input-field"></select>
+      </div>
+      <div class="full">
+        <label class="field-label">性别</label>
+        <div class="gender-row" id="genderRow">
+          <div class="gender-opt active" data-gender="male">男</div>
+          <div class="gender-opt" data-gender="female">女</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-ritual" id="paipanBtn" style="width:100%;margin-top:18px;font-size:1.15rem;">开始排盘</button>
+  </section>
+
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">选择批命大师</h2>
+    <div class="master-list" id="masterList">
+      <div class="master-card selected" data-master="huiming">
+        <div class="master-emoji">🧘</div>
+        <div class="master-info">
+          <div class="master-name">慧明长老</div>
+          <div class="master-title">庄严古德 · 引经据典</div>
+          <div class="master-style">修行六十载，通晓三藏。批命重在因果之理，常引佛经为证，言辞庄重，发人深省。</div>
+        </div>
+      </div>
+      <div class="master-card" data-master="mingxin">
+        <div class="master-emoji">🙏</div>
+        <div class="master-info">
+          <div class="master-name">明心师父</div>
+          <div class="master-title">慈悲尼师 · 温婉开解</div>
+          <div class="master-style">出家三十载，慈悲为怀。批命重在心灵抚慰，言语温柔，如春风化雨，令人心生安定。</div>
+        </div>
+      </div>
+      <div class="master-card" data-master="xuanzhen">
+        <div class="master-emoji">☯️</div>
+        <div class="master-info">
+          <div class="master-name">玄真道长</div>
+          <div class="master-title">直白道派 · 一针见血</div>
+          <div class="master-style">道门传人，通晓易理。批命直截了当，不绕弯子，吉凶分明，举措清晰，务实可循。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="result-wrap" id="resultWrap" data-reveal>
+    <div class="card" style="padding:24px;">
+      <h2 class="section-title">四柱八字</h2>
+      <div class="pillar-table" id="pillarTable"></div>
+      <div style="font-size:0.78rem;color:var(--ink-muted);text-align:center;margin-top:4px;">日主（日柱天干）为命主本身</div>
+
+      <h2 class="section-title" style="margin-top:24px;">五行分布</h2>
+      <div class="wuxing-bars" id="wuxingBars"></div>
+
+      <h2 class="section-title" style="margin-top:24px;">命格分析</h2>
+      <div class="analysis-box">
+        <div class="analysis-label" id="analysisLabel">大师批命</div>
+        <p class="analysis-text" id="analysisText"></p>
+        <div class="analysis-by" id="analysisBy"></div>
+      </div>
+
+      <h2 class="section-title" style="margin-top:24px;">流年运势</h2>
+      <div class="liunian-row" id="liunianRow"></div>
+    </div>
+    <button class="btn-secondary" id="repaipanBtn" style="width:100%;margin-top:16px;">重新排盘</button>
+  </section>
+
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">八字命理</h2>
+    <div class="knowledge-card">
+      <p>八字命理，又称四柱推命，以人出生之年月日时，配以天干地支，共得四柱八字。天干地支蕴含阴阳五行之气，据此推演命主性格、运势、吉凶。</p>
+      <p>排盘以「立春」为岁首，非正月初一。立春前生人，年柱属上一年。月柱以节气为界，非农历初一。此为真太阳时排盘之要。</p>
+      <p>五行生克：金生水、水生木、木生火、火生土、土生金；金克木、木克土、土克水、水克火、火克金。五行均衡为佳，偏旺偏衰皆需调候。</p>
+    </div>
+    <p class="disclaimer">※ 八字命理为传统文化参考，命运在人为，积善之家必有余庆。</p>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  var stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  var branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  var stemElem = ['木','木','火','火','土','土','金','金','水','水'];
+  var branchElem = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+  var elemNames = ['金','木','水','火','土'];
+  var elemColors = {'金':'#d4af37','木':'#5cb85c','水':'#5bc0de','火':'#e74c3c','土':'#d2a679'};
+  var elemChars = {'金':'⚪','木':'🟢','水':'🔵','火':'🔴','土':'🟤'};
+  var hourNames = ['子时','丑时','寅时','卯时','辰时','巳时','午时','未时','申时','酉时','戌时','亥时'];
+  var hourRanges = ['23-1点','1-3点','3-5点','5-7点','7-9点','9-11点','11-13点','13-15点','15-17点','17-19点','19-21点','21-23点'];
+  var nayin = ['海中金','海中金','炉中火','炉中火','大林木','大林木','路旁土','路旁土','剑锋金','剑锋金','山头火','山头火','涧下水','涧下水','城头土','城头土','白蜡金','白蜡金','杨柳木','杨柳木','泉中水','泉中水','屋上土','屋上土','霹雳火','霹雳火','松柏木','松柏木','长流水','长流水','砂石金','砂石金','山下火','山下火','平地木','平地木','壁上土','壁上土','金箔金','金箔金','覆灯火','覆灯火','天河水','天河水','大驿土','大驿土','钗钏金','钗钏金','桑柘木','桑柘木','大溪水','大溪水','沙中土','沙中土','天上火','天上火','石榴木','石榴木','大海水','大海水'];
+
+  // 五行关系
+  var generateFrom = [4,2,0,1,3]; // 生我: 金←土,木←水,水←金,火←木,土←火
+  var generateTo = [2,3,1,4,0];  // 我生: 金→水,木→火,水→木,火→土,土→金
+  var overcomeBy = [3,0,4,2,1];  // 克我: 金←火,木←金,水←土,火←水,土←木
+  var overcomeTo = [1,4,3,0,2];  // 我克: 金→木,木→土,水→火,火→金,土→水
+
+  var dayMasterTraits = {
+    '金':'刚毅果断，重义气，有领导之才，然易刚愎自用',
+    '木':'仁慈正直，有上进心，喜助人为乐，然易固执己见',
+    '水':'聪慧灵活，善变通，富有智慧，然易漂泊不定',
+    '火':'热情奔放，知礼节，有冲劲，然易冲动急躁',
+    '土':'诚实守信，稳重踏实，可托重任，然易保守迟疑'
+  };
+
+  // 填充下拉
+  var yearSel = document.getElementById('baziYear');
+  for(var y=2025; y>=1940; y--){
+    var opt = document.createElement('option');
+    opt.value = y; opt.textContent = y + '年';
+    yearSel.appendChild(opt);
+  }
+  yearSel.value = 1990;
+
+  var monthSel = document.getElementById('baziMonth');
+  for(var m=1; m<=12; m++){
+    var opt = document.createElement('option');
+    opt.value = m; opt.textContent = m + '月';
+    monthSel.appendChild(opt);
+  }
+
+  var daySel = document.getElementById('baziDay');
+  for(var d=1; d<=31; d++){
+    var opt = document.createElement('option');
+    opt.value = d; opt.textContent = d + '日';
+    daySel.appendChild(opt);
+  }
+
+  var hourSel = document.getElementById('baziHour');
+  for(var h=0; h<12; h++){
+    var opt = document.createElement('option');
+    opt.value = h; opt.textContent = hourNames[h] + '（' + hourRanges[h] + '）';
+    hourSel.appendChild(opt);
+  }
+
+  // 性别选择
+  var selectedGender = 'male';
+  document.querySelectorAll('.gender-opt').forEach(function(el){
+    el.addEventListener('click', function(){
+      document.querySelectorAll('.gender-opt').forEach(function(e){ e.classList.remove('active'); });
+      this.classList.add('active');
+      selectedGender = this.getAttribute('data-gender');
+    });
+  });
+
+  // 大师选择
+  var selectedMaster = 'huiming';
+  document.querySelectorAll('.master-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      document.querySelectorAll('.master-card').forEach(function(c){ c.classList.remove('selected'); });
+      this.classList.add('selected');
+      selectedMaster = this.getAttribute('data-master');
+    });
+  });
+
+  // 排盘算法
+  function getDayDiff(y, m, d){
+    var date = new Date(y, m-1, d);
+    var base = new Date(1900, 0, 1);
+    return Math.round((date - base) / 86400000);
+  }
+
+  function getYearPillar(y, m, d){
+    var year = y;
+    if(m < 2 || (m === 2 && d < 4)) year = y - 1;
+    var stem = ((year - 4) % 10 + 10) % 10;
+    var branch = ((year - 4) % 12 + 12) % 12;
+    return {stem:stem, branch:branch, year:year};
+  }
+
+  function getMonthPillar(yearStem, month){
+    var monthBranch = ((month + 1) % 12 + 12) % 12;
+    var startStem = ((yearStem % 5) * 2 + 2) % 10;
+    var monthStem = ((startStem + month - 1) % 10 + 10) % 10;
+    return {stem:monthStem, branch:monthBranch};
+  }
+
+  function getDayPillar(y, m, d){
+    var diff = getDayDiff(y, m, d);
+    var stem = ((diff % 10) + 10) % 10;
+    var branch = ((diff % 12) + 10) % 12;
+    return {stem:stem, branch:branch};
+  }
+
+  function getHourPillar(dayStem, hourIndex){
+    var startStem = (dayStem % 5) * 2;
+    var stem = ((startStem + hourIndex) % 10 + 10) % 10;
+    return {stem:stem, branch:hourIndex};
+  }
+
+  function getNayin(stemIdx, branchIdx){
+    var ganzhiIdx = ((stemIdx - branchIdx + 10) % 10 / 2);
+    var idx = branchIdx * 5 + ganzhiIdx;
+    return nayin[idx] || '';
+  }
+
+  function elemIdx(name){
+    return elemNames.indexOf(name);
+  }
+
+  function countElements(pillars){
+    var counts = [0,0,0,0,0];
+    pillars.forEach(function(p){
+      counts[elemIdx(stemElem[p.stem])]++;
+      counts[elemIdx(branchElem[p.branch])]++;
+    });
+    return counts;
+  }
+
+  function analyze(pillars){
+    var dayStem = pillars[2].stem;
+    var dayElem = stemElem[dayStem];
+    var dayElemIdx = elemIdx(dayElem);
+    var counts = countElements(pillars);
+    var support = counts[dayElemIdx] + counts[generateFrom[dayElemIdx]];
+    var consume = counts[generateTo[dayElemIdx]] + counts[overcomeTo[dayElemIdx]] + counts[overcomeBy[dayElemIdx]];
+    var strong = support >= consume;
+    var favorable = strong ? [generateTo[dayElemIdx], overcomeTo[dayElemIdx], overcomeBy[dayElemIdx]] : [generateFrom[dayElemIdx], dayElemIdx];
+    var unfavorable = strong ? [generateFrom[dayElemIdx], dayElemIdx] : [generateTo[dayElemIdx], overcomeTo[dayElemIdx], overcomeBy[dayElemIdx]];
+
+    return {
+      dayElem: dayElem,
+      dayElemIdx: dayElemIdx,
+      counts: counts,
+      strong: strong,
+      favorable: favorable,
+      unfavorable: unfavorable,
+      support: support,
+      consume: consume
+    };
+  }
+
+  function generateAnalysis(analysis, masterKey){
+    var de = analysis.dayElem;
+    var strong = analysis.strong;
+    var counts = analysis.counts;
+    var favElems = analysis.favorable.map(function(i){return elemNames[i];}).join('、');
+    var unfavElems = analysis.unfavorable.map(function(i){return elemNames[i];}).join('、');
+    var traits = dayMasterTraits[de];
+    var strength = strong ? '偏旺' : '偏弱';
+
+    // 找最旺和最弱的五行
+    var maxIdx = 0, minIdx = 0;
+    for(var i=1; i<5; i++){
+      if(counts[i] > counts[maxIdx]) maxIdx = i;
+      if(counts[i] < counts[minIdx]) minIdx = i;
+    }
+    var maxElem = elemNames[maxIdx];
+    var minElem = elemNames[minIdx];
+
+    if(masterKey === 'huiming'){
+      return '命主日主为'+de+'，'+traits+'。观此八字，'+de+'气'+strength+'，五行之中'+maxElem+'最旺、'+minElem+'最弱。' +
+        (strong ? '身旺者，喜食伤泄秀、财星耗之、官杀克之，' : '身弱者，喜印星生扶、比劫助之，') +
+        '故用神取'+favElems+'为佳，忌'+unfavElems+'。' +
+        '《金刚经》云：「一切有为法，如梦幻泡影。」命虽先天所定，运乃后天所修。' +
+        '命主'+de+'性之人，当以'+(strong ? '谦逊收敛' : '精进自强')+'为本。' +
+        '五行偏'+maxElem+'者，宜'+(maxElem==='金'?'多近水木':maxElem==='木'?'多近火土':maxElem==='水'?'多近木火':maxElem==='火'?'多近土金':'多近金水')+'以调之。' +
+        '命理非定数，积善修德，可转先天之局。佛云：命由己造，相由心生。';
+    } else if(masterKey === 'mingxin'){
+      return '施主日主为'+de+'，'+traits+'。师父看了您的八字，'+de+'气'+strength+'，五行分布中'+maxElem+'偏多、'+minElem+'偏少。' +
+        (strong ? '您是个有主见、有力量的人，但有时也会太强势了一点。师父建议您多包容、多听取他人意见，' : '您是个温和善良的人，但有时会觉得自己力量不够。师父想告诉您，柔弱也是一种力量，') +
+        '用神在'+favElems+'，多接触与'+favElems+'相关的事物，对您有好处。' +
+        '命主'+de+'性之人，心地'+(de==='金'?'刚正':de==='木'?'仁善':de==='水'?'聪慧':de==='火'?'热忱':'敦厚')+'，' +
+        '只要心存善念，多行布施，福报自然增长。' +
+        '师父为您祈福，愿您'+(strong?'学会放下，以柔克刚':'增强自信，勇猛精进')+'，一切顺遂。阿弥陀佛。';
+    } else {
+      return '直说：日主'+de+'，'+strength+'。五行'+maxElem+'旺'+minElem+'弱，用神'+favElems+'，忌'+unfavElems+'。' +
+        (strong ? '身旺别太冲，凡事收着点，该低调就低调。' : '身弱别怂，补'+favElems+'，借力打力。') +
+        '性格上，'+traits+'。' +
+        (de==='金'?'适合做管理、金融、军警；':de==='木'?'适合做教育、文化、医疗；':de==='水'?'适合做贸易、传播、咨询；':de==='火'?'适合做传媒、餐饮、能源；':'适合做地产、农业、基建。') +
+        '五行缺'+minElem+'，平时多用'+minElem+'色之物，方位上多走'+(minElem==='金'?'西方':minElem==='木'?'东方':minElem==='水'?'北方':minElem==='火'?'南方':'中央')+'。' +
+        '记住：命是先天牌，运是后天打。好牌打烂的大有人在，烂牌打赢的也不少。关键在你自己。';
+    }
+  }
+
+  function generateLiunian(analysis){
+    var now = new Date();
+    var curYear = now.getFullYear();
+    var dayElemIdx = analysis.dayElemIdx;
+    var result = [];
+    for(var i=0; i<3; i++){
+      var y = curYear + i;
+      var yStem = ((y - 4) % 10 + 10) % 10;
+      var yBranch = ((y - 4) % 12 + 12) % 12;
+      var yElem = elemIdx(stemElem[yStem]);
+      var tip = '';
+      if(yElem === dayElemIdx || yElem === generateFrom[dayElemIdx]){
+        tip = '利·顺势';
+      } else if(yElem === overcomeBy[dayElemIdx]){
+        tip = '慎·压力';
+      } else if(yElem === overcomeTo[dayElemIdx]){
+        tip = '财·机遇';
+      } else if(yElem === generateTo[dayElemIdx]){
+        tip = '动·付出';
+      } else {
+        tip = '平·稳守';
+      }
+      result.push({year:y, ganzhi:stems[yStem]+branches[yBranch], tip:tip});
+    }
+    return result;
+  }
+
+  document.getElementById('paipanBtn').addEventListener('click', function(){
+    var y = parseInt(yearSel.value);
+    var m = parseInt(monthSel.value);
+    var d = parseInt(daySel.value);
+    var h = parseInt(hourSel.value);
+
+    showToast('排盘中，推演天干地支……', 1500);
+
+    setTimeout(function(){
+      var yp = getYearPillar(y, m, d);
+      var mp = getMonthPillar(yp.stem, m);
+      var dp = getDayPillar(y, m, d);
+      var hp = getHourPillar(dp.stem, h);
+      var pillars = [yp, mp, dp, hp];
+      var analysis = analyze(pillars);
+
+      // 四柱表
+      var labels = ['年柱','月柱','日柱','时柱'];
+      var tableHtml = '';
+      pillars.forEach(function(p, i){
+        tableHtml +=
+          '<div class="pillar-cell">'+
+            '<div class="pillar-label">'+labels[i]+'</div>'+
+            '<div class="pillar-gan">'+stems[p.stem]+'</div>'+
+            '<div class="pillar-zhi">'+branches[p.branch]+'</div>'+
+            '<div class="pillar-elem">'+stemElem[p.stem]+' · '+branchElem[p.branch]+'</div>'+
+            '<div class="pillar-nayin">'+getNayin(p.stem, p.branch)+'</div>'+
+          '</div>';
+      });
+      document.getElementById('pillarTable').innerHTML = tableHtml;
+
+      // 五行分布
+      var total = analysis.counts.reduce(function(a,b){return a+b;},0) || 1;
+      var barsHtml = '';
+      elemNames.forEach(function(en, i){
+        var c = analysis.counts[i];
+        var pct = Math.round(c / total * 100);
+        barsHtml +=
+          '<div class="wuxing-row">'+
+            '<div class="wuxing-icon" style="background:'+elemColors[en]+';">'+en+'</div>'+
+            '<div class="wuxing-name">'+en+'</div>'+
+            '<div class="wuxing-track"><div class="wuxing-fill" style="width:'+pct+'%;background:'+elemColors[en]+';"></div></div>'+
+            '<div class="wuxing-count">'+c+'个 '+pct+'%</div>'+
+          '</div>';
+      });
+      document.getElementById('wuxingBars').innerHTML = barsHtml;
+
+      // 命格分析
+      var masterNames = {huiming:'慧明长老', mingxin:'明心师父', xuanzhen:'玄真道长'};
+      var masterTitles = {huiming:'庄严古德', mingxin:'慈悲尼师', xuanzhen:'直白道派'};
+      document.getElementById('analysisLabel').textContent = masterNames[selectedMaster] + ' 批命';
+      document.getElementById('analysisText').textContent = generateAnalysis(analysis, selectedMaster);
+      document.getElementById('analysisBy').textContent = '—— ' + masterTitles[selectedMaster] + ' · 般若阁';
+
+      // 流年
+      var liunian = generateLiunian(analysis);
+      var liunianHtml = '';
+      liunian.forEach(function(l){
+        liunianHtml +=
+          '<div class="liunian-item">'+
+            '<div class="liunian-year">'+l.year+'年</div>'+
+            '<div class="liunian-ganzhi">'+l.ganzhi+'</div>'+
+            '<div class="liunian-tip">'+l.tip+'</div>'+
+          '</div>';
+      });
+      document.getElementById('liunianRow').innerHTML = liunianHtml;
+
+      var wrap = document.getElementById('resultWrap');
+      wrap.classList.add('show');
+      wrap.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 800);
+  });
+
+  document.getElementById('repaipanBtn').addEventListener('click', function(){
+    document.getElementById('resultWrap').classList.remove('show');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+</body>
+</html>

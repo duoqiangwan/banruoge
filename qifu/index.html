@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>心愿供灯 · 般若阁</title>
+<meta name="description" content="点一盏灯，写下一份祝愿。为自己、为家人、为众生祈福，灯灯相续，愿愿皆成。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* 页面专属样式 */
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+
+  /* 灯类型卡 */
+  .lamp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .lamp-type { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:12px; padding:16px 8px; text-align:center; cursor:pointer; transition:all 0.2s; position:relative; }
+  .lamp-type:hover { border-color: rgba(201,160,94,0.5); }
+  .lamp-type.active { border-color: var(--gold); background:rgba(201,160,94,0.1); box-shadow:0 0 16px rgba(201,160,94,0.2); }
+  .lamp-icon { width:40px; height:40px; margin:0 auto 8px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; }
+  .lamp-type-pingan .lamp-icon { background:radial-gradient(circle, rgba(201,160,94,0.35), rgba(201,160,94,0.05)); color:var(--gold-light); }
+  .lamp-type-zhihui .lamp-icon { background:radial-gradient(circle, rgba(91,158,178,0.35), rgba(91,158,178,0.05)); color:#9fd3e0; }
+  .lamp-type-fubao .lamp-icon { background:radial-gradient(circle, rgba(192,57,43,0.35), rgba(192,57,43,0.05)); color:var(--vermillion-light); }
+  .lamp-name { font-size:0.95rem; color:var(--paper-dark); margin-bottom:4px; }
+  .lamp-desc { font-size:0.72rem; color:var(--ink-muted); line-height:1.5; }
+
+  /* 点亮的灯 */
+  .lit-lamp-wrap { display:none; flex-direction:column; align-items:center; gap:16px; padding:24px 0; }
+  .lit-lamp { position:relative; width:90px; height:130px; }
+  .flame { position:absolute; left:50%; top:-6px; transform:translateX(-50%); width:18px; height:28px; background:radial-gradient(ellipse at 50% 70%, #fff3c4 0%, #f5b942 40%, #e85d2c 80%, transparent 100%); border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; transform-origin:50% 100%; animation:flame-flicker 0.6s ease-in-out infinite alternate; filter:drop-shadow(0 0 12px rgba(245,185,66,0.8)); }
+  @keyframes flame-flicker {
+    0% { transform:translateX(-50%) scaleY(1) rotate(-2deg); }
+    100% { transform:translateX(-50%) scaleY(1.12) rotate(2deg); }
+  }
+  .lamp-body { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:60px; height:90px; }
+  .lamp-glow { position:absolute; inset:-30px; border-radius:50%; background:radial-gradient(circle, rgba(245,185,66,0.3), transparent 70%); animation:glow-pulse 2s ease-in-out infinite; }
+  @keyframes glow-pulse { 0%,100%{opacity:0.6;} 50%{opacity:1;} }
+  .blessing-text { font-family:'ZhiMangXing','Noto Serif SC',cursive; font-size:1.4rem; color:var(--gold-light); text-align:center; line-height:2; }
+
+  /* 灯墙 */
+  .lamp-wall { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
+  .wall-item { border:1px solid rgba(201,160,94,0.15); background:rgba(34,26,20,0.6); border-radius:10px; padding:12px; position:relative; overflow:hidden; }
+  .wall-item::before { content:''; position:absolute; top:8px; right:8px; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); animation:glow-pulse 2s ease-in-out infinite; }
+  .wall-name { font-size:0.9rem; color:var(--gold); margin-bottom:6px; }
+  .wall-wish { font-size:0.8rem; color:var(--paper-dark); line-height:1.6; margin-bottom:6px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .wall-time { font-size:0.7rem; color:var(--ink-muted); }
+
+  textarea.input-field { resize:vertical; min-height:90px; font-family:inherit; }
+  .char-count { text-align:right; font-size:0.75rem; color:var(--ink-muted); margin-top:4px; }
+  .field-label { display:block; font-size:0.85rem; color:var(--gold); margin-bottom:8px; letter-spacing:0.05em; }
+  .knowledge-card { background:rgba(42,31,24,0.5); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:16px; }
+  .knowledge-card p { margin:0 0 8px; line-height:1.9; font-size:0.9rem; color:var(--paper-dark); }
+  .knowledge-card p:last-child { margin-bottom:0; }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <!-- 页头 -->
+  <section style="text-align:center;padding:24px 0 8px;">
+    <h1 class="font-display gold-text-gradient page-title">心愿供灯</h1>
+    <p class="page-sub">点一盏灯，写下一份祝愿</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <!-- 供灯表单 -->
+  <section class="card" style="padding:24px;margin-top:24px;" data-reveal>
+    <h2 class="section-title">填写心愿</h2>
+    <form id="lampForm" style="display:flex;flex-direction:column;gap:18px;" autocomplete="off">
+
+      <div>
+        <label class="field-label" for="forWhom">为谁祈福</label>
+        <select id="forWhom" class="input-field" required>
+          <option value="自己">为自己</option>
+          <option value="家人" selected>为家人</option>
+          <option value="父母">为父母</option>
+          <option value="孩子">为孩子</option>
+          <option value="朋友">为朋友</option>
+          <option value="众生">为众生</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="field-label" for="lampName">名字 / 称呼</label>
+        <input id="lampName" type="text" class="input-field" placeholder="如：小明 / 母亲 / 全家" maxlength="12" required>
+      </div>
+
+      <div>
+        <label class="field-label" for="lampWish">心愿内容</label>
+        <textarea id="lampWish" class="input-field" placeholder="写下您的心愿，至诚则灵……" maxlength="200" required></textarea>
+        <div class="char-count"><span id="charCount">0</span> / 200</div>
+      </div>
+
+      <div>
+        <label class="field-label">选择灯种</label>
+        <div class="lamp-grid" id="lampTypes">
+          <div class="lamp-type lamp-type-pingan active" data-type="pingan" data-blessing="一灯能破千年暗，一念能消万劫灾。愿平安灯照亮前路，所行之处皆得安稳，所遇之人皆怀善意。">
+            <div class="lamp-icon">🪔</div>
+            <div class="lamp-name">平安灯</div>
+            <div class="lamp-desc">金色<br>消灾免难</div>
+          </div>
+          <div class="lamp-type lamp-type-zhihui" data-type="zhihui" data-blessing="智慧如海，澄明如镜。愿智慧灯破除无明，令心眼开明，于纷扰世间得见本真，于迷惑之中常生正见。">
+            <div class="lamp-icon">🕯️</div>
+            <div class="lamp-name">智慧灯</div>
+            <div class="lamp-desc">青色<br>开慧明心</div>
+          </div>
+          <div class="lamp-type lamp-type-fubao" data-type="fubao" data-blessing="福报如灯，灯灯相续。愿福报灯汇聚善缘，令所求如愿、所行顺遂，福禄绵长，善根增长。">
+            <div class="lamp-icon">🏮</div>
+            <div class="lamp-name">福报灯</div>
+            <div class="lamp-desc">红色<br>增福延寿</div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-ritual" style="width:100%;font-size:1.15rem;">点 灯</button>
+    </form>
+  </section>
+
+  <!-- 点灯结果 -->
+  <section class="lit-lamp-wrap" id="litLampWrap">
+    <div class="lit-lamp">
+      <div class="lamp-glow"></div>
+      <div class="flame"></div>
+      <div class="lamp-body">
+        <svg viewBox="0 0 60 90" style="width:100%;height:100%;">
+          <ellipse cx="30" cy="16" rx="14" ry="4" fill="rgba(201,160,94,0.3)"/>
+          <path d="M14 22 Q30 18 46 22 L42 70 Q30 76 18 70 Z" fill="#8b6914" fill-opacity="0.25" stroke="#c9a05c" stroke-width="1.2"/>
+          <path d="M18 28 Q30 25 42 28" stroke="#c9a05c" stroke-width="0.8" fill="none" opacity="0.6"/>
+          <ellipse cx="30" cy="78" rx="20" ry="5" fill="#3a2a1a" stroke="#c9a05c" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:0.8rem;color:var(--ink-muted);margin-bottom:4px;" id="litMeta"></div>
+      <div class="blessing-text" id="litBlessing"></div>
+    </div>
+    <button class="btn-secondary" onclick="document.getElementById('litLampWrap').style.display='none';document.getElementById('lampForm').scrollIntoView({behavior:'smooth'});">再点一盏</button>
+  </section>
+
+  <!-- 灯墙 -->
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">心愿灯墙</h2>
+    <p style="font-size:0.85rem;color:var(--ink-muted);margin:0 0 16px;">众灯汇聚，愿愿相承。下方为近期点亮的心愿灯。</p>
+    <div class="lamp-wall" id="lampWall"></div>
+  </section>
+
+  <!-- 文化小知识 -->
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">供灯文化</h2>
+    <div class="knowledge-card">
+      <p>供灯，源于古印度以灯火供养佛菩萨的传统，传入中土后与本土灯祭习俗相融，成为寺院与民间祈福的重要仪轨。</p>
+      <p>佛经有云：「一灯能破千年暗，一智能灭万年愚。」灯表智慧与光明，燃灯供佛，既为破除无明，亦为回向众生。</p>
+      <p>供灯之时，心当至诚。一念清净，则一灯功德；念念相续，则灯灯无尽。愿每一盏心灯，皆照见自性光明。</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  var selectedType = document.querySelector('.lamp-type.active');
+  var selectedBlessing = selectedType ? selectedType.getAttribute('data-blessing') : '';
+
+  // 灯种切换
+  document.querySelectorAll('.lamp-type').forEach(function(el){
+    el.addEventListener('click', function(){
+      document.querySelectorAll('.lamp-type').forEach(function(e){ e.classList.remove('active'); });
+      this.classList.add('active');
+      selectedBlessing = this.getAttribute('data-blessing');
+    });
+  });
+
+  // 字数统计
+  var wishInput = document.getElementById('lampWish');
+  var charCount = document.getElementById('charCount');
+  wishInput.addEventListener('input', function(){
+    charCount.textContent = this.value.length;
+  });
+
+  // 提交点灯
+  document.getElementById('lampForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var whom = document.getElementById('forWhom').value;
+    var name = document.getElementById('lampName').value.trim();
+    var wish = document.getElementById('lampWish').value.trim();
+    if(!name || !wish){ showToast('请填写名字与心愿'); return; }
+
+    lightLamp(function(){
+      // 显示结果
+      var meta = '为 ' + whom + ' · ' + name + ' 点亮';
+      document.getElementById('litMeta').textContent = meta;
+      document.getElementById('litBlessing').textContent = selectedBlessing || '愿所求皆如愿，所行皆坦途。';
+      var wrap = document.getElementById('litLampWrap');
+      wrap.style.display = 'flex';
+      wrap.scrollIntoView({behavior:'smooth'});
+
+      // 加入灯墙
+      addWallItem(name, wish, '刚刚', selectedBlessing);
+      showToast('灯已点亮，愿心愿成真', 1800);
+    });
+  });
+
+  // 灯墙示例数据
+  var sampleLamps = [
+    {name:'善信 李居士', wish:'愿母亲身体康健，远离病痛，岁岁平安。', time:'5分钟前'},
+    {name:'诚心者', wish:'祈愿家中老人安康，孩子学业有成，全家和顺。', time:'12分钟前'},
+    {name:'无名氏', wish:'愿世间众生离苦得乐，少些纷争，多些慈悲。', time:'28分钟前'},
+    {name:'王氏女', wish:'愿父亲手术顺利，早日康复，感恩诸佛加持。', time:'40分钟前'},
+    {name:'净心', wish:'求智慧开明，于迷惑中得见正道，心常清净。', time:'1小时前'},
+    {name:'张先生', wish:'愿事业顺遂，遇贵人相扶，亦不忘布施利他。', time:'2小时前'},
+    {name:'慈母心', wish:'愿在外游子平安归来，一路顺风，家人牵挂。', time:'3小时前'},
+    {name:'修行人', wish:'愿精进不退，道心坚固，今生得闻正法。', time:'5小时前'}
+  ];
+
+  function addWallItem(name, wish, time, blessing){
+    var wall = document.getElementById('lampWall');
+    var item = document.createElement('div');
+    item.className = 'wall-item animate-fade-in-up';
+    item.innerHTML = '<div class="wall-name">'+ escapeHtml(name) +'</div>'+
+      '<div class="wall-wish">'+ escapeHtml(wish) +'</div>'+
+      '<div class="wall-time">'+ escapeHtml(time) +'</div>';
+    wall.insertBefore(item, wall.firstChild);
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  // 渲染示例灯墙
+  sampleLamps.forEach(function(l){ addWallItem(l.name, l.wish, l.time); });
+})();
+</script>
+</body>
+</html>

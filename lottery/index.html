@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>关帝灵签 · 般若阁</title>
+<meta name="description" content="心诚则灵，一签一事。请三位大师为您解读关帝灵签，事业姻缘健康，一签知吉凶。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+
+  /* 签筒舞台 */
+  .holder-stage { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:32px 0; background:radial-gradient(ellipse at 50% 60%, rgba(201,160,94,0.1), transparent 70%); border-radius:16px; }
+  .holder-wrap { position:relative; width:140px; height:200px; display:flex; align-items:flex-end; justify-content:center; }
+  .holder-wrap.shaking { animation:holder-shake 0.15s ease-in-out infinite; }
+  @keyframes holder-shake {
+    0%,100% { transform:translateX(0) rotate(0deg); }
+    25% { transform:translateX(-4px) rotate(-2deg); }
+    75% { transform:translateX(4px) rotate(2deg); }
+  }
+  /* 签筒内的签 */
+  .stick { position:absolute; bottom:60px; width:4px; background:linear-gradient(to top, #8b6914, #c9a05c); border-radius:2px; transform-origin:bottom center; }
+  .stick-head { position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:10px; height:10px; border-radius:50%; background:var(--vermillion); }
+
+  .drawn-stick { position:absolute; bottom:140px; left:50%; transform:translateX(-50%); width:5px; height:120px; background:linear-gradient(to top, #8b6914, #c9a05c 80%, #e8d5b0); border-radius:3px; opacity:0; transition:all 0.6s ease; }
+  .drawn-stick.show { opacity:1; bottom:200px; }
+  .drawn-stick .stick-head { top:-8px; width:12px; height:12px; }
+
+  /* 大师卡 */
+  .master-list { display:flex; flex-direction:column; gap:12px; }
+  .master-card .master-emoji { font-size:2rem; flex-shrink:0; width:48px; height:48px; border-radius:50%; background:rgba(201,160,94,0.1); display:flex; align-items:center; justify-content:center; }
+  .master-info { flex:1; }
+  .master-name { font-size:1.05rem; color:var(--gold-light); margin-bottom:2px; }
+  .master-title { font-size:0.75rem; color:var(--ink-muted); margin-bottom:6px; }
+  .master-style { font-size:0.85rem; color:var(--paper-dark); line-height:1.6; }
+
+  /* 问题输入 */
+  .q-suggest { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .q-chip { border:1px solid rgba(201,160,94,0.25); background:rgba(34,26,20,0.6); border-radius:999px; padding:6px 14px; font-size:0.8rem; color:var(--paper-dark); cursor:pointer; transition:all 0.2s; }
+  .q-chip:hover { border-color:var(--gold); color:var(--gold); }
+
+  /* 签文结果 */
+  .result-wrap { display:none; }
+  .result-wrap.show { display:block; animation:fade-in-up 0.6s ease-out forwards; }
+  .lottery-card { margin-top:0; }
+  .lottery-num { font-size:0.85rem; color:var(--ink-light); letter-spacing:0.1em; }
+  .lottery-grade { display:inline-block; font-family:'ZhiMangXing',cursive; font-size:1.8rem; padding:4px 20px; border-radius:8px; margin:8px 0; }
+  .grade-top { color:#b8332a; background:rgba(192,57,43,0.1); border:1px solid rgba(192,57,43,0.3); }
+  .grade-up { color:#c97a2a; background:rgba(201,122,42,0.1); border:1px solid rgba(201,122,42,0.3); }
+  .grade-mid { color:#5a7a5a; background:rgba(90,122,90,0.1); border:1px solid rgba(90,122,90,0.3); }
+  .grade-down { color:#6b5a4a; background:rgba(107,90,74,0.1); border:1px solid rgba(107,90,74,0.3); }
+  .grade-bottom { color:#4a3a2a; background:rgba(74,58,42,0.1); border:1px solid rgba(74,58,42,0.3); }
+  .lottery-title { font-family:'ZhiMangXing',cursive; font-size:1.6rem; color:var(--ink); margin:12px 0; }
+  .lottery-poem { font-family:'ZhiMangXing','Noto Serif SC',cursive; font-size:1.5rem; line-height:2.2; color:var(--ink); text-align:center; padding:16px 0; }
+  .master-interpret { background:rgba(58,42,26,0.08); border-left:3px solid var(--gold-dark); border-radius:0 8px 8px 0; padding:16px; margin-top:16px; text-align:left; }
+  .interpret-label { font-size:0.8rem; color:var(--gold-dark); margin-bottom:8px; font-weight:500; }
+  .interpret-text { font-size:0.95rem; color:var(--ink); line-height:1.9; }
+  .interpret-by { font-size:0.75rem; color:var(--ink-light); margin-top:8px; font-style:italic; }
+
+  .knowledge-card { background:rgba(42,31,24,0.5); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:16px; }
+  .knowledge-card p { margin:0 0 8px; line-height:1.9; font-size:0.9rem; color:var(--paper-dark); }
+  .knowledge-card p:last-child { margin-bottom:0; }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <!-- 页头 -->
+  <section style="text-align:center;padding:24px 0 8px;">
+    <h1 class="font-display gold-text-gradient page-title">关帝灵签</h1>
+    <p class="page-sub">心诚则灵 · 一签一事</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <!-- 签筒 -->
+  <section class="card" style="padding:24px;margin-top:24px;" data-reveal>
+    <div class="holder-stage">
+      <div class="holder-wrap" id="holderWrap">
+        <!-- 签筒内多支签 -->
+        <div class="stick" style="left:calc(50% - 24px);height:110px;transform:rotate(-8deg);"><div class="stick-head"></div></div>
+        <div class="stick" style="left:calc(50% - 14px);height:120px;transform:rotate(-3deg);"><div class="stick-head"></div></div>
+        <div class="stick" style="left:calc(50% - 4px);height:125px;transform:rotate(1deg);"><div class="stick-head"></div></div>
+        <div class="stick" style="left:calc(50% + 6px);height:118px;transform:rotate(5deg);"><div class="stick-head"></div></div>
+        <div class="stick" style="left:calc(50% + 16px);height:112px;transform:rotate(9deg);"><div class="stick-head"></div></div>
+        <!-- 抽出的签 -->
+        <div class="drawn-stick" id="drawnStick"><div class="stick-head"></div></div>
+        <!-- 签筒 SVG -->
+        <svg viewBox="0 0 140 90" style="width:140px;height:90px;position:relative;z-index:2;">
+          <path d="M30 10 Q70 4 110 10 L104 78 Q70 86 36 78 Z" fill="#3a2a1a" stroke="#c9a05c" stroke-width="1.4"/>
+          <path d="M36 18 Q70 13 104 18" stroke="#c9a05c" stroke-width="0.8" fill="none" opacity="0.5"/>
+          <ellipse cx="70" cy="10" rx="40" ry="6" fill="#2a1f18" stroke="#c9a05c" stroke-width="1.2"/>
+          <text x="70" y="50" text-anchor="middle" font-family="ZhiMangXing,cursive" font-size="22" fill="#c9a05c" opacity="0.75">签</text>
+        </svg>
+      </div>
+      <p style="font-size:0.85rem;color:var(--ink-muted);margin:0;text-align:center;">静心默念所问之事，摇签以求指引</p>
+    </div>
+  </section>
+
+  <!-- 大师选择 -->
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">选择解签大师</h2>
+    <div class="master-list" id="masterList">
+      <div class="master-card selected" data-master="huiming">
+        <div class="master-emoji">🧘</div>
+        <div class="master-info">
+          <div class="master-name">慧明长老</div>
+          <div class="master-title">庄严古德 · 引经据典</div>
+          <div class="master-style">修行六十载，通晓三藏。解签重在因果之理，常引佛经为证，言辞庄重，发人深省。</div>
+        </div>
+      </div>
+      <div class="master-card" data-master="mingxin">
+        <div class="master-emoji">🙏</div>
+        <div class="master-info">
+          <div class="master-name">明心师父</div>
+          <div class="master-title">慈悲尼师 · 温婉开解</div>
+          <div class="master-style">出家三十载，慈悲为怀。解签重在心灵抚慰，言语温柔，如春风化雨，令人心生安定。</div>
+        </div>
+      </div>
+      <div class="master-card" data-master="xuanzhen">
+        <div class="master-emoji">☯️</div>
+        <div class="master-info">
+          <div class="master-name">玄真道长</div>
+          <div class="master-title">直白道派 · 一针见血</div>
+          <div class="master-style">道门传人，通晓易理。解签直截了当，不绕弯子，吉凶分明，举措清晰，务实可循。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 问题输入 -->
+  <section class="card" style="padding:24px;margin-top:24px;" data-reveal>
+    <h2 class="section-title">所问之事</h2>
+    <input type="text" class="input-field" id="questionInput" placeholder="请输入您要问的事，如：事业、姻缘、健康">
+    <div class="q-suggest">
+      <span class="q-chip" data-q="事业前程">事业前程</span>
+      <span class="q-chip" data-q="姻缘感情">姻缘感情</span>
+      <span class="q-chip" data-q="健康平安">健康平安</span>
+      <span class="q-chip" data-q="财运投资">财运投资</span>
+      <span class="q-chip" data-q="学业考试">学业考试</span>
+    </div>
+    <button class="btn-ritual" id="drawBtn" style="width:100%;margin-top:18px;font-size:1.15rem;">摇 签</button>
+  </section>
+
+  <!-- 抽签结果 -->
+  <section class="result-wrap" id="resultWrap" data-reveal>
+    <div class="lottery-card">
+      <div class="lottery-num" id="lotteryNum">第 一 签</div>
+      <div class="lottery-grade grade-mid" id="lotteryGrade">中 签</div>
+      <div class="lottery-title" id="lotteryTitle">签题</div>
+      <div class="gold-divider" style="background:linear-gradient(90deg,transparent,rgba(58,42,26,0.4),transparent);"></div>
+      <div class="lottery-poem font-display" id="lotteryPoem"></div>
+      <div class="gold-divider" style="background:linear-gradient(90deg,transparent,rgba(58,42,26,0.4),transparent);"></div>
+      <div class="master-interpret">
+        <div class="interpret-label" id="interpretLabel">大师解读</div>
+        <p class="interpret-text" id="interpretText"></p>
+        <div class="interpret-by" id="interpretBy"></div>
+      </div>
+    </div>
+    <button class="btn-secondary" id="redrawBtn" style="width:100%;margin-top:16px;">再抽一签</button>
+  </section>
+
+  <!-- 文化说明 -->
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">关帝灵签</h2>
+    <div class="knowledge-card">
+      <p>关帝灵签，相传为关圣帝君所传，共一百签。关公忠义无双，被尊为「武财神」「伏魔大帝」，民间信其签文灵验，故求签者众。</p>
+      <p>灵签之要，在于「诚」字。《礼记》云：「至诚之道，可以前知。」求签之时，当先静心，默念所问，专注一事，不可心猿意马。一签只问一事，反复求问则不灵。</p>
+      <p>签分五等：上上签、上签、中签、下签、下下签。然吉凶非绝对，上签须努力方应，下签若行善亦可转。签文为参考，命运在人为。所谓「命由己造，相由心生」，此之谓也。</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  var selectedMaster = 'huiming';
+
+  // 签文数据
+  var lots = [
+    {
+      num:1, grade:'top', gradeText:'上上签', title:'钟离成道',
+      poem:'宝剑光芒按斗牛\n清琴一曲韵悠悠\n须知物外闲人乐\n不落凡尘第二流',
+      interpret:{
+        huiming:'此签大吉，乃超凡入圣之象。签中宝剑指智慧，清琴指清净心。阁下所问之事，当下当有贵人相助，事可大成。然须记得「物外闲人乐」——执着于得，反失其乐；淡然处之，方得其用。宜行善积德，以配此福。佛云：一切有为法，如梦幻泡影。了悟此理，则吉上加吉。',
+        mingxin:'阿弥陀佛，此乃上上吉签。施主福德深厚，所问之事当有善果。宝剑虽利，不为伤人；清琴虽雅，不染尘嚣。施主当下心境，宜如这清琴一般，平和从容。前路有贵人相扶，但莫忘初心，常怀感恩。若遇顺境，多行布施；若逢他人有难，伸手相助。慈悲之人，福报自来。师父在此为您祝福。',
+        xuanzhen:'直说吧，上上签，大吉。你要问的事，成。签里说「不落凡尘第二流」，意思是这事你做出来，比别人强。但别得意——「宝剑」是利器，也是麻烦，成事之后别张扬。「清琴」是清静，别贪。记住四个字：顺势而为。该出手时别犹豫，不该碰的别伸手。问事业，升；问姻缘，成；问财，有。就这么直白。'
+      }
+    },
+    {
+      num:2, grade:'up', gradeText:'上签', title:'苏武牧羊',
+      poem:'北海牧羊十九年\n冰霜历尽志弥坚\n一朝归汉功名显\n留得清名万古传',
+      interpret:{
+        huiming:'此签为上吉，然须历苦方得甘甜。苏武留匈奴十九年，持节不屈，终归汉室。阁下所问之事，当下或有阻滞，然不必忧惧。佛经云：「难行能行，难忍能忍。」此正是修行之时。坚守正道，不随波逐流，待机缘至时，自有大成。此签重在「志弥坚」三字——心若不动，外境何扰？',
+        mingxin:'施主，这是一支上签，但要先苦后甜。苏武在北海那么多年，吃了多少苦，可他心里始终有信念。施主当下或许觉得难，觉得累，但请相信，这些都是在积攒福报。师父常说，熬过去的人，才配得上好结果。您要问的事，坚持住，会有转机的。心里难受时，念念佛号，心就定了。别急，慢慢来。',
+        xuanzhen:'上签，但别想轻轻松松就成了。苏武牧羊十九年，你这事也得熬。关键就一个字：忍。签里说「志弥坚」，你心里得有数，别半道撂挑子。熬过去了，功名显，清名传，都跑不了。问事业的，别跳槽，稳住；问感情的，别冷战，主动点；问健康的，慢性病，慢慢养。十九年太久，但你这事儿，几个月到一年，见分晓。'
+      }
+    },
+    {
+      num:3, grade:'mid', gradeText:'中签', title:'张骞泛槎',
+      poem:'乘槎远去觅仙源\n万里风波一叶船\n莫道前路无定处\n到头终见武陵春',
+      interpret:{
+        huiming:'此签为中平，乃探索求索之象。张骞寻河源，历万里风波，终有所得。阁下所问之事，当下方向未明，前路漫漫，然不必气馁。佛法讲「缘起」，一切皆有因缘。你只管行去，每一步都是积累。到头终见武陵春——武陵春指桃花源，喻美好归宿。但须知，目的地虽美，路上修行更为紧要。',
+        mingxin:'施主，这是中签，不坏也不好，就是「还在路上」的意思。张骞乘着小船走了那么远，风浪不断，但他没回头。您现在问的这事，可能感觉飘忽不定，看不到头。别怕，师父觉得您方向是对的，就是还需要点时间。万里风波，一叶船，听着吓人，可船没翻不是？稳稳地往前走，春天就在前头。多念佛，心定了，路就清晰了。',
+        xuanzhen:'中签，意思就是你还在找、还在漂。张骞找仙源，你找答案，都一样——没到呢。但这签不是让你停，是让你继续走。「到头终见武陵春」，意思就是最后能成，但「到头」二字，你得有耐心。问事业的，别急着跳，再看看；问感情的，还在磨合期，别下结论；问投资的，长线持有，别短炒。一句话：别回头，往前走。'
+      }
+    },
+    {
+      num:4, grade:'mid', gradeText:'中签', title:'小秦王三跳涧',
+      poem:'三跳涧中事可成\n再求名利一时新\n英雄进退皆由命\n莫向春风逞少年',
+      interpret:{
+        huiming:'此签中平，重在知进退。秦王三跳涧，勇则有之，然签文告诫「莫逞少年」。阁下所问之事，当下或有机缘，可进，然须审时度势，不可逞强。佛法讲「中道」，不偏不倚。进退之间，当观因缘：因缘具足则进，因缘不足则守。英雄亦须认命——非认输，乃顺天时。莫因一时得意而忘形。',
+        mingxin:'施主，这签是说，事情能成，但别太冲。三跳涧，跳过去了是英雄，跳不过去就摔了。您问的事，有机会，但师父建议您稳着点来。「进退皆由命」不是说认命，是说要看清时机。该冲的时候冲，该停的时候停。年轻人容易冲动，您若是问事业学业，量力而行；问感情，别太上头。慢慢来，反而快。',
+        xuanzhen:'中签。能成，但有条件。三跳涧，第一次可能不成，再来。意思是这事得试几次，别一次失败就放弃。但「莫向春风逞少年」——别飘，别得瑟，成了也别嘚瑟。问事业的，可以争取，但别冒进；问感情的，主动可以，别死缠；问财运的，有机会，别贪多。记住：进退有度，别硬来。'
+      }
+    },
+    {
+      num:5, grade:'down', gradeText:'下签', title:'姜太公弃官',
+      poem:'渭水溪头一钓竿\n是非名利尽旁观\n时来鱼跃龙门去\n莫向迷途叹路难',
+      interpret:{
+        huiming:'此签为下，然非绝路，乃待时之象。太公渭水垂钓，非真钓鱼，乃待天时。阁下所问之事，当下恐难如意，强求无益。佛云：「因缘未熟，强求反苦。」此时宜静守，宜修德，宜广结善缘。待时运至时，鱼跃龙门，自有所成。莫叹路难——路虽难，心莫难。心安即是道场。',
+        mingxin:'施主，这是下签，但您别怕。下签不是坏事，是提醒您「时机未到」。姜太公钓鱼，等了多少年？八十岁才出山呢。您问的事，现在可能不成，但不是不成，是时候不到。师父建议您：先放下，别较劲。把心收回来，做该做的事，养精蓄锐。时候到了，自然就成了。心里别堵，念念佛，一切都有安排。',
+        xuanzhen:'下签，直说：现在不成。姜太公弃官钓鱼，意思是你这事得放一放，急也没用。但注意——太公最后钓到了周文王，八十岁封相。所以这不是死局，是让你等。问事业的，别折腾，先稳着；问感情的，别强求，随缘；问投资的，别动，守着。时来运转是有的，但得等。等多久？看你造化。别叹气，叹气没用。'
+      }
+    },
+    {
+      num:6, grade:'top', gradeText:'上上签', title:'相如题桥',
+      poem:'题桥立志气凌云\n乘驷归来耀里门\n莫道文章无实用\n大器终当晚乃成',
+      interpret:{
+        huiming:'此签大吉，乃大器晚成之象。司马相如题桥立志，后果乘驷马衣锦还乡。阁下所问之事，当下或未见显效，然志已立，功必成。佛经云：「初发心时，便成正觉。」发心之刻，果已注定。然须耐心——大器晚成，非不成，乃成之大。宜守志不移，广修六度，待因缘圆熟，自当显发。',
+        mingxin:'阿弥陀佛，上上吉签。施主，您这事能成，而且成得漂亮。司马相如当年题桥立誓，别人笑他，后来他真回来了，风光无限。您现在可能被人看轻，或者自己也没底，但师父告诉您：别动摇。「大器晚成」——好的东西，值得等。您只管努力，多行善事，福报到了，挡都挡不住。师父为您高兴，也为您加油。',
+        xuanzhen:'上上签，大吉。但你得有耐心。相如题桥，立志容易，等回来难。「大器晚成」四个字记住了——你这事不是不成，是成得晚。问事业的，别急着要结果，埋头干；问学业的，考研考公，能成，别半途而废；问感情的，慢热型，最后能成。这签最忌一个字：急。急了就废了。稳住，时间站在你这边。'
+      }
+    },
+    {
+      num:7, grade:'up', gradeText:'上签', title:'伯牙学琴',
+      poem:'琴声一曲遇知音\n高山流水古今闻\n莫道世间无识者\n终有知音契此心',
+      interpret:{
+        huiming:'此签上吉，乃得遇知音之象。伯牙子期，高山流水，千古美谈。阁下所问之事，关乎人际寻觅——或姻缘，或合作，或知己。当下或许孤单，然不必忧虑。佛法讲「同愿同行」，志同道合者终会相聚。但须知，欲得知音，先须是知音。修己以待人，心净则缘至。高山流水，非求而来，乃感而通。',
+        mingxin:'施主，这是上签，说您会遇到对的人。伯牙弹琴，子期能听懂，这缘分多难得。您问的若是姻缘，那个人会出现，别急；问的若是事业合作，会遇到合拍的伙伴。师父觉得，这签重点是「先做好自己」。伯牙琴弹得好，才引来子期。您把自己修炼好了，对的人自然就来了。别将就，别凑合，值得等的，就等。',
+        xuanzhen:'上签。你会遇到对的人。问姻缘的，别相亲了，等，缘分到了自然来；问合作的，别随便找人，等对的。高山流水，意思就是——宁缺毋滥。但这签有个前提：你得是伯牙。自己没本事，遇到子期也没用。所以，一边等，一边提升自己。别闲着。知音这事，急不得，也求不来，但来了就值。'
+      }
+    },
+    {
+      num:8, grade:'down', gradeText:'下签', title:'李广不封侯',
+      poem:'飞将从来数李广\n数奇不遇叹时乖\n英雄自古多磨折\n莫向春风怨落花',
+      interpret:{
+        huiming:'此签为下，乃时运不济之象。李广一生征战，终不得封侯，非力不足，乃数奇也。阁下所问之事，当下恐难如愿，非阁下之过，乃因缘未凑。佛法讲「因果」，此世之因，或为前世之缘，不必怨尤。英雄多磨折，磨折即修行。莫怨落花——花开花落，皆有其时。当下宜守本分，广种善因，待来日因缘转时，自有佳境。',
+        mingxin:'施主，这是下签，师父先说声抱歉。李广那么厉害的将军，一辈子没封侯，不是他不行，是运气差了点。您问的事，可能也是这样——您做得挺好，但就是差那么临门一脚。师父想跟您说：这不是您的错，别自责。有时候，放下执念，反而会有转机。这签不是让您放弃，是让您别太执着结果。做好手头的事，念念佛，心宽了，路就宽了。',
+        xuanzhen:'下签，直说：这事悬。李广飞将军，打仗厉害吧？一辈子没封侯。为什么？运气差。你问的事，大概率也是这个情况——你没问题，但时运不济。怎么办？两条路：一，换条路走，别死磕；二，接受现实，等下一个机会。问事业的，可能升不上去，别钻牛角尖；问感情的，可能成不了，别太投入；问财运的，别冒险。别怨，怨没用。'
+      }
+    }
+  ];
+
+  // 大师选择
+  document.querySelectorAll('.master-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      document.querySelectorAll('.master-card').forEach(function(c){ c.classList.remove('selected'); });
+      this.classList.add('selected');
+      selectedMaster = this.getAttribute('data-master');
+    });
+  });
+
+  // 问题快捷
+  document.querySelectorAll('.q-chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.getElementById('questionInput').value = this.getAttribute('data-q');
+    });
+  });
+
+  var drawing = false;
+
+  // 摇签
+  document.getElementById('drawBtn').addEventListener('click', function(){
+    if(drawing) return;
+    var q = document.getElementById('questionInput').value.trim();
+    if(!q){
+      showToast('请先输入所问之事');
+      return;
+    }
+    drawing = true;
+    var holder = document.getElementById('holderWrap');
+    var drawn = document.getElementById('drawnStick');
+    drawn.classList.remove('show');
+    holder.classList.add('shaking');
+
+    showToast('摇签中，心诚则灵……', 1800);
+
+    setTimeout(function(){
+      holder.classList.remove('shaking');
+      drawn.classList.add('show');
+      setTimeout(function(){
+        showResult();
+        drawing = false;
+      }, 700);
+    }, 2000);
+  });
+
+  function showResult(){
+    // 随机抽签
+    var lot = lots[Math.floor(Math.random()*lots.length)];
+    var masterNames = {huiming:'慧明长老', mingxin:'明心师父', xuanzhen:'玄真道长'};
+    var masterTitles = {huiming:'庄严古德', mingxin:'慈悲尼师', xuanzhen:'直白道派'};
+
+    var gradeClass = 'grade-' + lot.grade;
+    var numText = '第 ' + ['零','一','二','三','四','五','六','七','八','九','十'][lot.num] + ' 签';
+
+    document.getElementById('lotteryNum').textContent = numText;
+    var gradeEl = document.getElementById('lotteryGrade');
+    gradeEl.className = 'lottery-grade ' + gradeClass;
+    gradeEl.textContent = lot.gradeText;
+    document.getElementById('lotteryTitle').textContent = '— ' + lot.title + ' —';
+    document.getElementById('lotteryPoem').innerHTML = lot.poem.replace(/\n/g, '<br>');
+    document.getElementById('interpretLabel').textContent = masterNames[selectedMaster] + ' 解读';
+    document.getElementById('interpretText').textContent = lot.interpret[selectedMaster];
+    document.getElementById('interpretBy').textContent = '—— ' + masterTitles[selectedMaster] + ' · 般若阁';
+
+    var wrap = document.getElementById('resultWrap');
+    wrap.classList.add('show');
+    wrap.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  // 再抽一签
+  document.getElementById('redrawBtn').addEventListener('click', function(){
+    document.getElementById('resultWrap').classList.remove('show');
+    document.getElementById('drawnStick').classList.remove('show');
+    document.getElementById('questionInput').focus();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+})();
+</script>
+</body>
+</html>

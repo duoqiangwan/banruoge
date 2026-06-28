@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>周易卦象 · 般若阁</title>
+<meta name="description" content="心起一念，三铜起卦。本卦、互卦、变卦，为当前事项补一版卦象参考。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+<main class="main-content">
+<div style="max-width:720px;margin:0 auto;padding:24px 16px 80px;">
+
+<!-- 标题 -->
+<section data-reveal style="text-align:center;padding:24px 0;">
+<h1 class="font-display gold-text-gradient" style="font-size:2.5rem;letter-spacing:0.15em;margin:0;">周易卦象</h1>
+<p style="margin:12px 0 0;color:rgba(232,213,176,0.8);line-height:1.8;">心起一念 · 三铜起卦 · 六爻成形</p>
+<div class="gold-divider" style="margin:16px auto;width:120px;"></div>
+<p style="font-size:0.875rem;color:rgba(232,213,176,0.6);line-height:1.8;">《周易》有云："无有师保，如临父母。"起卦前，请静心凝神，默念所问之事。</p>
+</section>
+
+<!-- 大师选择 -->
+<section data-reveal style="margin:24px 0;">
+<h2 class="font-display" style="font-size:1.25rem;color:var(--gold);margin:0 0 12px;">选择解卦大师</h2>
+<div style="display:grid;gap:12px;" id="masterGrid">
+<div class="card master-card" data-master="0" style="padding:16px;cursor:pointer;border:2px solid var(--gold);">
+<div style="display:flex;align-items:center;gap:12px;">
+<span style="font-size:2rem;">🧘</span>
+<div>
+<p class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0;">慧明长老</p>
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.7);margin:4px 0 0;">引经据典 · 庄严持重</p>
+</div>
+</div>
+</div>
+<div class="card master-card" data-master="1" style="padding:16px;cursor:pointer;border:2px solid transparent;">
+<div style="display:flex;align-items:center;gap:12px;">
+<span style="font-size:2rem;">🙏</span>
+<div>
+<p class="font-display" style="font-size:1.125rem;color:var(--paper-dark);margin:0;">明心师父</p>
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.7);margin:4px 0 0;">慈悲为怀 · 温润如玉</p>
+</div>
+</div>
+</div>
+<div class="card master-card" data-master="2" style="padding:16px;cursor:pointer;border:2px solid transparent;">
+<div style="display:flex;align-items:center;gap:12px;">
+<span style="font-size:2rem;">☯️</span>
+<div>
+<p class="font-display" style="font-size:1.125rem;color:var(--paper-dark);margin:0;">玄真道长</p>
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.7);margin:4px 0 0;">直言不讳 · 道法自然</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 问事输入 -->
+<section data-reveal style="margin:24px 0;">
+<h2 class="font-display" style="font-size:1.25rem;color:var(--gold);margin:0 0 12px;">所问何事</h2>
+<div class="card" style="padding:16px;">
+<textarea id="questionInput" placeholder="请默念您要问的事，如事业、姻缘、健康、财运……（可不填，心到即可）" style="width:100%;min-height:80px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;padding:12px;color:var(--paper-dark);font-size:1rem;resize:vertical;font-family:inherit;"></textarea>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+<span class="tag quick-q" style="cursor:pointer;">事业前程</span>
+<span class="tag quick-q" style="cursor:pointer;">姻缘感情</span>
+<span class="tag quick-q" style="cursor:pointer;">财运投资</span>
+<span class="tag quick-q" style="cursor:pointer;">健康平安</span>
+<span class="tag quick-q" style="cursor:pointer;">学业考试</span>
+</div>
+</div>
+</section>
+
+<!-- 起卦区 -->
+<section data-reveal style="margin:24px 0;">
+<div style="text-align:center;">
+<div id="coinArea" style="display:flex;justify-content:center;gap:16px;margin:24px 0;">
+<div class="coin" id="coin1" style="width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--xuan);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;border:3px solid var(--gold-dark);transition:transform 0.3s;">乾</div>
+<div class="coin" id="coin2" style="width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--xuan);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;border:3px solid var(--gold-dark);transition:transform 0.3s;">乾</div>
+<div class="coin" id="coin3" style="width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--xuan);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;border:3px solid var(--gold-dark);transition:transform 0.3s;">乾</div>
+</div>
+<p id="tossInfo" style="font-size:0.875rem;color:rgba(232,213,176,0.6);margin:8px 0;">点击下方按钮，摇六次成卦</p>
+<div id="tossProgress" style="display:flex;gap:8px;justify-content:center;margin:8px 0;">
+<span class="toss-dot" style="width:12px;height:12px;border-radius:50%;background:rgba(201,160,94,0.2);"></span>
+<span class="toss-dot" style="width:12px;height:12px;border-radius:50%;background:rgba(201,160,94,0.2);"></span>
+<span class="toss-dot" style="width:12px;height:12px;border-radius:50%;background:rgba(201,160,94,0.2);"></span>
+<span class="toss-dot" style="width:12px;height:12px;border-radius:50%;background:rgba(201,160,94,0.2);"></span>
+<span class="toss-dot" style="width:12px;height:12px;border-radius:50%;background:rgba(201,160,94,0.2);"></span>
+<span class="toss-dot" style="width:12px;height:12px;border-radius:50%;background:rgba(201,160,94,0.2);"></span>
+</div>
+<button id="tossBtn" class="btn-ritual" style="width:100%;max-width:320px;margin:8px auto;display:block;">铜钱摇卦</button>
+</div>
+</section>
+
+<!-- 卦象结果 -->
+<section id="resultSection" style="display:none;margin:24px 0;">
+<div class="card" style="padding:24px;border:1px solid rgba(201,160,94,0.3);">
+<h2 class="font-display" style="text-align:center;font-size:1.5rem;color:var(--gold);margin:0 0 16px;">卦象已成</h2>
+
+<!-- 本卦 -->
+<div style="text-align:center;margin:16px 0;">
+<p style="font-size:0.875rem;color:rgba(232,213,176,0.6);margin:0;">本卦</p>
+<p class="font-display" id="benGuaName" style="font-size:1.75rem;color:var(--gold);margin:4px 0;">—</p>
+<div id="yaoDisplay" style="display:flex;flex-direction:column-reverse;align-items:center;gap:6px;margin:12px 0;"></div>
+<p id="benGuaCi" style="font-size:0.875rem;color:rgba(232,213,176,0.8);line-height:1.8;margin:8px 0;">—</p>
+</div>
+
+<div class="gold-divider" style="margin:16px 0;"></div>
+
+<!-- 互卦 -->
+<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+<div style="text-align:center;">
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.6);">互卦</p>
+<p class="font-display" id="huGuaName" style="font-size:1.25rem;color:var(--gold);margin:4px 0;">—</p>
+</div>
+<div style="text-align:center;">
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.6);">变卦</p>
+<p class="font-display" id="bianGuaName" style="font-size:1.25rem;color:var(--vermillion);margin:4px 0;">—</p>
+</div>
+</div>
+
+<div class="gold-divider" style="margin:16px 0;"></div>
+
+<!-- 大师解读 -->
+<div>
+<p style="font-size:0.875rem;color:rgba(232,213,176,0.6);margin:0 0 8px;">大师解读</p>
+<div id="masterInterp" style="background:rgba(42,31,24,0.4);border-radius:8px;padding:16px;border-left:3px solid var(--gold);">
+<p id="interpText" style="margin:0;line-height:2;color:var(--paper-dark);font-size:0.9375rem;">—</p>
+</div>
+</div>
+
+<button id="resetBtn" class="btn-secondary" style="width:100%;margin-top:16px;">再起一卦</button>
+</div>
+</section>
+
+<!-- 周易文化 -->
+<section data-reveal style="margin:32px 0;">
+<div class="card" style="padding:24px;border-left:4px solid var(--gold);">
+<h3 class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0 0 12px;">周易文化</h3>
+<p style="font-size:0.875rem;line-height:2;color:rgba(232,213,176,0.8);margin:0;">
+《周易》是中国最古老的经典之一，相传为伏羲画卦、文王演卦、孔子作传。六十四卦由八卦两两相叠而成，每卦六爻，自下而上。古人以蓍草起卦，后世简化为铜钱摇卦法：三枚铜钱，每枚正面（字）为三、反面（花）为二，三枚之和，六为老阴（变阳），七为少阳，八为少阴，九为老阳（变阴）。六次摇卦，从下往上排列，即得本卦；老阴老阳变后，得变卦。本卦为当前态势，变卦为走向，互卦为内在因素。
+</p>
+</div>
+</section>
+
+</div>
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+// ===== 六十四卦数据 =====
+var guaData = {
+'111111':{name:'乾为天',ci:'元亨利贞'},
+'000000':{name:'坤为地',ci:'元亨，利牝马之贞'},
+'010001':{name:'水雷屯',ci:'元亨利贞，勿用有攸往'},
+'100010':{name:'山水蒙',ci:'亨。匪我求童蒙，童蒙求我'},
+'010111':{name:'水天需',ci:'有孚，光亨贞吉，利涉大川'},
+'111010':{name:'天水讼',ci:'有孚窒惕，中吉终凶'},
+'000010':{name:'地水师',ci:'贞，丈人吉无咎'},
+'010000':{name:'水地比',ci:'吉。原筮元永贞，无咎'},
+'111011':{name:'风天小畜',ci:'亨。密云不雨'},
+'110111':{name:'天泽履',ci:'履虎尾，不咥人，亨'},
+'000111':{name:'地天泰',ci:'小往大来，吉亨'},
+'111000':{name:'天地否',ci:'否之匪人，不利君子贞'},
+'101111':{name:'天火同人',ci:'同人于野，亨'},
+'111101':{name:'火天大有',ci:'元亨'},
+'000100':{name:'地山谦',ci:'亨，君子有终'},
+'100000':{name:'雷地豫',ci:'利建侯行师'},
+'100110':{name:'泽雷随',ci:'元亨利贞，无咎'},
+'011001':{name:'山风蛊',ci:'元亨，利涉大川'},
+'000101':{name:'地泽临',ci:'元亨利贞，至于八月有凶'},
+'101000':{name:'风地观',ci:'盥而不荐，有孚颙若'},
+'100101':{name:'火雷噬嗑',ci:'亨，利用狱'},
+'101001':{name:'山火贲',ci:'亨，小利有攸往'},
+'000000':{name:'山地剥',ci:'不利有攸往'},
+'000001':{name:'地雷复',ci:'亨。出入无疾，朋来无咎'},
+'111001':{name:'天雷无妄',ci:'元亨利贞，其匪正有眚'},
+'100111':{name:'山天大畜',ci:'利贞，不家食吉'},
+'100001':{name:'山雷颐',ci:'贞吉，观颐，自求口实'},
+'011110':{name:'泽风大过',ci:'栋桡，利有攸往，亨'},
+'010010':{name:'坎为水',ci:'习坎，有孚，维心亨'},
+'101101':{name:'离为火',ci:'利贞，亨。畜牝牛吉'},
+'001110':{name:'泽山咸',ci:'亨，利贞，取女吉'},
+'011100':{name:'雷风恒',ci:'亨，无咎，利贞'},
+'001111':{name:'天山遁',ci:'亨，小利贞'},
+'111100':{name:'雷天大壮',ci:'利贞'},
+'000011':{name:'火地晋',ci:'康侯用锡马蕃庶，昼日三接'},
+'110000':{name:'地火明夷',ci:'利艰贞'},
+'101011':{name:'风火家人',ci:'利女贞'},
+'110101':{name:'火泽睽',ci:'小事吉'},
+'001010':{name:'水山蹇',ci:'利西南，不利东北'},
+'010100':{name:'雷水解',ci:'利西南，无所往，其来复吉'},
+'100011':{name:'山泽损',ci:'有孚，元吉无咎'},
+'110001':{name:'风雷益',ci:'利有攸往，利涉大川'},
+'111110':{name:'泽天夬',ci:'扬于王庭，孚号有厉'},
+'011111':{name:'天风姤',ci:'女壮，勿用取女'},
+'000110':{name:'泽地萃',ci:'亨，王假有庙'},
+'011000':{name:'地风升',ci:'元亨，用见大人，勿恤'},
+'010110':{name:'泽水困',ci:'亨，贞，大人吉无咎'},
+'011010':{name:'水风井',ci:'改邑不改井，无丧无得'},
+'101100':{name:'泽火革',ci:'巳日乃孚，元亨利贞'},
+'001101':{name:'火风鼎',ci:'元吉，亨'},
+'100100':{name:'震为雷',ci:'亨。震来虩虩，笑言哑哑'},
+'001001':{name:'艮为山',ci:'艮其背，不获其身'},
+'001011':{name:'风山渐',ci:'女归吉，利贞'},
+'110100':{name:'雷泽归妹',ci:'征凶，无攸利'},
+'101010':{name:'雷火丰',ci:'亨，王假之'},
+'010101':{name:'火山旅',ci:'小亨，旅贞吉'},
+'011011':{name:'巽为风',ci:'小亨，利有攸往'},
+'100100':{name:'兑为泽',ci:'亨，利贞'},
+'110010':{name:'风水涣',ci:'亨，王假有庙'},
+'010011':{name:'水泽节',ci:'亨。苦节，不可贞'},
+'110011':{name:'风泽中孚',ci:'豚鱼吉，利涉大川'},
+'001100':{name:'雷山小过',ci:'亨利贞，可小事不可大事'},
+'101010':{name:'水火既济',ci:'亨小，利贞'},
+'010101':{name:'火水未济',ci:'亨。小狐汔济，濡其尾'}
+};
+
+var masterNames = ['慧明长老','明心师父','玄真道长'];
+var masterIntros = [
+'施主且听，此卦《{gua}》卦辞曰："{ci}"。卦中阴阳消长，动静相循。{analysis}《易》曰："天行健，君子以自强不息。"愿施主明辨时机，顺势而为，方得亨通。',
+'阿弥陀佛。此卦{gua}，卦辞"{ci}"，是告诉我们：{analysis}缘分使然，一切自有安排。施主但行善事，莫问前程，心平则事顺，心安则福至。',
+'直说吧，这卦{gua}，"{ci}"。{analysis}卦象摆在这，趋吉避凶的关键就看你能不能把握住。该出手时别犹豫，该收手时别贪。'
+];
+
+var selectedMaster = 0;
+var tossCount = 0;
+var yaoLines = [];
+var tossing = false;
+
+// 大师选择
+document.querySelectorAll('.master-card').forEach(function(card){
+card.addEventListener('click', function(){
+selectedMaster = parseInt(card.dataset.master);
+document.querySelectorAll('.master-card').forEach(function(c){
+c.style.border = '2px solid transparent';
+c.querySelector('.font-display').style.color = 'var(--paper-dark)';
+});
+card.style.border = '2px solid var(--gold)';
+card.querySelector('.font-display').style.color = 'var(--gold)';
+});
+});
+
+// 快捷问题
+document.querySelectorAll('.quick-q').forEach(function(tag){
+tag.addEventListener('click', function(){
+document.getElementById('questionInput').value = tag.textContent;
+});
+});
+
+// 摇卦
+document.getElementById('tossBtn').addEventListener('click', function(){
+if(tossing) return;
+if(tossCount >= 6) return;
+tossing = true;
+var btn = this;
+btn.disabled = true;
+btn.textContent = '摇卦中...';
+
+// 动画
+var coins = [document.getElementById('coin1'),document.getElementById('coin2'),document.getElementById('coin3')];
+var animCount = 0;
+var animTimer = setInterval(function(){
+coins.forEach(function(c){
+c.style.transform = 'rotate(' + (Math.random()*360) + 'deg) scale(' + (0.9 + Math.random()*0.2) + ')';
+});
+animCount++;
+}, 80);
+
+setTimeout(function(){
+clearInterval(animTimer);
+// 结果：每枚正面(3)或反面(2)
+var results = [];
+var sum = 0;
+coins.forEach(function(c,i){
+var val = Math.random() < 0.5 ? 3 : 2;
+results.push(val);
+sum += val;
+if(val === 3) {
+c.textContent = '字';
+c.style.background = 'var(--gold)';
+} else {
+c.textContent = '花';
+c.style.background = 'var(--xuan-surface)';
+c.style.color = 'var(--gold)';
+}
+c.style.transform = 'rotate(0deg) scale(1)';
+});
+
+// 6=老阴(变阳,0) 7=少阳(1) 8=少阴(0) 9=老阳(变阴,1)
+var yao;
+var isChange = false;
+if(sum === 6) { yao = 0; isChange = true; } // 老阴
+else if(sum === 7) { yao = 1; } // 少阳
+else if(sum === 8) { yao = 0; } // 少阴
+else { yao = 1; isChange = true; } // 老阳
+
+yaoLines.push({yao:yao, change:isChange, sum:sum});
+tossCount++;
+
+// 更新进度
+var dots = document.querySelectorAll('.toss-dot');
+dots[tossCount-1].style.background = 'var(--gold)';
+
+document.getElementById('tossInfo').textContent = '第'+tossCount+'爻：'+(sum===6?'老阴（变）':sum===7?'少阳':sum===8?'少阴':sum===9?'老阳（变）':'')+' — '+(yao?'阳爻':'阴爻');
+
+tossing = false;
+btn.disabled = false;
+
+if(tossCount >= 6) {
+btn.textContent = '卦象已成';
+btn.disabled = true;
+setTimeout(function(){ showResult(); }, 800);
+} else {
+btn.textContent = '继续摇第'+(tossCount+1)+'爻';
+}
+}, 1000);
+});
+
+// 显示结果
+function showResult(){
+var resultSection = document.getElementById('resultSection');
+resultSection.style.display = 'block';
+
+// 本卦
+var benCode = yaoLines.map(function(y){ return y.yao; }).join('');
+// 变卦
+var bianCode = yaoLines.map(function(y){ return y.change ? (1-y.yao) : y.yao; }).join('');
+// 互卦（取本卦2,3,4爻为下互，3,4,5爻为上互）
+var huCode = yaoLines[1].yao + '' + yaoLines[2].yao + '' + yaoLines[3].yao + '' + yaoLines[2].yao + '' + yaoLines[3].yao + '' + yaoLines[4].yao;
+
+var benGua = guaData[benCode] || {name:'未知卦',ci:'—'};
+var bianGua = guaData[bianCode] || {name:'无变卦',ci:'—'};
+var huGua = guaData[huCode] || {name:'—',ci:'—'};
+
+document.getElementById('benGuaName').textContent = benGua.name;
+document.getElementById('benGuaCi').textContent = '"'+benGua.ci+'"';
+document.getElementById('huGuaName').textContent = huGua.name || '—';
+document.getElementById('bianGuaName').textContent = (benCode === bianCode) ? '无变卦' : bianGua.name;
+
+// 爻显示
+var yaoDisplay = document.getElementById('yaoDisplay');
+yaoDisplay.innerHTML = '';
+yaoLines.forEach(function(y, i){
+var div = document.createElement('div');
+div.style.cssText = 'width:120px;height:14px;display:flex;align-items:center;justify-content:center;position:relative;';
+if(y.yao === 1) {
+// 阳爻
+var line = document.createElement('div');
+line.style.cssText = 'width:120px;height:8px;background:var(--gold);border-radius:2px;';
+div.appendChild(line);
+} else {
+// 阴爻
+var left = document.createElement('div');
+left.style.cssText = 'width:52px;height:8px;background:var(--gold);border-radius:2px;';
+var gap = document.createElement('div');
+gap.style.cssText = 'width:16px;';
+var right = document.createElement('div');
+right.style.cssText = 'width:52px;height:8px;background:var(--gold);border-radius:2px;';
+div.appendChild(left); div.appendChild(gap); div.appendChild(right);
+}
+if(y.change) {
+var badge = document.createElement('span');
+badge.style.cssText = 'position:absolute;right:-40px;font-size:0.75rem;color:var(--vermillion);';
+badge.textContent = y.sum === 6 ? '老阴变' : '老阳变';
+div.appendChild(badge);
+}
+yaoDisplay.appendChild(div);
+});
+
+// 大师解读
+var q = document.getElementById('questionInput').value.trim();
+var qText = q ? '施主问的是「'+q+'」，' : '';
+var analysisText = qText + '本卦'+benGua.name+'，'+(benCode===bianCode?'卦无变爻，态势稳定，当以卦辞为准。':'变卦为'+bianGua.name+'，事态将有变化，宜以变卦为趋向。')+'互卦'+(huGua.name||'—')+'，是此事内在的暗流。';
+
+var interp = masterIntros[selectedMaster]
+.replace('{gua}', benGua.name)
+.replace('{ci}', benGua.ci)
+.replace('{analysis}', analysisText);
+
+document.getElementById('interpText').textContent = interp;
+
+resultSection.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// 重置
+document.getElementById('resetBtn').addEventListener('click', function(){
+tossCount = 0;
+yaoLines = [];
+document.querySelectorAll('.toss-dot').forEach(function(d){ d.style.background = 'rgba(201,160,94,0.2)'; });
+document.getElementById('tossInfo').textContent = '点击下方按钮，摇六次成卦';
+document.getElementById('tossBtn').textContent = '铜钱摇卦';
+document.getElementById('tossBtn').disabled = false;
+document.getElementById('resultSection').style.display = 'none';
+document.getElementById('questionInput').value = '';
+window.scrollTo({top:0, behavior:'smooth'});
+});
+})();
+</script>
+</body>
+</html>

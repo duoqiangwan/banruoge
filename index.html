@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="般若阁">
+<title>般若阁 · 为家人祈福求灵签</title>
+<meta name="description" content="心诚则灵。为家人点一盏祈福灯，求一支关帝灵签，看一卦命理八字。一念慈悲，福报自来。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+<audio data-bg-music preload="auto"></audio>
+
+<!-- 背景层 -->
+<div class="bg-decoration bg-gradient-base"></div>
+<div class="bg-decoration bg-radial-overlay"></div>
+<div class="bg-decoration bg-top-glow" style="position:fixed;top:0;left:0;right:0;z-index:0;"></div>
+<!-- 光点装饰 -->
+<div class="bg-decoration">
+<span class="animate-glow-rise" style="position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(201,160,94,0.4);left:12%;top:20%;animation-delay:0s;animation-duration:5s;"></span>
+<span class="animate-glow-rise" style="position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(201,160,94,0.4);left:32%;top:65%;animation-delay:1.2s;animation-duration:5s;"></span>
+<span class="animate-glow-rise" style="position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(201,160,94,0.4);left:55%;top:38%;animation-delay:2.4s;animation-duration:5s;"></span>
+<span class="animate-glow-rise" style="position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(201,160,94,0.4);left:72%;top:72%;animation-delay:0.8s;animation-duration:5s;"></span>
+<span class="animate-glow-rise" style="position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(201,160,94,0.4);left:85%;top:28%;animation-delay:3.1s;animation-duration:5s;"></span>
+<span class="animate-glow-rise" style="position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(201,160,94,0.4);left:20%;top:82%;animation-delay:2s;animation-duration:5s;"></span>
+</div>
+
+<!-- 顶部导航 -->
+<header class="top-nav" id="topNav">
+<a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;color:var(--gold);filter:drop-shadow(0 0 8px rgba(201,160,94,0.4));">
+<path d="M32 6 C 22 6, 12 12, 10 22 C 8 32, 14 44, 24 50 C 28 53, 30 56, 31 60 L 32 62 L 33 60 C 34 56, 36 53, 40 50 C 50 44, 56 32, 54 22 C 52 12, 42 6, 32 6 Z" fill="currentColor" fill-opacity="0.12"/>
+<path d="M32 8 V 60" stroke-width="1.4"/>
+<path d="M32 16 C 26 18, 20 22, 16 28"/>
+<path d="M32 16 C 38 18, 44 22, 48 28"/>
+<path d="M32 28 C 24 30, 18 36, 16 42"/>
+<path d="M32 28 C 40 30, 46 36, 48 42"/>
+<path d="M32 42 C 28 46, 26 50, 26 54"/>
+<path d="M32 42 C 36 46, 38 50, 38 54"/>
+</svg>
+<span class="font-display gold-text-gradient" style="font-size:1.65rem;letter-spacing:0.12em;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">般若阁</span>
+</a>
+<nav style="display:none;gap:20px;" class="md-nav">
+<a href="/qifu/" class="nav-link">为家人祈福</a>
+<a href="/almanac/" class="nav-link">今日黄历</a>
+<a href="/lottery/" class="nav-link">求灵签</a>
+<a href="/bazi/" class="nav-link">八字精批</a>
+<a href="/dream/" class="nav-link">周公解梦</a>
+<a href="/palmistry/" class="nav-link">手相 / 面相</a>
+<a href="/naming/" class="nav-link">宝宝起名</a>
+<a href="/divination/" class="nav-link">六爻占卜</a>
+<a href="/meditation/" class="nav-link">静心禅坐</a>
+</nav>
+<div style="display:flex;align-items:center;gap:8px;">
+<button data-music-toggle title="开启禅修背景音乐" style="width:36px;height:36px;border-radius:50%;border:1px solid rgba(201,160,94,0.25);color:var(--paper-dark);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+</button>
+<a href="/profile/" style="display:none;" class="md-nav">
+<span style="border:1px solid rgba(201,160,94,0.3);border-radius:999px;padding:6px 12px;font-size:0.875rem;color:var(--gold);text-decoration:none;">我的</span>
+</a>
+</div>
+<div class="gold-divider" style="position:absolute;bottom:0;left:0;right:0;opacity:0;transition:opacity 0.3s;"></div>
+</header>
+
+<!-- 主内容 -->
+<main class="main-content">
+<div style="max-width:1152px;margin:0 auto;padding:0 16px 80px;">
+
+<!-- Hero 区 -->
+<section style="min-height:calc(100vh - 56px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;text-align:center;padding:16px;">
+<div style="display:flex;flex-direction:column;gap:20px;">
+<!-- Logo 圆 -->
+<div style="position:relative;width:80px;height:80px;margin:0 auto;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid rgba(201,160,94,0.3);background:rgba(201,160,94,0.1);color:var(--gold);">
+<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;">
+<path d="M32 6 C 22 6, 12 12, 10 22 C 8 32, 14 44, 24 50 C 28 53, 30 56, 31 60 L 32 62 L 33 60 C 34 56, 36 53, 40 50 C 50 44, 56 32, 54 22 C 52 12, 42 6, 32 6 Z" fill="currentColor" fill-opacity="0.12"/>
+<path d="M32 8 V 60" stroke-width="1.4"/>
+<path d="M32 16 C 26 18, 20 22, 16 28"/>
+<path d="M32 16 C 38 18, 44 22, 48 28"/>
+<path d="M32 28 C 24 30, 18 36, 16 42"/>
+<path d="M32 28 C 40 30, 46 36, 48 42"/>
+<path d="M32 42 C 28 46, 26 50, 26 54"/>
+<path d="M32 42 C 36 46, 38 50, 38 54"/>
+</svg>
+<span style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(201,160,94,0.6);animation:ring-expand 3s ease-out infinite;"></span>
+<span style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(201,160,94,0.6);animation:ring-expand 3s ease-out infinite 1.5s;"></span>
+</div>
+<h1 class="font-display gold-text-gradient" style="font-size:3rem;letter-spacing:0.2em;margin:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));">般若阁</h1>
+<p style="max-width:28rem;margin:0 auto;color:rgba(232,213,176,0.85);line-height:2;">以古籍为根，以真人感解读为用<br>心愿供灯 · 传统签谱 · 看八字</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:400px;">
+<a href="/qifu/" style="text-decoration:none;"><button class="btn-ritual" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
+<span style="display:inline-flex;align-items:center;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+心愿供灯</span></button></a>
+<a href="/bazi/" style="text-decoration:none;"><button class="btn-secondary" style="width:100%;">大师八字精批</button></a>
+</div>
+<div>
+<p class="animate-bounce" style="font-size:0.875rem;color:rgba(232,213,176,0.65);">向下滚动 · 看更多功德</p>
+</div>
+</section>
+
+<!-- 九大善门 -->
+<section style="padding:48px 0;">
+<h2 data-reveal class="font-display" style="text-align:center;font-size:1.875rem;letter-spacing:0.2em;color:var(--gold);">九大善门</h2>
+<div style="display:grid;gap:16px;margin-top:24px;" id="featureGrid">
+<!-- 卡片由 JS 生成 -->
+</div>
+</section>
+
+<!-- 为何选般若阁 -->
+<section style="padding:48px 0;">
+<div data-reveal class="card" style="padding:32px;text-align:center;">
+<span class="tag" style="border-color:rgba(201,160,94,0.3);background:linear-gradient(90deg,rgba(201,160,94,0.2),rgba(201,160,94,0.05));color:var(--gold-dark);">真排盘 · 古籍为据 · 多风格解读</span>
+<h2 class="font-display" style="font-size:1.5rem;letter-spacing:0.2em;color:var(--gold);margin:16px 0 24px;">为何选般若阁</h2>
+<div style="display:grid;gap:16px;">
+<div style="border:1px solid rgba(201,160,94,0.15);background:rgba(42,31,24,0.4);border-radius:8px;padding:16px;text-align:left;">
+<p class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0;">古籍为根</p>
+<p style="margin:8px 0 0;font-size:0.875rem;color:rgba(232,213,176,0.8);">解读围绕《渊海子平》《滴天髓》《周易》等经典展开，引文皆有出处。</p>
+</div>
+<div style="border:1px solid rgba(201,160,94,0.15);background:rgba(42,31,24,0.4);border-radius:8px;padding:16px;text-align:left;">
+<p class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0;">多风格解读</p>
+<p style="margin:8px 0 0;font-size:0.875rem;color:rgba(232,213,176,0.8);">不是模板化套话，而是围绕盘面、流年与问题重点，给你更贴近真人表达的完整判断。</p>
+</div>
+<div style="border:1px solid rgba(201,160,94,0.15);background:rgba(42,31,24,0.4);border-radius:8px;padding:16px;text-align:left;">
+<p class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0;">心诚为本</p>
+<p style="margin:8px 0 0;font-size:0.875rem;color:rgba(232,213,176,0.8);">网站不替代医疗、法律、投资建议。一切结果，仅作传统文化参考。</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 在线上香 -->
+<section style="padding:48px 0;">
+<div data-reveal style="border:1px solid rgba(201,160,94,0.4);border-left:4px solid rgba(201,160,94,0.4);border-right:4px solid rgba(201,160,94,0.4);background:var(--paper-warm);color:var(--ink);border-radius:12px;padding:32px;text-align:center;">
+<div class="gold-divider" style="margin-bottom:16px;"></div>
+<p style="font-size:0.875rem;color:var(--ink-light);">每日三礼 · 每礼三炷</p>
+<h2 class="font-display" style="font-size:1.5rem;letter-spacing:0.2em;margin:8px 0;">在线上香</h2>
+<p style="max-width:28rem;margin:0 auto;line-height:2;">静心三礼九炷，为自己、为家人、为众生。把心念安放下来，人也更容易慢慢安定。</p>
+<a href="/temple/" style="text-decoration:none;"><button class="btn-ritual" style="margin-top:16px;">敬上一炷清香</button></a>
+<div class="gold-divider" style="margin-top:16px;"></div>
+</div>
+</section>
+
+<!-- 分享 -->
+<section style="padding:48px 0;">
+<div data-reveal style="border:1px solid rgba(201,160,94,0.4);border-left:4px solid rgba(201,160,94,0.4);border-right:4px solid rgba(201,160,94,0.4);background:var(--paper-warm);color:var(--ink);border-radius:12px;padding:32px;text-align:center;">
+<div class="gold-divider" style="margin-bottom:16px;"></div>
+<p style="font-size:0.875rem;color:var(--ink-light);letter-spacing:0.2em;">一灯传万灯</p>
+<h2 class="font-display" style="font-size:1.5rem;letter-spacing:0.2em;margin:8px 0;">支持般若阁 · 续灯续香</h2>
+<p style="max-width:28rem;margin:0 auto;line-height:2;">般若阁免费提供祈福、灵签、八字等传统文化服务。<br>您的随喜支持，是网站持续运营的动力。<br>金额不限，心到即可。愿您福慧双增，六时吉祥。</p>
+<button data-donate-btn class="btn-ritual" style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+随喜功德 · 支持般若阁</button>
+<div class="gold-divider" style="margin-top:16px;"></div>
+</div>
+</section>
+
+<!-- 底部 -->
+<footer style="border-top:1px solid rgba(201,160,94,0.1);padding-top:40px;text-align:center;font-size:0.875rem;">
+<div style="display:flex;flex-direction:column;gap:12px;">
+<p style="line-height:2;color:rgba(201,160,94,0.8);">善念起于心，福缘自然生。一念清净，万物皆宁。</p>
+<p style="line-height:2;color:rgba(232,213,176,0.7);">菩提本无树，明镜亦非台。本来无一物，何处惹尘埃。</p>
+<p style="line-height:2;color:rgba(232,213,176,0.65);">命自我立，福自我求。诸恶莫作，众善奉行。</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:16px 0;font-size:0.75rem;">
+<a href="/terms/" style="color:var(--gold);text-decoration:none;">用户协议</a>
+<a href="/privacy/" style="color:var(--gold);text-decoration:none;">隐私说明</a>
+<a href="/ai-notice/" style="color:var(--gold);text-decoration:none;">AI 生成说明</a>
+</div>
+<div style="width:48px;border-top:1px solid rgba(201,160,94,0.15);margin:0 auto;"></div>
+<p style="max-width:32rem;margin:8px auto;font-size:0.75rem;line-height:1.8;color:rgba(232,213,176,0.65);">本站内容仅作传统文化参考，不替代医疗、法律、投资等专业意见；部分说明由 AI 辅助生成。</p>
+<p style="max-width:32rem;margin:8px auto;font-size:0.75rem;line-height:1.8;color:rgba(232,213,176,0.62);">继续使用本站或发起服务，即表示您已阅读《用户协议》《隐私说明》《AI 生成说明》；未满18周岁请勿使用本服务。</p>
+<p style="font-size:0.75rem;color:rgba(232,213,176,0.6);">般若阁 · 一念慈悲，一灯长明</p>
+</footer>
+
+</div>
+</main>
+
+<!-- 功德箱浮动按钮 -->
+<button class="fab" title="随喜功德" onclick="showDonation()">功</button>
+
+<!-- 底部导航 -->
+<nav class="bottom-bar">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);padding:8px 4px;padding-bottom:max(env(safe-area-inset-bottom),8px);">
+<a href="/" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;text-decoration:none;color:var(--gold);font-size:0.75rem;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+<span style="font-size:11px;">首页</span>
+</a>
+<a href="/qifu/" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;text-decoration:none;color:var(--ink-muted);font-size:0.75rem;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+<span style="font-size:11px;">祈福</span>
+</a>
+<a href="/almanac/" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;text-decoration:none;color:var(--ink-muted);font-size:0.75rem;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+<span style="font-size:11px;">黄历</span>
+</a>
+<a href="/lottery/" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;text-decoration:none;color:var(--ink-muted);font-size:0.75rem;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+<span style="font-size:11px;">灵签</span>
+</a>
+<a href="/profile/" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;text-decoration:none;color:var(--ink-muted);font-size:0.75rem;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+<span style="font-size:11px;">我的</span>
+</a>
+<a href="/more/" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;text-decoration:none;color:var(--ink-muted);font-size:0.75rem;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+<span style="font-size:11px;">更多</span>
+</a>
+</div>
+</nav>
+
+<style>
+.nav-link { font-size:0.875rem; color:var(--paper-dark); text-decoration:none; transition:color 0.2s; }
+.nav-link:hover { color:var(--gold); }
+@media (min-width:768px) { .md-nav { display:flex !important; } }
+</style>
+
+<script src="/js/app.js"></script>
+<script>
+// 九大善门数据
+var features = [
+  { href:'/qifu/', icon:'heart', color:'var(--vermillion)', tag:'心愿寄托', title:'心愿供灯', desc:'点一盏灯，写下一份祝愿。适合生日纪念、平安祝福、学业心愿与日常仪式感表达。' },
+  { href:'/almanac/', icon:'calendar', color:'var(--gold)', tag:'每日打卡', title:'今日黄历', desc:'干支宜忌、神煞冲煞、十二时辰，传统择吉一目了然。' },
+  { href:'/dream/', icon:'moon', color:'var(--gold)', tag:'新增', title:'周公解梦', desc:'百梦皆有意，古今相参证。80 余条经典梦境，直接告诉您吉凶。' },
+  { href:'/lottery/', icon:'sparkles', color:'var(--gold)', tag:'传统签谱', title:'传统签谱', desc:'一签一事，100 支签文整理自传统签谱，为当前事项提供一版文化参考。' },
+  { href:'/bazi/', icon:'compass', color:'var(--gold)', tag:'传家技艺', title:'八字精批', desc:'立春节气真排盘，看命格根骨与一生气运起伏。' },
+  { href:'/divination/', icon:'scroll', color:'var(--gold)', tag:'周易卦例', title:'周易卦象', desc:'心起一念，三铜起卦，再看本卦、互卦、变卦，为当前事项补一版卦象参考。' },
+  { href:'/palmistry/', icon:'hand', color:'var(--gold)', tag:'图解', title:'手相 / 面相', desc:'上传掌心照或正脸照，围绕图上可见特征逐段分析，先预览再解锁完整详批。' },
+  { href:'/naming/', icon:'book', color:'var(--gold)', tag:'传家', title:'宝宝起名', desc:'结合八字喜忌、音韵笔画、典故诗词，给孩子一个耐看的名字。' },
+  { href:'/meditation/', icon:'flame', color:'var(--gold)', tag:'新增', title:'静心禅坐', desc:'钟磬古乐、佛号梵音、深山溪水。日日一坐，让自己慢下来。' }
+];
+
+var iconPaths = {
+  heart: '<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>',
+  calendar: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>',
+  moon: '<path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>',
+  sparkles: '<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>',
+  compass: '<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/>',
+  scroll: '<path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>',
+  hand: '<path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>',
+  book: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+  flame: '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>'
+};
+
+var grid = document.getElementById('featureGrid');
+features.forEach(function(f, i) {
+  var card = document.createElement('a');
+  card.href = f.href;
+  card.setAttribute('data-reveal', '');
+  card.setAttribute('data-delay', (i * 0.06).toFixed(2));
+  card.style.textDecoration = 'none';
+  card.innerHTML = '<div class="card" style="padding:20px;height:100%;">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
+    '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:' + f.color + ';">' + iconPaths[f.icon] + '</svg>' +
+    '<span class="tag">' + f.tag + '</span>' +
+    '</div>' +
+    '<h3 style="font-size:1.5rem;color:var(--paper-dark);margin:0 0 8px;">' + f.title + '</h3>' +
+    '<p style="font-size:1rem;color:rgba(232,213,176,0.8);margin:0;">' + f.desc + '</p>' +
+    '</div>';
+  grid.appendChild(card);
+});
+
+// 响应式网格
+function updateGrid() {
+  if (window.innerWidth >= 1024) {
+    grid.style.gridTemplateColumns = 'repeat(3,1fr)';
+  } else if (window.innerWidth >= 768) {
+    grid.style.gridTemplateColumns = 'repeat(2,1fr)';
+  } else {
+    grid.style.gridTemplateColumns = '1fr';
+  }
+}
+updateGrid();
+window.addEventListener('resize', updateGrid);
+</script>
+</body>
+</html>

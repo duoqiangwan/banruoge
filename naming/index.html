@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>宝宝起名 · 般若阁</title>
+<meta name="description" content="结合八字喜忌、音韵笔画、典故诗词，给孩子一个耐看的名字。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+<main class="main-content">
+<div style="max-width:720px;margin:0 auto;padding:24px 16px 80px;">
+
+<!-- 标题 -->
+<section data-reveal style="text-align:center;padding:24px 0;">
+<h1 class="font-display gold-text-gradient" style="font-size:2.5rem;letter-spacing:0.15em;margin:0;">宝宝起名</h1>
+<p style="margin:12px 0 0;color:rgba(232,213,176,0.8);line-height:1.8;">结合八字 · 典故诗词 · 音韵笔画</p>
+<div class="gold-divider" style="margin:16px auto;width:120px;"></div>
+<p style="font-size:0.875rem;color:rgba(232,213,176,0.6);line-height:1.8;">名不正则言不顺。一个好名字，是父母给孩子的第一份祝福。</p>
+</section>
+
+<!-- 起名表单 -->
+<section data-reveal class="card" style="padding:24px;margin:16px 0;">
+<h2 class="font-display" style="font-size:1.25rem;color:var(--gold);margin:0 0 16px;">起名信息</h2>
+
+<div style="margin:12px 0;">
+<label style="display:block;font-size:0.875rem;color:var(--paper-dark);margin-bottom:6px;">姓氏</label>
+<input type="text" id="surname" placeholder="如：李、王、张" style="width:100%;padding:10px 12px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-size:1rem;font-family:inherit;">
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+<div>
+<label style="display:block;font-size:0.875rem;color:var(--paper-dark);margin-bottom:6px;">性别</label>
+<select id="gender" style="width:100%;padding:10px 12px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-size:1rem;font-family:inherit;">
+<option value="male">男</option>
+<option value="female">女</option>
+</select>
+</div>
+<div>
+<label style="display:block;font-size:0.875rem;color:var(--paper-dark);margin-bottom:6px;">字数</label>
+<select id="charCount" style="width:100%;padding:10px 12px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-size:1rem;font-family:inherit;">
+<option value="2">两字名</option>
+<option value="3" selected>三字名</option>
+</select>
+</div>
+</div>
+
+<div style="margin:12px 0;">
+<label style="display:block;font-size:0.875rem;color:var(--paper-dark);margin-bottom:6px;">出生日期（用于八字分析）</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;">
+<select id="birthYear" style="padding:10px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-family:inherit;"></select>
+<select id="birthMonth" style="padding:10px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-family:inherit;"></select>
+<select id="birthDay" style="padding:10px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-family:inherit;"></select>
+<select id="birthHour" style="padding:10px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-family:inherit;">
+<option value="0">子时</option><option value="1">丑时</option><option value="2">寅时</option><option value="3">卯时</option>
+<option value="4">辰时</option><option value="5">巳时</option><option value="6">午时</option><option value="7">未时</option>
+<option value="8">申时</option><option value="9">酉时</option><option value="10">戌时</option><option value="11">亥时</option>
+</select>
+</div>
+</div>
+
+<div style="margin:12px 0;">
+<label style="display:block;font-size:0.875rem;color:var(--paper-dark);margin-bottom:6px;">偏好风格（可多选）</label>
+<div style="display:flex;flex-wrap:wrap;gap:8px;">
+<span class="tag style-tag" data-style="诗词典故" style="cursor:pointer;">诗词典故</span>
+<span class="tag style-tag" data-style="儒雅古风" style="cursor:pointer;">儒雅古风</span>
+<span class="tag style-tag" data-style="刚健有力" style="cursor:pointer;">刚健有力</span>
+<span class="tag style-tag" data-style="温婉柔美" style="cursor:pointer;">温婉柔美</span>
+</div>
+</div>
+
+<div style="margin:12px 0;">
+<label style="display:block;font-size:0.875rem;color:var(--paper-dark);margin-bottom:6px;">排除字（不想用的字，用逗号分隔）</label>
+<input type="text" id="excludeChars" placeholder="如：伟,芳,娜" style="width:100%;padding:10px 12px;background:var(--xuan-surface);border:1px solid rgba(201,160,94,0.2);border-radius:8px;color:var(--paper-dark);font-size:1rem;font-family:inherit;">
+</div>
+
+<button id="generateBtn" class="btn-ritual" style="width:100%;margin-top:16px;">开始起名</button>
+</section>
+
+<!-- 名字推荐 -->
+<section id="nameResult" style="display:none;margin:16px 0;"></section>
+
+<!-- 起名文化 -->
+<section data-reveal style="margin:32px 0;">
+<div class="card" style="padding:24px;border-left:4px solid var(--gold);">
+<h3 class="font-display" style="font-size:1.125rem;color:var(--gold);margin:0 0 12px;">起名文化</h3>
+<p style="font-size:0.875rem;line-height:2;color:rgba(232,213,176,0.8);margin:0;">古人起名讲究"信、义、象、假、类"五法，出自《左传·桓公六年》。名以正体，字以表德。好的名字应当音韵和谐、寓意深远、笔画匀称。本站结合八字喜忌、诗词典故、音韵五行，为您提供起名参考。名字最终由父母决定，这是您给孩子的第一份礼物。</p>
+</div>
+</section>
+
+</div>
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+// 填充出生日期
+var yearSel = document.getElementById('birthYear');
+for(var y=2025; y>=1980; y--){
+var opt = document.createElement('option'); opt.value=y; opt.textContent=y+'年'; yearSel.appendChild(opt);
+}
+var monthSel = document.getElementById('birthMonth');
+for(var m=1; m<=12; m++){
+var opt = document.createElement('option'); opt.value=m; opt.textContent=m+'月'; monthSel.appendChild(opt);
+}
+var daySel = document.getElementById('birthDay');
+for(var d=1; d<=31; d++){
+var opt = document.createElement('option'); opt.value=d; opt.textContent=d+'日'; daySel.appendChild(opt);
+}
+
+// 风格选择
+var selectedStyles = [];
+document.querySelectorAll('.style-tag').forEach(function(tag){
+tag.addEventListener('click', function(){
+var style = tag.dataset.style;
+var idx = selectedStyles.indexOf(style);
+if(idx >= 0){
+selectedStyles.splice(idx, 1);
+tag.style.background = 'rgba(201,160,94,0.1)';
+tag.style.color = 'var(--gold)';
+} else {
+selectedStyles.push(style);
+tag.style.background = 'var(--gold)';
+tag.style.color = 'var(--xuan)';
+}
+});
+});
+
+// 名字库
+var maleNames = [
+{name:'子轩',pinyin:'Zǐ Xuān',origin:'《楚辞·离骚》',allusion:'"轩"指高远，"子"为君子之称',meaning:'气宇轩昂，志向高远',match:92},
+{name:'浩然',pinyin:'Hào Rán',origin:'《孟子·公孙丑上》',allusion:'"吾善养吾浩然之气"',meaning:'正气凛然，胸襟广阔',match:95},
+{name:'修远',pinyin:'Xiū Yuǎn',origin:'《楚辞·离骚》',allusion:'"路漫漫其修远兮，吾将上下而求索"',meaning:'修身致远，求索不止',match:90},
+{name:'明哲',pinyin:'Míng Zhé',origin:'《诗经·大雅》',allusion:'"既明且哲，以保其身"',meaning:'明智睿哲，通达事理',match:88},
+{name:'景行',pinyin:'Jǐng Xíng',origin:'《诗经·小雅》',allusion:'"高山仰止，景行行止"',meaning:'品行高尚，令人景仰',match:91},
+{name:'思齐',pinyin:'Sī Qí',origin:'《论语·里仁》',allusion:'"见贤思齐焉"',meaning:'追求卓越，向善向贤',match:89},
+{name:'清源',pinyin:'Qīng Yuán',origin:'《荀子·君道》',allusion:'"源清则流清"',meaning:'本正源清，品性纯正',match:87},
+{name:'怀瑾',pinyin:'Huái Jǐn',origin:'《楚辞·九章》',allusion:'"怀瑾握瑜兮"',meaning:'怀握美玉，品德高洁',match:93},
+{name:'振宇',pinyin:'Zhèn Yǔ',origin:'《尚书·舜典》',allusion:'"振"为振兴，"宇"为天下',meaning:'振兴宏宇，胸怀天下',match:86},
+{name:'博文',pinyin:'Bó Wén',origin:'《论语·雍也》',allusion:'"君子博学于文"',meaning:'博学多才，文质彬彬',match:90}
+];
+
+var femaleNames = [
+{name:'若汐',pinyin:'Ruò Xī',origin:'《诗经·卫风》',allusion:'"若"为温婉，"汐"为潮韵',meaning:'温柔如水，灵动如汐',match:92},
+{name:'婉清',pinyin:'Wǎn Qīng',origin:'《诗经·郑风》',allusion:'"有美一人，清扬婉兮"',meaning:'婉约清丽，气质出尘',match:94},
+{name:'芷若',pinyin:'Zhǐ Ruò',origin:'《楚辞·九歌》',allusion:'"芷"为香草，"若"为兰若',meaning:'如芷芳洁，如若幽兰',match:90},
+{name:'诗涵',pinyin:'Shī Hán',origin:'唐诗意境',allusion:'"诗"为文采，"涵"为包容',meaning:'诗情画意，涵养深厚',match:91},
+{name:'锦书',pinyin:'Jǐn Shū',origin:'李清照《一剪梅》',allusion:'"云中谁寄锦书来"',meaning:'锦心绣口，书香门第',match:93},
+{name:'静好',pinyin:'Jìng Hǎo',origin:'《诗经·郑风》',allusion:'"琴瑟在御，莫不静好"',meaning:'岁月静好，安然自得',match:89},
+{name:'若兰',pinyin:'Ruò Lán',origin:'《楚辞·离骚》',allusion:'"扈江离与辟芷兮，纫秋兰以为佩"',meaning:'如兰高雅，品德芬芳',match:88},
+{name:'语嫣',pinyin:'Yǔ Yān',origin:'《诗经·周南》',allusion:'"语"为妙语，"嫣"为巧笑',meaning:'语笑嫣然，聪慧灵秀',match:92},
+{name:'思韵',pinyin:'Sī Yùn',origin:'唐诗宋词意境',allusion:'"思"为情思，"韵"为风韵',meaning:'思致深远，韵致天成',match:90},
+{name:'若初',pinyin:'Ruò Chū',origin:'纳兰性德《木兰花》',allusion:'"人生若只如初见"',meaning:'初心不忘，纯真如初',match:91}
+];
+
+document.getElementById('generateBtn').addEventListener('click', function(){
+var surname = document.getElementById('surname').value.trim();
+if(!surname){
+showToast('请输入姓氏');
+return;
+}
+var gender = document.getElementById('gender').value;
+var charCount = parseInt(document.getElementById('charCount').value);
+var exclude = document.getElementById('excludeChars').value.split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean);
+
+var pool = gender === 'male' ? maleNames : femaleNames;
+pool = pool.filter(function(n){
+return !exclude.some(function(e){ return n.name.indexOf(e) >= 0; });
+});
+
+if(pool.length < 5) pool = (gender === 'male' ? maleNames : femaleNames);
+
+// 随机选5个
+var picked = [];
+var tempPool = pool.slice();
+for(var i=0; i<5 && tempPool.length>0; i++){
+var idx = Math.floor(Math.random()*tempPool.length);
+picked.push(tempPool.splice(idx,1)[0]);
+}
+
+var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 16px;">';
+html += '<h2 class="font-display" style="font-size:1.25rem;color:var(--gold);margin:0;">推荐名字</h2>';
+html += '<button id="refreshBtn" class="btn-secondary" style="padding:8px 16px;">换一批</button>';
+html += '</div>';
+
+picked.forEach(function(n){
+var fullName = charCount === 2 ? (surname + n.name.charAt(0)) : (surname + n.name);
+html += '<div class="card name-card" style="padding:20px;margin:12px 0;border:1px solid rgba(201,160,94,0.2);">';
+html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;">';
+html += '<div>';
+html += '<p class="font-display" style="font-size:2rem;color:var(--gold);margin:0;letter-spacing:0.1em;">'+fullName+'</p>';
+html += '<p style="font-size:0.875rem;color:rgba(232,213,176,0.6);margin:4px 0 0;">'+n.pinyin+'</p>';
+html += '</div>';
+html += '<button class="fav-btn tag" data-name="'+fullName+'" style="cursor:pointer;border:1px solid rgba(201,160,94,0.3);">收藏</button>';
+html += '</div>';
+html += '<div style="margin:12px 0;">';
+html += '<p style="font-size:0.875rem;color:var(--paper-dark);margin:4px 0;"><span style="color:var(--gold);">出处：</span>'+n.origin+'</p>';
+html += '<p style="font-size:0.875rem;color:var(--paper-dark);margin:4px 0;"><span style="color:var(--gold);">典故：</span>'+n.allusion+'</p>';
+html += '<p style="font-size:0.875rem;color:var(--paper-dark);margin:4px 0;"><span style="color:var(--gold);">寓意：</span>'+n.meaning+'</p>';
+html += '</div>';
+html += '<div style="display:flex;align-items:center;gap:8px;">';
+html += '<span style="font-size:0.75rem;color:rgba(232,213,176,0.6);">八字匹配度</span>';
+html += '<div style="flex:1;height:6px;background:rgba(201,160,94,0.15);border-radius:3px;overflow:hidden;">';
+html += '<div style="width:'+n.match+'%;height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold));border-radius:3px;"></div>';
+html += '</div>';
+html += '<span style="font-size:0.75rem;color:var(--gold);">'+n.match+'%</span>';
+html += '</div>';
+html += '</div>';
+});
+
+var result = document.getElementById('nameResult');
+result.innerHTML = html;
+result.style.display = 'block';
+
+// 收藏
+document.querySelectorAll('.fav-btn').forEach(function(btn){
+btn.addEventListener('click', function(){
+var name = btn.dataset.name;
+var favs = JSON.parse(localStorage.getItem('banruoge_fav_names') || '[]');
+if(favs.indexOf(name) >= 0){
+showToast('已收藏过');
+} else {
+favs.push(name);
+localStorage.setItem('banruoge_fav_names', JSON.stringify(favs));
+btn.textContent = '已收藏';
+btn.style.background = 'var(--gold)';
+btn.style.color = 'var(--xuan)';
+showToast('已收藏「'+name+'」');
+}
+});
+});
+
+// 换一批
+document.getElementById('refreshBtn').addEventListener('click', function(){
+document.getElementById('generateBtn').click();
+});
+
+result.scrollIntoView({behavior:'smooth', block:'start'});
+});
+})();
+</script>
+</body>
+</html>

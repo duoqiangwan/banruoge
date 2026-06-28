@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>在线上香 · 般若阁</title>
+<meta name="description" content="每日三礼，每礼三炷。在线上香，心香一瓣达于十方，礼佛供养，福慧双修。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+
+  /* 香炉舞台 */
+  .incense-stage { position:relative; height:340px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; background:radial-gradient(ellipse at 50% 80%, rgba(201,160,94,0.12), transparent 70%); border-radius:16px; overflow:hidden; }
+  .incense-stage svg { display:block; }
+
+  /* 香与烟雾 */
+  .incense-stick { position:absolute; bottom:90px; width:3px; background:linear-gradient(to top, #6b4a2a, #c9a05c 80%, #e85d2c 100%); border-radius:2px; transform-origin:bottom center; opacity:0.92; }
+  .incense-tip { position:absolute; bottom:calc(100% - 4px); left:50%; transform:translateX(-50%); width:8px; height:8px; border-radius:50%; background:radial-gradient(circle,#ffb347 0%,#e85d2c 60%,transparent 100%); box-shadow:0 0 12px rgba(232,93,44,0.8); }
+  .incense-stick.unlit .incense-tip { background:none; box-shadow:none; opacity:0; }
+
+  .smoke { position:absolute; bottom:120px; width:14px; height:14px; border-radius:50%; background:radial-gradient(circle, rgba(232,213,176,0.5), rgba(232,213,176,0)); opacity:0; pointer-events:none; }
+  .smoke.rising { animation:smoke-rise 4s ease-out infinite; }
+  @keyframes smoke-rise {
+    0% { transform:translate(0,0) scale(0.6); opacity:0; }
+    20% { opacity:0.7; }
+    100% { transform:translate(var(--drift,20px),-180px) scale(2.4); opacity:0; }
+  }
+
+  .counter-box { display:flex; align-items:center; justify-content:center; gap:24px; padding:16px; }
+  .counter-num { font-family:'ZhiMangXing',cursive; font-size:2.4rem; color:var(--gold); line-height:1; }
+  .counter-label { font-size:0.85rem; color:var(--ink-muted); }
+
+  /* 三礼 */
+  .li-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .li-card { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:10px; padding:14px 8px; text-align:center; cursor:pointer; transition:all 0.2s; }
+  .li-card:hover { border-color:rgba(201,160,94,0.5); }
+  .li-card.done { border-color:var(--gold); background:rgba(201,160,94,0.1); }
+  .li-num { font-family:'ZhiMangXing',cursive; font-size:1.6rem; color:var(--gold); }
+  .li-target { font-size:0.85rem; color:var(--paper-dark); margin:4px 0; }
+  .li-status { font-size:0.7rem; color:var(--ink-muted); }
+  .li-card.done .li-status { color:var(--gold); }
+
+  /* 心经 */
+  .sutra-toggle { display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; }
+  .sutra-arrow { transition:transform 0.3s; color:var(--gold); }
+  .sutra-toggle.open .sutra-arrow { transform:rotate(180deg); }
+  .sutra-body { max-height:0; overflow:hidden; transition:max-height 0.5s ease; }
+  .sutra-body.open { max-height:2000px; }
+  .sutra-text { font-family:'ZhiMangXing','Noto Serif SC',cursive; font-size:1.5rem; line-height:2.4; color:var(--gold-light); text-align:center; padding:24px 8px; letter-spacing:0.08em; }
+  .knowledge-card { background:rgba(42,31,24,0.5); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:16px; }
+  .knowledge-card p { margin:0 0 8px; line-height:1.9; font-size:0.9rem; color:var(--paper-dark); }
+  .knowledge-card p:last-child { margin-bottom:0; }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <!-- 页头 -->
+  <section style="text-align:center;padding:24px 0 8px;">
+    <h1 class="font-display gold-text-gradient page-title">在线上香</h1>
+    <p class="page-sub">每日三礼 · 每礼三炷</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <!-- 香炉舞台 -->
+  <section class="card" style="padding:0;margin-top:24px;overflow:hidden;" data-reveal>
+    <div class="incense-stage" id="stage">
+      <!-- 烟雾容器 -->
+      <div id="smokeLayer" style="position:absolute;inset:0;pointer-events:none;"></div>
+      <!-- 三炷香 -->
+      <div class="incense-stick unlit" id="stick1" style="left:calc(50% - 22px);height:160px;"><div class="incense-tip"></div></div>
+      <div class="incense-stick unlit" id="stick2" style="left:calc(50% - 1px);height:170px;"><div class="incense-tip"></div></div>
+      <div class="incense-stick unlit" id="stick3" style="left:calc(50% + 20px);height:160px;"><div class="incense-tip"></div></div>
+
+      <!-- 香炉 SVG -->
+      <svg viewBox="0 0 220 110" style="width:220px;height:110px;">
+        <!-- 香灰 -->
+        <ellipse cx="110" cy="40" rx="48" ry="8" fill="#3a2a1a" opacity="0.8"/>
+        <ellipse cx="110" cy="38" rx="44" ry="5" fill="#6b5a4a" opacity="0.6"/>
+        <!-- 炉身 -->
+        <path d="M55 42 Q110 36 165 42 L158 82 Q110 92 62 82 Z" fill="#2a1f18" stroke="#c9a05c" stroke-width="1.4"/>
+        <path d="M62 50 Q110 45 158 50" stroke="#c9a05c" stroke-width="0.8" fill="none" opacity="0.5"/>
+        <!-- 炉耳 -->
+        <path d="M50 52 Q40 56 44 66 Q50 70 56 64" fill="none" stroke="#c9a05c" stroke-width="1.4"/>
+        <path d="M170 52 Q180 56 176 66 Q170 70 164 64" fill="none" stroke="#c9a05c" stroke-width="1.4"/>
+        <!-- 炉足 -->
+        <path d="M75 88 L70 104 L80 104 L82 90" fill="#2a1f18" stroke="#c9a05c" stroke-width="1.2"/>
+        <path d="M145 88 L150 104 L140 104 L138 90" fill="#2a1f18" stroke="#c9a05c" stroke-width="1.2"/>
+        <path d="M105 92 L103 104 L117 104 L115 92" fill="#2a1f18" stroke="#c9a05c" stroke-width="1.2"/>
+        <!-- 纹饰 -->
+        <text x="110" y="68" text-anchor="middle" font-family="ZhiMangXing,cursive" font-size="16" fill="#c9a05c" opacity="0.7">福</text>
+      </svg>
+    </div>
+
+    <!-- 计数 -->
+    <div class="counter-box">
+      <div>
+        <div class="counter-num" id="todayCount">0</div>
+        <div class="counter-label">今日已敬（炷）</div>
+      </div>
+      <div style="width:1px;height:40px;background:rgba(201,160,94,0.2);"></div>
+      <div>
+        <div class="counter-num" id="totalCount">0</div>
+        <div class="counter-label">累计敬香（炷）</div>
+      </div>
+    </div>
+
+    <div style="padding:0 24px 24px;text-align:center;">
+      <button class="btn-ritual" id="offerBtn" style="width:100%;max-width:320px;font-size:1.15rem;">敬 香</button>
+      <p style="font-size:0.8rem;color:var(--ink-muted);margin:12px 0 0;">心香一瓣，可达十方。点击敬香，三炷齐燃。</p>
+    </div>
+  </section>
+
+  <!-- 三礼 -->
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">三礼之仪</h2>
+    <p style="font-size:0.85rem;color:var(--ink-muted);margin:0 0 16px;">每礼敬香三炷，依次为众生祈愿。可分别点击下方卡片敬香。</p>
+    <div class="li-grid" id="liGrid">
+      <div class="li-card" data-li="1">
+        <div class="li-num">一礼</div>
+        <div class="li-target">为自己</div>
+        <div class="li-status">未敬</div>
+      </div>
+      <div class="li-card" data-li="2">
+        <div class="li-num">二礼</div>
+        <div class="li-target">为家人</div>
+        <div class="li-status">未敬</div>
+      </div>
+      <div class="li-card" data-li="3">
+        <div class="li-num">三礼</div>
+        <div class="li-target">为众生</div>
+        <div class="li-status">未敬</div>
+      </div>
+    </div>
+    <button class="btn-secondary" id="resetLi" style="width:100%;margin-top:16px;font-size:0.95rem;">重置今日三礼</button>
+  </section>
+
+  <!-- 心经 -->
+  <section class="card" style="margin-top:32px;overflow:hidden;" data-reveal>
+    <div class="sutra-toggle" id="sutraToggle" style="padding:20px 24px;">
+      <h2 class="section-title" style="margin:0;">般若波罗蜜多心经</h2>
+      <span class="sutra-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </span>
+    </div>
+    <div class="sutra-body" id="sutraBody">
+      <div class="gold-divider"></div>
+      <div class="sutra-text">
+        观自在菩萨，行深般若波罗蜜多时，照见五蕴皆空，度一切苦厄。<br>
+        舍利子，色不异空，空不异色，色即是空，空即是色，受想行识，亦复如是。<br>
+        舍利子，是诸法空相，不生不灭，不垢不净，不增不减。<br>
+        是故空中无色，无受想行识，无眼耳鼻舌身意，无色声香味触法，无眼界，乃至无意识界。<br>
+        无无明，亦无无明尽，乃至无老死，亦无老死尽。<br>
+        无苦集灭道，无智亦无得。<br>
+        以无所得故，菩提萨埵，依般若波罗蜜多故，心无罣碍。<br>
+        无罣碍故，无有恐怖，远离颠倒梦想，究竟涅槃。<br>
+        三世诸佛，依般若波罗蜜多故，得阿耨多罗三藐三菩提。<br>
+        故知般若波罗蜜多，是大神咒，是大明咒，是无上咒，是无等等咒，能除一切苦，真实不虚。<br>
+        故说般若波罗蜜多咒，即说咒曰：揭谛揭谛，波罗揭谛，波罗僧揭谛，菩提萨婆诃。
+      </div>
+    </div>
+  </section>
+
+  <!-- 文化说明 -->
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">上香文化</h2>
+    <div class="knowledge-card">
+      <p>上香，乃佛教及中华传统供养之仪。以香为媒，传递心念于十方三世，谓之「心香一瓣」。</p>
+      <p>三炷香，表「戒、定、慧」三无漏学，亦表供养佛、法、僧三宝。香燃起时，当摄心正念，不起妄念。</p>
+      <p>三礼之仪：一礼回向自身，二礼回向亲眷，三礼回向一切众生。心量越大，功德越广。所谓「愿以此功德，普及于一切」。</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  var STORAGE_KEY = 'banruoge_incense';
+  var liDone = {1:false, 2:false, 3:false};
+
+  function loadData(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return {date:'', today:0, total:0, li:{1:false,2:false,3:false}};
+      var d = JSON.parse(raw);
+      var today = new Date().toDateString();
+      if(d.date !== today){ d.today = 0; d.li = {1:false,2:false,3:false}; d.date = today; }
+      return d;
+    } catch(e){ return {date:'', today:0, total:0, li:{1:false,2:false,3:false}}; }
+  }
+  function saveData(d){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch(e){}
+  }
+
+  var data = loadData();
+
+  function render(){
+    document.getElementById('todayCount').textContent = data.today;
+    document.getElementById('totalCount').textContent = data.total;
+    [1,2,3].forEach(function(i){
+      var card = document.querySelector('.li-card[data-li="'+i+'"]');
+      var done = !!data.li[i];
+      liDone[i] = done;
+      card.classList.toggle('done', done);
+      card.querySelector('.li-status').textContent = done ? '已敬 ✓' : '未敬';
+    });
+  }
+
+  // 点燃香 + 烟雾
+  function lightSticks(){
+    ['stick1','stick2','stick3'].forEach(function(id){
+      document.getElementById(id).classList.remove('unlit');
+    });
+    startSmoke();
+  }
+  var smokeTimer = null;
+  function startSmoke(){
+    if(smokeTimer) return;
+    smokeTimer = setInterval(function(){
+      spawnSmoke('stick1');
+      spawnSmoke('stick2');
+      spawnSmoke('stick3');
+    }, 600);
+  }
+  function spawnSmoke(stickId){
+    var stick = document.getElementById(stickId);
+    if(stick.classList.contains('unlit')) return;
+    var stage = document.getElementById('smokeLayer');
+    var rect = stick.getBoundingClientRect();
+    var stageRect = stage.getBoundingClientRect();
+    var left = rect.left - stageRect.left + rect.width/2 - 7;
+    var bottom = stageRect.bottom - rect.top;
+    var smoke = document.createElement('div');
+    smoke.className = 'smoke rising';
+    smoke.style.left = left + 'px';
+    smoke.style.bottom = bottom + 'px';
+    smoke.style.setProperty('--drift', (Math.random()*60-30) + 'px');
+    smoke.style.animationDuration = (3 + Math.random()*2) + 's';
+    stage.appendChild(smoke);
+    setTimeout(function(){ smoke.remove(); }, 5000);
+  }
+
+  // 敬香
+  function offer(liNum){
+    if(liNum && data.li[liNum]){
+      showToast('此礼已敬，可敬下一礼');
+      return;
+    }
+    // 上香动画：先熄灭再点燃
+    ['stick1','stick2','stick3'].forEach(function(id){ document.getElementById(id).classList.add('unlit'); });
+    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer = null; }
+
+    showToast('上香中……', 1000);
+    setTimeout(function(){
+      lightSticks();
+      data.today += 3;
+      data.total += 3;
+      if(liNum){ data.li[liNum] = true; }
+      saveData(data);
+      render();
+      var msg = liNum ? ('第'+['一','二','三'][liNum-1]+'礼已成，三炷齐燃') : '敬香圆满，三炷齐燃';
+      showToast(msg, 1800);
+    }, 900);
+  }
+
+  // 主按钮：依次完成未敬之礼
+  document.getElementById('offerBtn').addEventListener('click', function(){
+    var next = [1,2,3].find(function(i){ return !data.li[i]; });
+    offer(next || 1);
+  });
+
+  // 三礼卡片点击
+  document.querySelectorAll('.li-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      offer(parseInt(this.getAttribute('data-li'),10));
+    });
+  });
+
+  // 重置
+  document.getElementById('resetLi').addEventListener('click', function(){
+    data.li = {1:false,2:false,3:false};
+    data.today = 0;
+    saveData(data);
+    render();
+    ['stick1','stick2','stick3'].forEach(function(id){ document.getElementById(id).classList.add('unlit'); });
+    if(smokeTimer){ clearInterval(smokeTimer); smokeTimer = null; }
+    showToast('已重置三礼');
+  });
+
+  // 心经折叠
+  var stoggle = document.getElementById('sutraToggle');
+  var sbody = document.getElementById('sutraBody');
+  stoggle.addEventListener('click', function(){
+    stoggle.classList.toggle('open');
+    sbody.classList.toggle('open');
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

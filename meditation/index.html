@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>静心禅坐 · 般若阁</title>
+<meta name="description" content="钟磬古乐，日日一坐。跟随呼吸引导，静心禅坐，于一呼一吸间照见本心。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+
+  /* 呼吸圆 */
+  .breath-stage { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:40px 0; min-height:360px; background:radial-gradient(ellipse at 50% 50%, rgba(201,160,94,0.08), transparent 70%); border-radius:16px; }
+  .breath-circle-wrap { position:relative; width:220px; height:220px; display:flex; align-items:center; justify-content:center; }
+  .breath-ring { position:absolute; inset:0; border-radius:50%; border:1px solid rgba(201,160,94,0.2); }
+  .breath-ring.r2 { inset:20px; border-color:rgba(201,160,94,0.3); }
+  .breath-ring.r3 { inset:40px; border-color:rgba(201,160,94,0.4); }
+  .breath-core { width:100px; height:100px; border-radius:50%; background:radial-gradient(circle, rgba(245,230,184,0.4), rgba(201,160,94,0.15) 60%, transparent); border:1.5px solid rgba(201,160,94,0.5); display:flex; align-items:center; justify-content:center; transition:transform 0.1s; }
+  .breath-text { font-family:'ZhiMangXing',cursive; font-size:1.8rem; color:var(--gold-light); text-align:center; }
+  .breath-hint { font-size:0.9rem; color:var(--ink-muted); text-align:center; min-height:1.4em; }
+
+  /* 运行中状态 */
+  .breath-core.inhale { animation:breath-inhale 4s ease-in-out forwards; }
+  .breath-core.hold { animation:breath-hold 2s ease-in-out forwards; }
+  .breath-core.exhale { animation:breath-exhale 6s ease-in-out forwards; }
+  @keyframes breath-inhale { from{transform:scale(1);} to{transform:scale(1.6);} }
+  @keyframes breath-hold { from{transform:scale(1.6);} to{transform:scale(1.6);} }
+  @keyframes breath-exhale { from{transform:scale(1.6);} to{transform:scale(1);} }
+
+  /* 时长选择 */
+  .duration-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .duration-btn { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:10px; padding:14px 4px; text-align:center; cursor:pointer; transition:all 0.2s; }
+  .duration-btn:hover { border-color:rgba(201,160,94,0.5); }
+  .duration-btn.active { border-color:var(--gold); background:rgba(201,160,94,0.1); }
+  .duration-num { font-size:1.3rem; color:var(--gold); font-weight:500; }
+  .duration-unit { font-size:0.75rem; color:var(--ink-muted); }
+
+  /* 音乐选择 */
+  .music-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .music-btn { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:10px; padding:16px 8px; text-align:center; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .music-btn:hover { border-color:rgba(201,160,94,0.5); }
+  .music-btn.active { border-color:var(--gold); background:rgba(201,160,94,0.1); }
+  .music-icon { font-size:1.6rem; }
+  .music-name { font-size:0.9rem; color:var(--paper-dark); }
+
+  .timer-display { font-family:'ZhiMangXing',cursive; font-size:2.4rem; color:var(--gold); }
+  .control-row { display:flex; gap:12px; justify-content:center; }
+
+  .tip-list { display:flex; flex-direction:column; gap:12px; }
+  .tip-item { display:flex; gap:12px; align-items:flex-start; background:rgba(42,31,24,0.5); border-radius:10px; padding:14px; }
+  .tip-num { flex-shrink:0; width:28px; height:28px; border-radius:50%; background:rgba(201,160,94,0.15); color:var(--gold); display:flex; align-items:center; justify-content:center; font-family:'ZhiMangXing',cursive; font-size:1.1rem; }
+  .tip-text { font-size:0.9rem; color:var(--paper-dark); line-height:1.7; }
+  .tip-text strong { color:var(--gold); font-weight:500; }
+
+  .complete-card { display:none; text-align:center; padding:32px; }
+  .complete-card.show { display:block; animation:fade-in-up 0.6s ease-out forwards; }
+  .complete-icon { font-size:3rem; margin-bottom:12px; }
+  .complete-title { font-family:'ZhiMangXing',cursive; font-size:2.2rem; color:var(--gold-light); margin-bottom:8px; }
+  .complete-msg { color:var(--paper-dark); line-height:2; }
+  .complete-stats { display:flex; gap:24px; justify-content:center; margin:20px 0; }
+  .complete-stat-num { font-family:'ZhiMangXing',cursive; font-size:2rem; color:var(--gold); }
+  .complete-stat-label { font-size:0.8rem; color:var(--ink-muted); }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <!-- 页头 -->
+  <section style="text-align:center;padding:24px 0 8px;">
+    <h1 class="font-display gold-text-gradient page-title">静心禅坐</h1>
+    <p class="page-sub">钟磬古乐 · 日日一坐</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <!-- 呼吸引导 -->
+  <section class="card" style="padding:24px;margin-top:24px;" data-reveal>
+    <div class="breath-stage">
+      <div class="breath-circle-wrap">
+        <div class="breath-ring"></div>
+        <div class="breath-ring r2"></div>
+        <div class="breath-ring r3"></div>
+        <div class="breath-core" id="breathCore">
+          <div class="breath-text" id="breathText">静</div>
+        </div>
+      </div>
+      <div class="breath-hint" id="breathHint">点击下方按钮开始禅坐</div>
+      <div class="timer-display" id="timerDisplay" style="display:none;">00:00</div>
+    </div>
+
+    <div class="control-row" id="controlRow" style="margin-top:8px;">
+      <button class="btn-ritual" id="startBtn">开始禅坐</button>
+      <button class="btn-secondary" id="stopBtn" style="display:none;">结束</button>
+    </div>
+  </section>
+
+  <!-- 时长选择 -->
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">选择时长</h2>
+    <div class="duration-grid" id="durationGrid">
+      <div class="duration-btn" data-min="5"><div class="duration-num">5</div><div class="duration-unit">分钟</div></div>
+      <div class="duration-btn active" data-min="10"><div class="duration-num">10</div><div class="duration-unit">分钟</div></div>
+      <div class="duration-btn" data-min="15"><div class="duration-num">15</div><div class="duration-unit">分钟</div></div>
+      <div class="duration-btn" data-min="20"><div class="duration-num">20</div><div class="duration-unit">分钟</div></div>
+    </div>
+  </section>
+
+  <!-- 背景音乐 -->
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">背景音乐</h2>
+    <div class="music-grid" id="musicGrid">
+      <div class="music-btn active" data-music="bell"><div class="music-icon">🔔</div><div class="music-name">钟磬</div></div>
+      <div class="music-btn" data-music="chant"><div class="music-icon">🙏</div><div class="music-name">佛号</div></div>
+      <div class="music-btn" data-music="stream"><div class="music-icon">💧</div><div class="music-name">溪水</div></div>
+    </div>
+    <audio id="bgAudio" loop preload="auto"></audio>
+    <p style="font-size:0.78rem;color:var(--ink-muted);margin:10px 0 0;text-align:center;">禅坐开始时自动播放（可关闭），需浏览器允许播放声音</p>
+  </section>
+
+  <!-- 完成提示 -->
+  <section class="card complete-card" id="completeCard" data-reveal>
+    <div class="complete-icon">🪷</div>
+    <div class="complete-title">圆 满</div>
+    <div class="complete-msg">一坐已毕，愿您带着这份清明，回到日常之中。<br>行住坐卧，皆是禅修。</div>
+    <div class="complete-stats">
+      <div>
+        <div class="complete-stat-num" id="completeMin">0</div>
+        <div class="complete-stat-label">本次（分钟）</div>
+      </div>
+      <div style="width:1px;background:rgba(201,160,94,0.2);"></div>
+      <div>
+        <div class="complete-stat-num" id="totalMin">0</div>
+        <div class="complete-stat-label">今日累计（分钟）</div>
+      </div>
+    </div>
+    <button class="btn-secondary" onclick="document.getElementById('completeCard').classList.remove('show');">再坐一程</button>
+  </section>
+
+  <!-- 禅修小贴士 -->
+  <section style="margin-top:32px;" data-reveal>
+    <h2 class="section-title">禅修小贴士</h2>
+    <div class="tip-list">
+      <div class="tip-item">
+        <div class="tip-num">一</div>
+        <div class="tip-text"><strong>调身：</strong>盘腿而坐，脊梁正直，下颌微收，双肩放松。手结定印，置于脐下。身不紧不松，是为中道。</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">二</div>
+        <div class="tip-text"><strong>调息：</strong>呼吸自然，不急不缓。鼻吸鼻呼，气沉丹田。意念随息，了了分明，不迎不拒。</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">三</div>
+        <div class="tip-text"><strong>调心：</strong>念头起时，不随不制。如观流水，任其来去。守住当下，安住一念，是为正定。</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">四</div>
+        <div class="tip-text"><strong>定时：</strong>初学宜短，每日一坐，贵在坚持。久坐生定，定能发慧，循序渐进，不可贪进。</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">五</div>
+        <div class="tip-text"><strong>调境：</strong>择安静处，光线柔和。着宽松衣，勿过饱饥。下坐之时，缓动身体，按摩手足，渐归日常。</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  var STORAGE_KEY = 'banruoge_meditation';
+  var selectedMin = 10;
+  var selectedMusic = 'bell';
+  var running = false;
+  var remaining = 0; // 秒
+  var timerInterval = null;
+  var breathTimeout = null;
+  var audio = document.getElementById('bgAudio');
+
+  // 音乐源（占位，实际可替换为真实音频文件）
+  var musicSrc = {
+    bell: '',
+    chant: '',
+    stream: ''
+  };
+
+  function loadTodayMin(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return 0;
+      var d = JSON.parse(raw);
+      if(d.date !== new Date().toDateString()) return 0;
+      return d.minutes || 0;
+    } catch(e){ return 0; }
+  }
+  function saveTodayMin(min){
+    try {
+      var today = new Date().toDateString();
+      var d = {date:today, minutes:min};
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+    } catch(e){}
+  }
+
+  // 时长选择
+  document.querySelectorAll('.duration-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(running){ showToast('禅坐中无法更改时长'); return; }
+      document.querySelectorAll('.duration-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      selectedMin = parseInt(this.getAttribute('data-min'),10);
+    });
+  });
+
+  // 音乐选择
+  document.querySelectorAll('.music-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.music-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      selectedMusic = this.getAttribute('data-music');
+      if(running){
+        playMusic();
+      }
+    });
+  });
+
+  function playMusic(){
+    var src = musicSrc[selectedMusic];
+    if(src){
+      audio.src = src;
+      audio.volume = 0.3;
+      audio.play().catch(function(){});
+    }
+  }
+  function stopMusic(){
+    audio.pause();
+    audio.currentTime = 0;
+  }
+
+  // 呼吸循环
+  function breathCycle(){
+    if(!running) return;
+    var core = document.getElementById('breathCore');
+    var text = document.getElementById('breathText');
+    var hint = document.getElementById('breathHint');
+
+    // 吸气 4s
+    core.className = 'breath-core inhale';
+    text.textContent = '吸';
+    hint.textContent = '吸气……缓缓吸入清气';
+
+    breathTimeout = setTimeout(function(){
+      if(!running) return;
+      // 屏息 2s
+      core.className = 'breath-core hold';
+      text.textContent = '止';
+      hint.textContent = '屏息……守气于内';
+
+      breathTimeout = setTimeout(function(){
+        if(!running) return;
+        // 呼气 6s
+        core.className = 'breath-core exhale';
+        text.textContent = '呼';
+        hint.textContent = '呼气……缓缓吐出浊气';
+
+        breathTimeout = setTimeout(function(){
+          if(running) breathCycle();
+        }, 6000);
+      }, 2000);
+    }, 4000);
+  }
+
+  function fmtTime(sec){
+    var m = Math.floor(sec/60);
+    var s = sec%60;
+    return (m<10?'0':'') + m + ':' + (s<10?'0':'') + s;
+  }
+
+  function startTimer(){
+    remaining = selectedMin * 60;
+    document.getElementById('timerDisplay').style.display = 'block';
+    document.getElementById('timerDisplay').textContent = fmtTime(remaining);
+    timerInterval = setInterval(function(){
+      remaining--;
+      document.getElementById('timerDisplay').textContent = fmtTime(Math.max(0,remaining));
+      if(remaining <= 0){
+        complete();
+      }
+    }, 1000);
+  }
+
+  function start(){
+    running = true;
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('stopBtn').style.display = 'inline-block';
+    document.querySelectorAll('.duration-btn').forEach(function(b){ b.style.pointerEvents='none'; b.style.opacity='0.6'; });
+    playMusic();
+    breathCycle();
+    startTimer();
+    showToast('禅坐开始，请闭目调息', 1800);
+  }
+
+  function stop(early){
+    running = false;
+    if(breathTimeout){ clearTimeout(breathTimeout); breathTimeout = null; }
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    stopMusic();
+    var core = document.getElementById('breathCore');
+    core.className = 'breath-core';
+    core.style.transform = 'scale(1)';
+    document.getElementById('breathText').textContent = '静';
+    document.getElementById('breathHint').textContent = '点击下方按钮开始禅坐';
+    document.getElementById('startBtn').style.display = 'inline-block';
+    document.getElementById('stopBtn').style.display = 'none';
+    document.querySelectorAll('.duration-btn').forEach(function(b){ b.style.pointerEvents=''; b.style.opacity=''; });
+
+    if(early){
+      var elapsedMin = selectedMin - Math.ceil(remaining/60);
+      if(elapsedMin > 0){
+        showComplete(elapsedMin);
+      }
+    }
+  }
+
+  function complete(){
+    stop(false);
+    showComplete(selectedMin);
+  }
+
+  function showComplete(min){
+    var todayTotal = loadTodayMin() + min;
+    saveTodayMin(todayTotal);
+    document.getElementById('completeMin').textContent = min;
+    document.getElementById('totalMin').textContent = todayTotal;
+    var card = document.getElementById('completeCard');
+    card.classList.add('show');
+    card.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  document.getElementById('startBtn').addEventListener('click', start);
+  document.getElementById('stopBtn').addEventListener('click', function(){ stop(true); });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>我的 · 般若阁</title>
+<meta name="description" content="般若阁个人中心，管理您的祈福灯、灵签、八字报告、解梦记录、收藏名字与禅坐记录。">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
+  .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
+  .section-title { font-size: 1.25rem; color: var(--gold); margin: 0 0 16px; display:flex; align-items:center; gap:10px; }
+  .section-title::before { content:''; width:4px; height:18px; background:var(--gold); border-radius:2px; }
+
+  /* 头像区 */
+  .avatar-wrap { display:flex; align-items:center; gap:16px; }
+  .avatar { width:72px; height:72px; border-radius:50%; border:2px solid rgba(201,160,94,0.5); background:linear-gradient(135deg,rgba(201,160,94,0.25),rgba(192,57,43,0.15)); display:flex; align-items:center; justify-content:center; font-family:'ZhiMangXing',cursive; font-size:2rem; color:var(--gold-light); flex-shrink:0; box-shadow:0 0 16px rgba(201,160,94,0.2); }
+  .nick-name { font-size:1.5rem; color:var(--gold-light); margin:0 0 4px; }
+  .nick-edit { background:none; border:none; color:var(--ink-muted); cursor:pointer; font-size:0.875rem; padding:2px 8px; }
+  .nick-edit:hover { color:var(--gold); }
+  .nick-input { background:rgba(42,31,24,0.8); border:1px solid rgba(201,160,94,0.4); border-radius:6px; padding:6px 10px; color:var(--gold-light); font-size:1.25rem; font-family:inherit; max-width:200px; }
+  .nick-input:focus { outline:none; border-color:var(--gold); }
+
+  /* 会员卡 */
+  .member-card { position:relative; overflow:hidden; }
+  .member-level { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .level-badge { font-family:'ZhiMangXing',cursive; font-size:1.2rem; color:var(--gold-light); padding:2px 12px; border:1px solid rgba(201,160,94,0.4); border-radius:999px; background:rgba(201,160,94,0.1); }
+  .member-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .stat-item { text-align:center; padding:10px 4px; border-right:1px solid rgba(201,160,94,0.12); }
+  .stat-item:last-child { border-right:none; }
+  .stat-num { font-family:'ZhiMangXing',cursive; font-size:1.6rem; color:var(--gold); line-height:1.2; }
+  .stat-label { font-size:0.75rem; color:var(--ink-muted); margin-top:4px; }
+
+  /* 功能列表 */
+  .func-list { display:flex; flex-direction:column; gap:0; }
+  .func-item { display:flex; align-items:center; gap:14px; padding:16px 0; border-bottom:1px solid rgba(201,160,94,0.08); text-decoration:none; color:inherit; transition:all 0.2s; cursor:pointer; }
+  .func-item:last-child { border-bottom:none; }
+  .func-item:hover { padding-left:6px; }
+  .func-icon { width:42px; height:42px; border-radius:10px; background:rgba(201,160,94,0.1); border:1px solid rgba(201,160,94,0.15); display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0; }
+  .func-info { flex:1; min-width:0; }
+  .func-name { font-size:1.05rem; color:var(--paper-dark); margin:0; }
+  .func-desc { font-size:0.8rem; color:var(--ink-muted); margin:2px 0 0; }
+  .func-arrow { color:var(--ink-muted); flex-shrink:0; }
+  .func-badge { font-size:0.75rem; color:var(--gold); background:rgba(201,160,94,0.1); border-radius:999px; padding:2px 10px; flex-shrink:0; }
+
+  /* 设置列表 */
+  .setting-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(201,160,94,0.08); cursor:pointer; }
+  .setting-item:last-child { border-bottom:none; }
+  .setting-label { font-size:1rem; color:var(--paper-dark); display:flex; align-items:center; gap:10px; }
+  .setting-value { font-size:0.85rem; color:var(--ink-muted); }
+
+  /* 退出按钮 */
+  .logout-btn { width:100%; margin-top:8px; }
+
+  .empty-hint { text-align:center; color:var(--ink-muted); font-size:0.85rem; padding:8px 0; }
+</style>
+</head>
+<body class="antialiased">
+<main class="main-content">
+
+  <!-- 页头 -->
+  <section style="text-align:center;padding:24px 0 8px;" data-reveal>
+    <h1 class="font-display gold-text-gradient page-title">我的</h1>
+    <p class="page-sub">功德记于心 · 善念常相伴</p>
+    <div class="gold-divider" style="width:120px;margin:16px auto 0;"></div>
+  </section>
+
+  <!-- 用户信息 -->
+  <section class="card" style="padding:24px;margin-top:24px;" data-reveal>
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatar">慧</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="nick-name" id="nickDisplay">慧光189</span>
+          <button class="nick-edit" id="nickEditBtn">编辑</button>
+        </div>
+        <p style="margin:0;font-size:0.8rem;color:var(--ink-muted);">般若阁同修 · ID 10089</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 会员状态 -->
+  <section class="card member-card" style="padding:24px;margin-top:16px;" data-reveal>
+    <div class="member-level">
+      <span class="level-badge">善 信</span>
+      <span style="font-size:0.85rem;color:var(--ink-muted);">距下一等级"居士"还需 320 积分</span>
+    </div>
+    <div class="member-stats">
+      <div class="stat-item">
+        <div class="stat-num" id="statPoints">680</div>
+        <div class="stat-label">功德积分</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="statLamps">0</div>
+        <div class="stat-label">在点福灯</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="statUses">3</div>
+        <div class="stat-label">可用次数</div>
+      </div>
+    </div>
+    <div class="gold-divider" style="margin:16px 0 12px;"></div>
+    <p style="text-align:center;font-size:0.8rem;color:var(--ink-muted);margin:0;">每日签到可获 10 积分 · 积分可兑换灵签、解梦等服务</p>
+  </section>
+
+  <!-- 我的功能 -->
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">我的功德</h2>
+    <div class="card" style="padding:8px 20px;">
+      <div class="func-list">
+        <a class="func-item" href="/qifu/">
+          <div class="func-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 6 8 10 12 10s4-4 0-8Z"/><path d="M9 12v8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-8"/></svg>
+          </div>
+          <div class="func-info">
+            <p class="func-name">我的祈福灯</p>
+            <p class="func-desc">查看已点亮的福灯与心愿</p>
+          </div>
+          <span class="func-badge" id="lampCount">0 盏</span>
+          <span class="func-arrow">›</span>
+        </a>
+        <a class="func-item" href="/lottery/">
+          <div class="func-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+          </div>
+          <div class="func-info">
+            <p class="func-name">我的灵签</p>
+            <p class="func-desc">历史抽签记录与解读</p>
+          </div>
+          <span class="func-badge" id="lotteryCount">0 支</span>
+          <span class="func-arrow">›</span>
+        </a>
+        <a class="func-item" href="/bazi/">
+          <div class="func-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></svg>
+          </div>
+          <div class="func-info">
+            <p class="func-name">我的八字报告</p>
+            <p class="func-desc">命盘排盘与精批记录</p>
+          </div>
+          <span class="func-badge" id="baziCount">0 份</span>
+          <span class="func-arrow">›</span>
+        </a>
+        <a class="func-item" href="/dream/">
+          <div class="func-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+          </div>
+          <div class="func-info">
+            <p class="func-name">我的解梦记录</p>
+            <p class="func-desc">梦境解析历史归档</p>
+          </div>
+          <span class="func-badge" id="dreamCount">0 条</span>
+          <span class="func-arrow">›</span>
+        </a>
+        <a class="func-item" href="/naming/">
+          <div class="func-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+          </div>
+          <div class="func-info">
+            <p class="func-name">收藏的名字</p>
+            <p class="func-desc">起名收藏夹与典故</p>
+          </div>
+          <span class="func-badge" id="nameCount">0 个</span>
+          <span class="func-arrow">›</span>
+        </a>
+        <a class="func-item" href="/meditation/">
+          <div class="func-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>
+          </div>
+          <div class="func-info">
+            <p class="func-name">禅坐记录</p>
+            <p class="func-desc">累计禅坐时长与打卡</p>
+          </div>
+          <span class="func-badge" id="medCount">0 分钟</span>
+          <span class="func-arrow">›</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 设置 -->
+  <section style="margin-top:24px;" data-reveal>
+    <h2 class="section-title">设置</h2>
+    <div class="card" style="padding:8px 20px;">
+      <div class="setting-item" id="settingNotify">
+        <span class="setting-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          通知设置
+        </span>
+        <span class="setting-value" id="notifyValue">已开启 ›</span>
+      </div>
+      <div class="setting-item" id="settingPrivacy">
+        <span class="setting-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          隐私设置
+        </span>
+        <span class="setting-value">›</span>
+      </div>
+      <a class="setting-item" href="/more/" style="text-decoration:none;color:inherit;">
+        <span class="setting-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          关于般若阁
+        </span>
+        <span class="setting-value">›</span>
+      </a>
+      <a class="setting-item" href="/terms/" style="text-decoration:none;color:inherit;">
+        <span class="setting-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+          用户协议
+        </span>
+        <span class="setting-value">›</span>
+      </a>
+      <a class="setting-item" href="/privacy/" style="text-decoration:none;color:inherit;">
+        <span class="setting-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          隐私说明
+        </span>
+        <span class="setting-value">›</span>
+      </a>
+      <a class="setting-item" href="/ai-notice/" style="text-decoration:none;color:inherit;">
+        <span class="setting-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+          AI 生成说明
+        </span>
+        <span class="setting-value">›</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 退出登录 -->
+  <section style="margin-top:24px;padding-bottom:16px;" data-reveal>
+    <button class="btn-secondary logout-btn" id="logoutBtn">退出登录</button>
+    <p style="text-align:center;font-size:0.75rem;color:var(--ink-muted);margin-top:16px;line-height:1.8;">般若阁 · 一念慈悲，一灯长明<br>本站内容仅作传统文化参考</p>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+<script src="/js/layout.js"></script>
+<script>
+(function(){
+  var STORAGE_KEY = 'banruoge_profile';
+
+  // 默认数据
+  var defaultData = {
+    nickname: '慧光189',
+    points: 680,
+    level: '善信',
+    uses: 3,
+    lamps: 0,
+    lottery: 0,
+    bazi: 0,
+    dream: 0,
+    names: 0,
+    meditation: 0,
+    notify: true
+  };
+
+  function loadData(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) return Object.assign({}, defaultData, JSON.parse(raw));
+    } catch(e){}
+    return Object.assign({}, defaultData);
+  }
+
+  function saveData(d){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch(e){}
+  }
+
+  var data = loadData();
+
+  // 同步其他模块记录的数据（禅坐时长等）
+  try {
+    var medRaw = localStorage.getItem('banruoge_meditation');
+    if(medRaw){
+      var medData = JSON.parse(medRaw);
+      // 累计禅坐分钟（简化处理：取今日值）
+      data.meditation = medData.totalMinutes || medData.minutes || 0;
+    }
+  } catch(e){}
+
+  // 渲染
+  function render(){
+    document.getElementById('nickDisplay').textContent = data.nickname;
+    document.getElementById('avatar').textContent = data.nickname.charAt(0) || '慧';
+    document.getElementById('statPoints').textContent = data.points;
+    document.getElementById('statLamps').textContent = data.lamps;
+    document.getElementById('statUses').textContent = data.uses;
+    document.getElementById('lampCount').textContent = data.lamps + ' 盏';
+    document.getElementById('lotteryCount').textContent = data.lottery + ' 支';
+    document.getElementById('baziCount').textContent = data.bazi + ' 份';
+    document.getElementById('dreamCount').textContent = data.dream + ' 条';
+    document.getElementById('nameCount').textContent = data.names + ' 个';
+    document.getElementById('medCount').textContent = data.meditation + ' 分钟';
+    document.getElementById('notifyValue').textContent = data.notify ? '已开启 ›' : '已关闭 ›';
+  }
+  render();
+
+  // 昵称编辑
+  var editMode = false;
+  document.getElementById('nickEditBtn').addEventListener('click', function(){
+    if(!editMode){
+      editMode = true;
+      var display = document.getElementById('nickDisplay');
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'nick-input';
+      input.value = data.nickname;
+      input.maxLength = 20;
+      display.replaceWith(input);
+      input.focus();
+      input.select();
+      this.textContent = '保存';
+
+      function save(){
+        var val = input.value.trim() || '慧光189';
+        data.nickname = val;
+        saveData(data);
+        input.replaceWith(display);
+        display.textContent = val;
+        document.getElementById('avatar').textContent = val.charAt(0) || '慧';
+        document.getElementById('nickEditBtn').textContent = '编辑';
+        editMode = false;
+        showToast('昵称已更新');
+      }
+
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){ input.blur(); }
+      });
+    }
+  });
+
+  // 通知设置
+  document.getElementById('settingNotify').addEventListener('click', function(){
+    data.notify = !data.notify;
+    saveData(data);
+    render();
+    showToast(data.notify ? '通知已开启' : '通知已关闭');
+  });
+
+  // 隐私设置
+  document.getElementById('settingPrivacy').addEventListener('click', function(){
+    showToast('隐私设置：照片仅在本地分析，八字不上传服务器');
+  });
+
+  // 退出登录
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    if(confirm('确定要退出登录吗？本地记录将保留。')){
+      showToast('已退出登录（模拟）');
+      setTimeout(function(){
+        window.location.href = '/';
+      }, 1200);
+    }
+  });
+})();
+</script>
+</body>
+</html>
