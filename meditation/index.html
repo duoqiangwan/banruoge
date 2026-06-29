@@ -118,8 +118,7 @@
       <div class="music-btn" data-music="chant"><div class="music-icon">🙏</div><div class="music-name">佛号</div></div>
       <div class="music-btn" data-music="stream"><div class="music-icon">💧</div><div class="music-name">溪水</div></div>
     </div>
-    <audio id="bgAudio" loop preload="auto"></audio>
-    <p style="font-size:0.78rem;color:var(--ink-muted);margin:10px 0 0;text-align:center;">禅坐开始时自动播放（可关闭），需浏览器允许播放声音</p>
+    <p style="font-size:0.78rem;color:var(--ink-muted);margin:10px 0 0;text-align:center;">禅坐开始时自动播放环境音（由 Web Audio API 实时生成），首次需点击"开始禅坐"以允许声音</p>
   </section>
 
   <!-- 完成提示 -->
@@ -181,14 +180,99 @@
   var remaining = 0; // 秒
   var timerInterval = null;
   var breathTimeout = null;
-  var audio = document.getElementById('bgAudio');
+  // === Web Audio API 环境音生成（无需外部音频文件） ===
+  var audioCtx = null;
+  var activeNodes = [];
+  var bellTimer = null;
 
-  // 音乐源（占位，实际可替换为真实音频文件）
-  var musicSrc = {
-    bell: '',
-    chant: '',
-    stream: ''
-  };
+  function initAudio(){
+    if(!audioCtx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return false;
+      audioCtx = new AC();
+    }
+    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+    return true;
+  }
+
+  // 钟磬：oscillator + gain envelope，基频220Hz加泛音，长尾衰减3-4秒
+  function playBellStrike(){
+    if(!audioCtx) return;
+    var now = audioCtx.currentTime;
+    var master = audioCtx.createGain();
+    master.gain.setValueAtTime(0, now);
+    master.gain.linearRampToValueAtTime(0.3, now + 0.005);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
+    master.connect(audioCtx.destination);
+    activeNodes.push(master);
+    var partials = [
+      {f:220, a:1.0, d:3.5},
+      {f:440, a:0.5, d:3.0},
+      {f:587, a:0.35, d:2.6},
+      {f:880, a:0.2, d:2.2},
+      {f:1320,a:0.1, d:1.6}
+    ];
+    partials.forEach(function(p){
+      var osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(p.f, now);
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.a, now);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + p.d);
+      osc.connect(g); g.connect(master);
+      osc.start(now); osc.stop(now + p.d);
+      activeNodes.push(osc, g);
+    });
+  }
+
+  // 佛号：低频drone约130Hz + 谐波 + vibrato，持续低音
+  function playChantDrone(){
+    if(!audioCtx) return;
+    var master = audioCtx.createGain();
+    master.gain.setValueAtTime(0, audioCtx.currentTime);
+    master.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 2);
+    master.connect(audioCtx.destination);
+    activeNodes.push(master);
+    var fundamentals = [130, 195, 260];
+    fundamentals.forEach(function(f, i){
+      var osc = audioCtx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+      var g = audioCtx.createGain();
+      g.gain.value = (1 / (i + 1)) * 0.5;
+      var lp = audioCtx.createBiquadFilter();
+      lp.type = 'lowpass'; lp.frequency.value = 400;
+      // vibrato
+      var lfo = audioCtx.createOscillator();
+      lfo.frequency.value = 5;
+      var lfoGain = audioCtx.createGain();
+      lfoGain.gain.value = 3;
+      lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+      osc.connect(g); g.connect(lp); lp.connect(master);
+      osc.start(); lfo.start();
+      activeNodes.push(osc, g, lp, lfo, lfoGain);
+    });
+  }
+
+  // 溪水：白噪声 + bandpass filter，模拟流水声，持续播放
+  function playStreamNoise(){
+    if(!audioCtx) return;
+    var bufferSize = 2 * audioCtx.sampleRate;
+    var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    var data = buffer.getChannelData(0);
+    for(var i = 0; i < bufferSize; i++){ data[i] = Math.random() * 2 - 1; }
+    var noise = audioCtx.createBufferSource();
+    noise.buffer = buffer; noise.loop = true;
+    var bandpass = audioCtx.createBiquadFilter();
+    bandpass.type = 'bandpass'; bandpass.frequency.value = 800; bandpass.Q.value = 0.5;
+    var lp = audioCtx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 1200;
+    var g = audioCtx.createGain();
+    g.gain.value = 0.25;
+    noise.connect(bandpass); bandpass.connect(lp); lp.connect(g); g.connect(audioCtx.destination);
+    noise.start();
+    activeNodes.push(noise, bandpass, lp, g);
+  }
 
   function loadTodayMin(){
     try {
@@ -230,16 +314,31 @@
   });
 
   function playMusic(){
-    var src = musicSrc[selectedMusic];
-    if(src){
-      audio.src = src;
-      audio.volume = 0.3;
-      audio.play().catch(function(){});
+    if(!initAudio()) return;
+    stopMusic();
+    if(selectedMusic === 'bell'){
+      // 立即敲一次，之后每隔 8-12 秒敲一次
+      playBellStrike();
+      (function loop(){
+        bellTimer = setTimeout(function(){
+          if(!running){ bellTimer = null; return; }
+          playBellStrike();
+          loop();
+        }, 8000 + Math.random() * 4000);
+      })();
+    } else if(selectedMusic === 'chant'){
+      playChantDrone();
+    } else if(selectedMusic === 'stream'){
+      playStreamNoise();
     }
   }
   function stopMusic(){
-    audio.pause();
-    audio.currentTime = 0;
+    if(bellTimer){ clearTimeout(bellTimer); bellTimer = null; }
+    activeNodes.forEach(function(node){
+      try { if(node.stop) node.stop(); } catch(e){}
+      try { node.disconnect(); } catch(e){}
+    });
+    activeNodes = [];
   }
 
   // 呼吸循环

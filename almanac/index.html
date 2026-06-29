@@ -9,6 +9,7 @@
 <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 6C22 6 12 12 10 22C8 32 14 44 24 50C28 53 30 56 31 60L32 62L33 60C34 56 36 53 40 50C50 44 56 32 54 22C52 12 42 6 32 6Z' fill='%23c9a05c' fill-opacity='0.3' stroke='%23c9a05c' stroke-width='1.6'/></svg>">
 <link rel="stylesheet" href="/css/style.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.js"></script>
 <style>
   .page-title { font-size: 2.4rem; letter-spacing: 0.15em; margin: 0; }
   .page-sub { color: rgba(232,213,176,0.7); margin: 8px 0 0; font-size: 0.95rem; letter-spacing: 0.08em; }
@@ -34,15 +35,15 @@
   .cal-wd { text-align:center; font-size:0.72rem; color:var(--ink-muted); padding:4px 0; }
   .cal-wd.weekend { color:var(--vermillion-light); }
   .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-  .cal-cell { aspect-ratio:1; border:1px solid transparent; border-radius:8px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; background:rgba(42,31,24,0.3); }
+  .cal-cell { min-height:36px; padding:3px 2px; border:1px solid transparent; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; background:rgba(42,31,24,0.3); }
   .cal-cell:hover { border-color:rgba(201,160,94,0.4); background:rgba(201,160,94,0.08); }
   .cal-cell.empty { background:transparent; cursor:default; pointer-events:none; }
   .cal-cell.today { border-color:rgba(201,160,94,0.5); }
   .cal-cell.today .cal-d { color:var(--gold); }
   .cal-cell.selected { background:linear-gradient(135deg,rgba(201,160,94,0.25),rgba(201,160,94,0.1)); border-color:var(--gold); }
   .cal-cell.selected .cal-d { color:var(--gold-light); font-weight:700; }
-  .cal-d { font-size:0.95rem; color:var(--paper-dark); line-height:1; }
-  .cal-lunar { font-size:0.6rem; color:var(--ink-muted); margin-top:2px; line-height:1; }
+  .cal-d { font-size:0.85rem; color:var(--paper-dark); line-height:1; }
+  .cal-lunar { font-size:0.55rem; color:var(--ink-muted); margin-top:2px; line-height:1; }
   .cal-cell.selected .cal-lunar { color:rgba(201,160,94,0.7); }
   .cal-cell .cal-dot { position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; }
   .cal-dot.ji { background:#7ec47e; }
@@ -191,76 +192,21 @@
   var shaDir = {0:'南',4:'南',8:'南',2:'北',6:'北',10:'北',5:'东',9:'东',1:'东',11:'西',3:'西',7:'西'};
   var animalNames = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
 
-  var lunarInfo = [
-    0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
-    0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
-    0x04970,0x0a4b0,0x0b4b5,0x0a950,0x0b550,0x15356,0x04da0,0x0a5b0,0x06a80,0x0aa50,
-    0x07b52,0x0a930,0x0a950,0x0b550,0x0b6a0,0x0bb95,0x052b0,0x0b540,0x0b6a5,0x0ba50,
-    0x057d0,0x055d2,0x04b60,0x0a450,0x0b295,0x06b50,0x06d40,0x04ab0,0x07560,0x09570,
-    0x074b0,0x0a9b0,0x06aa0,0x0ad50,0x14b52,0x04b60,0x0a570,0x054d5,0x0d250,0x1d455,
-    0x0b540,0x0b6a0,0x195a6,0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,
-    0x0af46,0x0ab60,0x09570,0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,
-    0x0ab60,0x096d5,0x092e0,0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,
-    0x025d0,0x092d0,0x0cab5,0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,
-    0x15176,0x052b0,0x0a930,0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,
-    0x0d260,0x0ea65,0x0d530,0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,
-    0x0d250,0x0d520,0x0dd45,0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,
-    0x1b255,0x06d20,0x0ada0,0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,
-    0x06b20,0x1a6c4,0x0aae0,0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,
-    0x056a0,0x0a6d0,0x055d4,0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,
-    0x0aba4,0x0a5b0,0x052b0,0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,
-    0x0a570,0x054d4,0x0d160,0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,
-    0x0a2d0,0x0d150,0x0f252,0x0d520
-  ];
+  // 农历计算使用 lunar-javascript 库（见 head 中引入的 lunar.js）
+  // 保留 solar2lunar 作为兼容封装，返回 {year,month,day,isLeap,monthStr,dayStr}
 
-  function lYearDays(y){
-    var sum = 348;
-    for(var i=0x8000; i>0x8; i>>=1){ sum += (lunarInfo[y-1900] & i) ? 1 : 0; }
-    return sum + leapDays(y);
-  }
-  function leapMonth(y){ return lunarInfo[y-1900] & 0xf; }
-  function leapDays(y){
-    if(leapMonth(y)) return (lunarInfo[y-1900] & 0x10000) ? 30 : 29;
-    return 0;
-  }
-  function monthDays(y, m){
-    return (lunarInfo[y-1900] & (0x10000 >> m)) ? 30 : 29;
-  }
   function solar2lunar(y, m, d){
-    if(y<1900 || y>2100) return null;
-    var offset = Math.round((new Date(y, m-1, d) - new Date(1900, 0, 31)) / 86400000);
-    var ly = 1900, temp = 0;
-    for(; ly<2101 && offset>0; ly++){
-      temp = lYearDays(ly);
-      offset -= temp;
+    try {
+      var lunar = Lunar.fromSolarDate(y, m, d);
+      var lm = lunar.getMonth();
+      var ld = lunar.getDay();
+      var isLeap = lunar.isLeap();
+      var monthStr = (isLeap ? '闰' : '') + lunar.getMonthInChinese() + '月';
+      var dayStr = lunar.getDayInChinese();
+      return {year: lunar.getYear(), month: Math.abs(lm), day: ld, isLeap: isLeap, monthStr: monthStr, dayStr: dayStr};
+    } catch(e){
+      return null;
     }
-    if(offset<0){ offset += temp; ly--; }
-    var isLeap = false, leap = leapMonth(ly);
-    var lm = 1;
-    for(; lm<13 && offset>0; lm++){
-      if(leap>0 && lm === leap+1 && !isLeap){
-        lm--; isLeap = true; temp = leapDays(ly);
-      } else {
-        temp = monthDays(ly, lm);
-      }
-      if(isLeap && lm === leap+1) isLeap = false;
-      offset -= temp;
-    }
-    if(offset===0 && leap>0 && lm===leap+1){
-      if(isLeap){ isLeap = false; } else { isLeap = true; lm--; }
-    }
-    if(offset<0){ offset += temp; lm--; }
-    var ld = offset + 1;
-    var lunarMonthName = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
-    var lunarDayPre = ['初','十','廿','卅'];
-    var lunarDayNum = ['','一','二','三','四','五','六','七','八','九','十'];
-    var dayStr;
-    if(ld===10) dayStr='初十';
-    else if(ld===20) dayStr='二十';
-    else if(ld===30) dayStr='三十';
-    else dayStr = lunarDayPre[Math.floor((ld-1)/10)] + lunarDayNum[ld%10 || 10];
-    var monthStr = (isLeap?'闰':'') + lunarMonthName[lm-1] + '月';
-    return {year:ly, month:lm, day:ld, isLeap:isLeap, monthStr:monthStr, dayStr:dayStr};
   }
 
   function getDayDiff(y, m, d){
