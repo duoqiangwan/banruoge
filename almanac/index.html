@@ -197,13 +197,12 @@
 
   function solar2lunar(y, m, d){
     try {
-      var lunar = Lunar.fromSolarDate(y, m, d);
+      var lunar = Lunar.fromSolar(Solar.fromYmd(y, m, d));
       var lm = lunar.getMonth();
       var ld = lunar.getDay();
-      var isLeap = lunar.isLeap();
-      var monthStr = (isLeap ? '闰' : '') + lunar.getMonthInChinese() + '月';
+      var monthStr = lunar.getMonthInChinese() + '月';
       var dayStr = lunar.getDayInChinese();
-      return {year: lunar.getYear(), month: Math.abs(lm), day: ld, isLeap: isLeap, monthStr: monthStr, dayStr: dayStr};
+      return {year: lunar.getYear(), month: Math.abs(lm), day: ld, isLeap: false, monthStr: monthStr, dayStr: dayStr};
     } catch(e){
       return null;
     }
