@@ -44,6 +44,202 @@ function json(data, status, corsHeaders) {
   });
 }
 
+// ============================================================
+// WeChat Pay V3 - Native scan-to-pay (扫码支付)
+// env.PRIVATE_KEY : 商户私钥(PEM, PKCS#8) 文本内容
+// env.WX_APPID    : 关联的 AppID(公众号/小程序/移动应用)
+// ============================================================
+const WX_MCHID     = '1114634131';
+const WX_APIV3_KEY = 'wanduoqiang342623199212224013199'; // 32 bytes
+const WX_SERIAL_NO = '74811D188C4A952B42F9ABE7F387684F8BC21B23';
+const WX_API_BASE  = 'https://api.mch.weixin.qq.com';
+
+// ---- base64 / utf8 helpers ----
+function strToBytes(s){ return new TextEncoder().encode(s); }
+function bytesToB64(bytes){
+  let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function b64ToBytes(b64){
+  const bin=atob(b64); const out=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i);
+  return out;
+}
+function randomStr(len){
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let s=''; for(let i=0;i<(len||32);i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+function genOrderId(){
+  return 'BR' + Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+}
+
+// ---- PEM -> DER bytes ----
+function pemToDer(pem){
+  const b64 = String(pem).replace(/-----[^-]+-----/g,'').replace(/\s+/g,'');
+  return b64ToBytes(b64);
+}
+
+// cache imported merchant private key (signing)
+let _privKeyCache = null;
+async function getPrivateKey(env){
+  if(_privKeyCache) return _privKeyCache;
+  if(!env.PRIVATE_KEY) throw new Error('PRIVATE_KEY 未配置');
+  const der = pemToDer(env.PRIVATE_KEY);
+  _privKeyCache = await crypto.subtle.importKey(
+    'pkcs8', der,
+    { name:'RSASSA-PKCS1-v1_5', hash:'SHA-256' },
+    false, ['sign']
+  );
+  return _privKeyCache;
+}
+
+// ---- build signature & Authorization header ----
+async function wxSign(env, method, urlPathQuery, timestamp, nonce, body){
+  const priv = await getPrivateKey(env);
+  const sigStr = `${method}\n${urlPathQuery}\n${timestamp}\n${nonce}\n${body}\n`;
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', priv, strToBytes(sigStr));
+  return bytesToB64(new Uint8Array(sig));
+}
+function wxAuthHeader(mchid, serialNo, nonce, timestamp, signature){
+  return `WECHATPAY2-SHA256-RSA2048 mchid="${mchid}",nonce_str="${nonce}",timestamp="${timestamp}",serial_no="${serialNo}",signature="${signature}"`;
+}
+
+// make an authenticated request to a WeChat Pay V3 API
+async function wxRequest(env, method, pathAndQuery, bodyObj){
+  const timestamp = Math.floor(Date.now()/1000).toString();
+  const nonce = randomStr(32);
+  const bodyStr = (bodyObj !== undefined && bodyObj !== null) ? JSON.stringify(bodyObj) : '';
+  const signature = await wxSign(env, method, pathAndQuery, timestamp, nonce, bodyStr);
+  const headers = {
+    'Accept':'application/json',
+    'User-Agent':'BanruogeAI/1.0',
+    'Authorization': wxAuthHeader(WX_MCHID, WX_SERIAL_NO, nonce, timestamp, signature)
+  };
+  if(bodyStr) headers['Content-Type'] = 'application/json';
+  const resp = await fetch(WX_API_BASE + pathAndQuery, {
+    method, headers, body: bodyStr || undefined
+  });
+  const text = await resp.text();
+  let data = null;
+  if(text){ try{ data = JSON.parse(text); }catch(e){ data = text; } }
+  return { status: resp.status, data, raw: text };
+}
+
+// ---- AES-256-GCM decrypt with APIv3 key (callback resource / cert) ----
+async function aesGcmDecrypt(ciphertextB64, nonceStr, associatedData){
+  const key = await crypto.subtle.importKey(
+    'raw', strToBytes(WX_APIV3_KEY),
+    { name:'AES-GCM' }, false, ['decrypt']
+  );
+  const dec = await crypto.subtle.decrypt(
+    { name:'AES-GCM',
+      iv: strToBytes(nonceStr),
+      additionalData: associatedData ? strToBytes(associatedData) : new Uint8Array(0) },
+    key, b64ToBytes(ciphertextB64)
+  );
+  return new TextDecoder().decode(dec);
+}
+
+// ---- minimal ASN.1 DER: extract SubjectPublicKeyInfo from X.509 cert ----
+function derReadLen(b,i){
+  const first=b[i]; i++;
+  if(first < 0x80) return { len:first, n:1 };
+  const num = first & 0x7f; let len=0;
+  for(let k=0;k<num;k++){ len=(len<<8)|b[i+k]; }
+  return { len, n:1+num };
+}
+function derReadTLV(b,i){
+  const tag=b[i];
+  const { len, n } = derReadLen(b,i+1);
+  const headerLen=1+n;
+  const valueStart=i+headerLen;
+  return { tag, len, headerLen, valueStart, end: valueStart+len };
+}
+function extractSpki(certDer){
+  const cert = derReadTLV(certDer, 0);
+  const tbs  = derReadTLV(certDer, cert.valueStart);
+  let off = tbs.valueStart;
+  const kids = [];
+  while(off < tbs.end){
+    const c = derReadTLV(certDer, off);
+    kids.push({ start: off, end: c.end, tag: c.tag });
+    off = c.end;
+  }
+  // version [0] present in v3 certs -> SPKI is index 6, else index 5
+  const idx = (kids[0].tag === 0xA0) ? 6 : 5;
+  const spki = kids[idx];
+  return certDer.subarray(spki.start, spki.end);
+}
+
+// ---- platform certificate cache (serial -> CryptoKey for verify) ----
+let _platformCertsCache = null; // { fetchedAt, map:{ serial: CryptoKey } }
+const PLATFORM_CERT_TTL = 10 * 60 * 1000; // 10 min
+
+async function fetchPlatformCerts(env){
+  const now = Date.now();
+  if(_platformCertsCache && (now - _platformCertsCache.fetchedAt) < PLATFORM_CERT_TTL){
+    return _platformCertsCache.map;
+  }
+  const r = await wxRequest(env, 'GET', '/v3/certificates', null);
+  if(r.status !== 200 || !r.data || !Array.isArray(r.data.data)){
+    throw new Error('下载微信平台证书失败: ' + r.status);
+  }
+  const map = {};
+  for(const item of r.data.data){
+    try{
+      const enc = item.encrypt_certificate;
+      const pem = await aesGcmDecrypt(enc.ciphertext, enc.nonce, enc.associated_data);
+      const spki = extractSpki(pemToDer(pem));
+      map[item.serial_no] = await crypto.subtle.importKey(
+        'spki', spki,
+        { name:'RSASSA-PKCS1-v1_5', hash:'SHA-256' },
+        false, ['verify']
+      );
+    }catch(e){ /* skip malformed cert */ }
+  }
+  _platformCertsCache = { fetchedAt: now, map };
+  return map;
+}
+async function getPlatformCert(env, serial){
+  let map = await fetchPlatformCerts(env);
+  if(map[serial]) return map[serial];
+  _platformCertsCache = null; // refresh once for a possibly new serial
+  map = await fetchPlatformCerts(env);
+  if(map[serial]) return map[serial];
+  throw new Error('未找到序列号对应的平台证书: ' + serial);
+}
+
+// ---- verify WeChat callback signature ----
+async function verifyCallback(env, timestamp, nonce, body, signatureB64, serial){
+  const pubKey = await getPlatformCert(env, serial);
+  const sigStr = `${timestamp}\n${nonce}\n${body}\n`;
+  return await crypto.subtle.verify(
+    'RSASSA-PKCS1-v1_5', pubKey,
+    b64ToBytes(signatureB64), strToBytes(sigStr)
+  );
+}
+
+// ---- query order from WeChat (recover missed callbacks) ----
+async function wxQueryOrder(env, outTradeNo){
+  const path = `/v3/pay/transactions/out-trade-no/${encodeURIComponent(outTradeNo)}?mchid=${WX_MCHID}`;
+  return await wxRequest(env, 'GET', path, null);
+}
+
+// record a successful payment in KV (order + persistent paid/unlock records)
+async function recordPayment(DB, order){
+  order.status = 'paid';
+  order.paidAt = order.paidAt || Date.now();
+  if(!DB) return;
+  await DB.put('order:' + order.orderId, JSON.stringify(order));
+  await DB.put('paid:' + order.pageKey + ':' + order.orderId,
+    JSON.stringify({ paid:true, paidAt:order.paidAt, user:order.user }));
+  if(order.user){
+    await DB.put('unlock:' + order.pageKey + ':' + order.user,
+      JSON.stringify({ orderId:order.orderId, paidAt:order.paidAt }));
+  }
+}
+
 export default {
   async fetch(request, env) {
     const corsHeaders = {
@@ -227,6 +423,160 @@ export default {
 
         return json({ reply: reply, master: profile.name }, 200, corsHeaders);
 
+      } catch (err) {
+        return json({ error: err.message }, 500, corsHeaders);
+      }
+    }
+
+    // ===== Pay: create order (Native scan-to-pay) =====
+    if (path === '/api/pay/create' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const amount = parseInt(body.amount, 10); // 分(cents)
+        const subject = body.subject || '般若阁祈福';
+        const pageKey = body.pageKey || 'default';
+        if (!amount || amount < 1 || amount > 1000000) {
+          return json({ error: '金额非法' }, 400, corsHeaders);
+        }
+        if (!env.WX_APPID) {
+          return json({ error: '微信支付未配置(WX_APPID)' }, 500, corsHeaders);
+        }
+        const orderId = genOrderId();
+        const notifyUrl = new URL(request.url).origin + '/api/pay/notify';
+
+        const wxBody = {
+          appid: env.WX_APPID,
+          mchid: WX_MCHID,
+          description: subject,
+          out_trade_no: orderId,
+          notify_url: notifyUrl,
+          amount: { total: amount, currency: 'CNY' }
+        };
+        const r = await wxRequest(env, 'POST', '/v3/pay/transactions/native', wxBody);
+        if (r.status !== 200 || !r.data || !r.data.code_url) {
+          return json({ error: '创建支付订单失败', detail: r.data || r.raw }, 502, corsHeaders);
+        }
+
+        // optionally associate a logged-in user
+        let username = null;
+        try {
+          const auth = request.headers.get('Authorization') || '';
+          username = parseToken(auth.replace('Bearer ', ''));
+        } catch(e) {}
+
+        const order = {
+          orderId, mchid: WX_MCHID, amount, subject, pageKey,
+          user: username,
+          status: 'created',
+          codeUrl: r.data.code_url,
+          transactionId: null,
+          createdAt: Date.now(),
+          paidAt: null,
+          lastSyncAt: 0
+        };
+        if (DB) await DB.put('order:' + orderId, JSON.stringify(order));
+
+        return json({ success: true, orderId, codeUrl: r.data.code_url }, 200, corsHeaders);
+      } catch (err) {
+        return json({ error: err.message }, 500, corsHeaders);
+      }
+    }
+
+    // ===== Pay: WeChat notify callback =====
+    if (path === '/api/pay/notify' && request.method === 'POST') {
+      try {
+        const timestamp = request.headers.get('Wechatpay-Timestamp') || '';
+        const nonce     = request.headers.get('Wechatpay-Nonce') || '';
+        const signature = request.headers.get('Wechatpay-Signature') || '';
+        const serial    = request.headers.get('Wechatpay-Serial') || '';
+        const rawBody = await request.text();
+
+        if (!timestamp || !nonce || !signature || !serial) {
+          return json({ code: 'FAIL', message: '缺少验签字段' }, 400, corsHeaders);
+        }
+
+        let verified = false;
+        try { verified = await verifyCallback(env, timestamp, nonce, rawBody, signature, serial); }
+        catch(e) { verified = false; }
+        if (!verified) {
+          return json({ code: 'FAIL', message: '验签失败' }, 401, corsHeaders);
+        }
+
+        const envelope = JSON.parse(rawBody);
+        const resource = envelope.resource;
+        const plaintext = await aesGcmDecrypt(resource.ciphertext, resource.nonce, resource.associated_data);
+        const result = JSON.parse(plaintext);
+
+        const orderId = result.out_trade_no;
+        const tradeState = result.trade_state; // SUCCESS / NOTPAY / CLOSED ...
+        const orderKey = 'order:' + orderId;
+        const raw = DB ? await DB.get(orderKey) : null;
+        if (!raw) {
+          // unknown order -> ack to stop retries
+          return json({ code: 'SUCCESS', message: '成功' }, 200, corsHeaders);
+        }
+        const order = JSON.parse(raw);
+
+        if (tradeState === 'SUCCESS') {
+          if (order.status !== 'paid') {
+            order.transactionId = result.transaction_id;
+            await recordPayment(DB, order);
+          }
+        } else if (order.status !== 'paid') {
+          order.status = tradeState ? tradeState.toLowerCase() : order.status;
+          if (DB) await DB.put(orderKey, JSON.stringify(order));
+        }
+
+        return json({ code: 'SUCCESS', message: '成功' }, 200, corsHeaders);
+      } catch (err) {
+        return json({ code: 'FAIL', message: err.message }, 500, corsHeaders);
+      }
+    }
+
+    // ===== Pay: query order status =====
+    if (path === '/api/pay/status' && request.method === 'GET') {
+      try {
+        const orderId = url.searchParams.get('orderId');
+        if (!orderId) {
+          return json({ error: '缺少 orderId' }, 400, corsHeaders);
+        }
+        const orderKey = 'order:' + orderId;
+        const raw = DB ? await DB.get(orderKey) : null;
+        if (!raw) {
+          return json({ error: '订单不存在' }, 404, corsHeaders);
+        }
+        const order = JSON.parse(raw);
+
+        // not paid & order older than 30s -> sync with WeChat (catch missed callbacks)
+        if (order.status !== 'paid' && (Date.now() - order.createdAt) > 30000) {
+          const lastSync = order.lastSyncAt || 0;
+          if ((Date.now() - lastSync) > 15000) {
+            order.lastSyncAt = Date.now();
+            try {
+              const r = await wxQueryOrder(env, orderId);
+              if (r.status === 200 && r.data) {
+                if (r.data.trade_state === 'SUCCESS') {
+                  order.transactionId = r.data.transaction_id;
+                  await recordPayment(DB, order);
+                } else if (r.data.trade_state) {
+                  order.status = r.data.trade_state.toLowerCase();
+                }
+              }
+            } catch(e) { /* ignore sync errors, fall back to KV state */ }
+            if (DB) await DB.put(orderKey, JSON.stringify(order));
+          }
+        }
+
+        return json({
+          orderId: order.orderId,
+          paid: order.status === 'paid',
+          status: order.status,
+          amount: order.amount,
+          subject: order.subject,
+          pageKey: order.pageKey,
+          createdAt: order.createdAt,
+          paidAt: order.paidAt
+        }, 200, corsHeaders);
       } catch (err) {
         return json({ error: err.message }, 500, corsHeaders);
       }
