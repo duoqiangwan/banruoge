@@ -24,6 +24,30 @@
   .date-ganzhi { font-size:0.82rem; color:var(--ink-muted); margin-top:2px; }
   .date-weekday { font-size:0.75rem; color:var(--ink-light); margin-top:2px; }
 
+  /* === 月历组件 === */
+  .calendar-wrap { margin-top:16px; border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.5); border-radius:12px; padding:16px; }
+  .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .cal-title { font-size:1.1rem; color:var(--gold); font-weight:500; }
+  .cal-nav-btn { width:32px; height:32px; border-radius:50%; border:1px solid rgba(201,160,94,0.25); background:transparent; color:var(--gold); font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+  .cal-nav-btn:hover { border-color:var(--gold); background:rgba(201,160,94,0.1); }
+  .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:6px; }
+  .cal-wd { text-align:center; font-size:0.72rem; color:var(--ink-muted); padding:4px 0; }
+  .cal-wd.weekend { color:var(--vermillion-light); }
+  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .cal-cell { aspect-ratio:1; border:1px solid transparent; border-radius:8px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; background:rgba(42,31,24,0.3); }
+  .cal-cell:hover { border-color:rgba(201,160,94,0.4); background:rgba(201,160,94,0.08); }
+  .cal-cell.empty { background:transparent; cursor:default; pointer-events:none; }
+  .cal-cell.today { border-color:rgba(201,160,94,0.5); }
+  .cal-cell.today .cal-d { color:var(--gold); }
+  .cal-cell.selected { background:linear-gradient(135deg,rgba(201,160,94,0.25),rgba(201,160,94,0.1)); border-color:var(--gold); }
+  .cal-cell.selected .cal-d { color:var(--gold-light); font-weight:700; }
+  .cal-d { font-size:0.95rem; color:var(--paper-dark); line-height:1; }
+  .cal-lunar { font-size:0.6rem; color:var(--ink-muted); margin-top:2px; line-height:1; }
+  .cal-cell.selected .cal-lunar { color:rgba(201,160,94,0.7); }
+  .cal-cell .cal-dot { position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; }
+  .cal-dot.ji { background:#7ec47e; }
+  .cal-dot.xiong { background:var(--vermillion-light); }
+
   .yiji-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .yiji-box { border:1px solid rgba(201,160,94,0.2); background:rgba(34,26,20,0.6); border-radius:12px; padding:16px; }
   .yiji-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
@@ -87,6 +111,15 @@
       <button class="date-nav-btn" id="nextDay">›</button>
     </div>
     <button class="btn-secondary" id="todayBtn" style="width:100%;margin-top:16px;padding:8px;font-size:0.9rem;">回到今天</button>
+    <div class="calendar-wrap">
+      <div class="cal-header">
+        <button class="cal-nav-btn" id="prevMonth">‹</button>
+        <div class="cal-title" id="calTitle"></div>
+        <button class="cal-nav-btn" id="nextMonth">›</button>
+      </div>
+      <div class="cal-weekdays" id="calWeekdays"></div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
   </section>
 
   <section style="margin-top:24px;" data-reveal>
@@ -388,18 +421,98 @@
   document.getElementById('prevDay').addEventListener('click', function(){
     currentDate.setDate(currentDate.getDate() - 1);
     render();
+    renderCalendar();
   });
   document.getElementById('nextDay').addEventListener('click', function(){
     currentDate.setDate(currentDate.getDate() + 1);
     render();
+    renderCalendar();
   });
   document.getElementById('todayBtn').addEventListener('click', function(){
     currentDate = new Date();
     render();
+    renderCalendar();
     showToast('已回到今天');
   });
 
+  // === 月历 ===
+  var calViewDate = new Date(); // 当前查看的月份
+  var todayDate = new Date();
+
+  function renderCalendar(){
+    var y = calViewDate.getFullYear();
+    var m = calViewDate.getMonth(); // 0-11
+    var monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+    document.getElementById('calTitle').textContent = y + '年 ' + monthNames[m];
+
+    // 星期标题
+    var wdNames = ['日','一','二','三','四','五','六'];
+    var wdHtml = '';
+    for(var w=0; w<7; w++){
+      wdHtml += '<div class="cal-wd' + (w===0||w===6 ? ' weekend' : '') + '">' + wdNames[w] + '</div>';
+    }
+    document.getElementById('calWeekdays').innerHTML = wdHtml;
+
+    // 日期格子
+    var firstDay = new Date(y, m, 1).getDay(); // 1号是星期几
+    var daysInMonth = new Date(y, m+1, 0).getDate();
+    var gridHtml = '';
+    // 空格
+    for(var i=0; i<firstDay; i++){
+      gridHtml += '<div class="cal-cell empty"></div>';
+    }
+    // 日期
+    for(var d=1; d<=daysInMonth; d++){
+      var cellDate = new Date(y, m, d);
+      var lunar = solar2lunar(y, m+1, d);
+      var lunarStr = lunar ? lunar.dayStr : '';
+      // 节气日特殊标注
+      if(lunar && lunar.dayStr === '初一' && lunar.monthStr){
+        lunarStr = lunar.monthStr;
+      }
+      var bIdx = getDayBranchIdx(y, m+1, d);
+      var zs = getDayZhiShen(bIdx, getMonthBranchIdx(y, m+1, d));
+      var dotClass = zs.luck === '吉' ? 'ji' : 'xiong';
+
+      var isToday = cellDate.toDateString() === todayDate.toDateString();
+      var isSelected = cellDate.toDateString() === currentDate.toDateString();
+      var classes = 'cal-cell';
+      if(isToday) classes += ' today';
+      if(isSelected) classes += ' selected';
+
+      gridHtml += '<div class="' + classes + '" data-y="' + y + '" data-m="' + (m+1) + '" data-d="' + d + '">' +
+        '<div class="cal-d">' + d + '</div>' +
+        '<div class="cal-lunar">' + lunarStr + '</div>' +
+        '<div class="cal-dot ' + dotClass + '"></div>' +
+      '</div>';
+    }
+    document.getElementById('calGrid').innerHTML = gridHtml;
+
+    // 点击日期
+    var cells = document.querySelectorAll('.cal-cell:not(.empty)');
+    for(var c=0; c<cells.length; c++){
+      cells[c].addEventListener('click', function(){
+        var dy = parseInt(this.getAttribute('data-y'));
+        var dm = parseInt(this.getAttribute('data-m'));
+        var dd = parseInt(this.getAttribute('data-d'));
+        currentDate = new Date(dy, dm-1, dd);
+        render();
+        renderCalendar();
+      });
+    }
+  }
+
+  document.getElementById('prevMonth').addEventListener('click', function(){
+    calViewDate.setMonth(calViewDate.getMonth() - 1);
+    renderCalendar();
+  });
+  document.getElementById('nextMonth').addEventListener('click', function(){
+    calViewDate.setMonth(calViewDate.getMonth() + 1);
+    renderCalendar();
+  });
+
   render();
+  renderCalendar();
 })();
 </script>
 </body>
