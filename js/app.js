@@ -139,6 +139,7 @@ function showDonation(onUnlock) {
 <p class="font-display" style="font-size:1.75rem;color:#c9a05c;letter-spacing:0.15em;margin:0 0 4px;">随喜功德</p>\
 <div style="width:48px;height:1px;background:rgba(201,160,94,0.3);margin:8px auto 16px;"></div>\
 <p style="font-size:0.8125rem;color:rgba(232,213,176,0.7);line-height:1.8;margin:0 0 20px;">一念随喜，功德无量。<br>您的支持是般若阁续灯续香的动力。</p>\
+<p style="font-size:0.75rem;color:rgba(201,160,94,0.6);line-height:1.6;margin:0 0 16px;font-style:italic;">诚心随喜，福报自来<br>请扫码完成随喜后再点下方按钮</p>\
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">\
 <div>\
 <img src="/assets/wechat-qr.png" alt="微信收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid rgba(201,160,94,0.2);background:#fff;" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">\
@@ -162,7 +163,12 @@ function showDonation(onUnlock) {
     _ub.className = 'btn-ritual';
     _ub.textContent = '我已随喜，解锁详批';
     _ub.style.cssText = 'width:100%;margin-top:16px;font-size:1rem;';
-    _ub.addEventListener('click', function(){ closeDonation(); onUnlock(); });
+    _ub.addEventListener('click', function(){
+      // 二次确认
+      _ub.textContent = '确认已扫码随喜？';
+      _ub.style.background = 'linear-gradient(135deg, #8b6914, #c9a05c)';
+      _ub.onclick = function(){ closeDonation(); onUnlock(); };
+    });
     if (_box) _box.appendChild(_ub);
   }
 }
