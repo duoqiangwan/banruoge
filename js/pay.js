@@ -21,7 +21,7 @@ var BanruogePay = (function () {
   'use strict';
 
   // ===== 配置 =====
-  var API_BASE = 'https://banroge-ai.duoqiang-wan.workers.dev';
+  var API_BASE = 'https://api.boruo.icu';
   var QR_API = 'https://api.qrserver.com/v1/create-qr-code/?data=';
   var POLL_INTERVAL = 2000;              // 轮询间隔 2 秒
   var TIMEOUT_MS = 10 * 60 * 1000;       // 10 分钟自动关闭

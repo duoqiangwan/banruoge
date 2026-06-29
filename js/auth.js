@@ -7,7 +7,7 @@
 //   banruoge_username
 
 var BanruogeAuth = (function () {
-  var API_BASE = 'https://banroge-ai.duoqiang-wan.workers.dev';
+  var API_BASE = 'https://api.boruo.icu';
   var TOKEN_KEY = 'banruoge_token';
   var USERNAME_KEY = 'banruoge_username';
 

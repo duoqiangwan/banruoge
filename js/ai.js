@@ -25,7 +25,7 @@ var BanruogeAI = (function() {
         type: opts.type || 'general'
       };
 
-      var resp = await fetch('https://banroge-ai.duoqiang-wan.workers.dev/api/chat', {
+      var resp = await fetch('https://api.boruo.icu/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
